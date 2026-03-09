@@ -80,41 +80,6 @@
   </div>
 </div>
 
-<!-- CATALONIA TIMELINE -->
-<div class="card">
-  <div class="card-title">Línea de Gobiernos de Catalunya (1980–2025)</div>
-  <div class="card-desc">Cada bloque = un año. <span style="color:#00b4d8">■ CiU/JxCat</span> (nacionalismo centro-derecha) · <span style="color:var(--psoe)">■ PSC</span> (socialistas) · <span style="color:var(--highlight)">■ ERC</span> (independentismo izquierda). Debajo: president.</div>
-  <div class="timeline" id="timelineCat"></div>
-  <div class="insight-box">
-    <strong>Patrón:</strong> CiU (Jordi Pujol) dominó 23 años consecutivos (1980-2003). Luego hubo dos tripartitos de izquierdas (PSC+ERC+ICV). El independentismo gobernó desde 2010 hasta 2024 (CiU→JxCat y ERC). En 2024 volvió el PSC con Salvador Illa. A diferencia de España, aquí no ha habido alternancia PP/PSOE sino un eje propio: nacionalismo vs constitucionalismo, con la izquierda fragmentada.
-  </div>
-</div>
-
-<!-- CATALONIA FISCAL CHARTS -->
-<div class="charts-grid">
-
-<div class="card">
-  <div class="card-title">Déficit Fiscal de Catalunya con el Estado (% PIB)</div>
-  <div class="card-desc">Diferencia entre lo que Catalunya aporta al Estado y lo que recibe. Método flujo monetario. Fuente: Generalitat de Catalunya / FEDEA. Negativo = Catalunya aporta más de lo que recibe.</div>
-  <div class="chart-sm"><canvas id="chartDeficit"></canvas></div>
-  <div class="insight-box"><strong>Observación:</strong> El déficit fiscal se ha mantenido entre el 6.7% y el 10.1% del PIB catalán durante toda la serie (1986-2021), con una media del 8.1%. Esto significa que Catalunya aporta consistentemente más de lo que recibe, independientemente del partido que gobierne en España o en Catalunya. Es un dato estructural, no coyuntural. <strong>Matiz importante:</strong> esto es esperable en territorios más ricos dentro de un estado (Baviera en Alemania, Lombardía en Italia, Île-de-France tienen déficits similares). El debate no es si debe existir solidaridad, sino si el nivel es excesivo comparado con otros países federales (donde ronda el 2-4% del PIB).</div>
-</div>
-
-<div class="card">
-  <div class="card-title">Inversión del Estado en Catalunya: Presupuestada vs Ejecutada (%)</div>
-  <div class="card-desc">% del presupuesto de inversión del Estado asignado a Catalunya que se ejecuta realmente. Fuente: PGE / Ministerio de Hacienda / Generalitat.</div>
-  <div class="chart-sm"><canvas id="chartEjecucion"></canvas></div>
-  <div class="insight-box"><strong>Observación:</strong> La ejecución presupuestaria en Catalunya ha sido sistemáticamente baja (media ~55-65%), muy inferior al ~85-90% de media nacional. Esto significa que incluso cuando se presupuesta inversión para Catalunya, no se gasta. Este es uno de los argumentos más sólidos del catalanismo: no es solo cuánto se asigna, sino cuánto se ejecuta de lo asignado. El caso del Corredor Mediterráneo es emblemático: presupuestado repetidamente, ejecutado mínimamente durante décadas.</div>
-</div>
-
-<div class="card">
-  <div class="card-title">% de Inversión del Estado destinada a Catalunya vs peso en PIB</div>
-  <div class="card-desc">Comparación del peso de Catalunya en el PIB español (~19%) vs el % de inversión estatal que recibe. Fuente: PGE / INE.</div>
-  <div class="chart-sm"><canvas id="chartPesoCat"></canvas></div>
-  <div class="insight-box"><strong>Observación:</strong> Catalunya representa ~19% del PIB español y ~16% de la población, pero históricamente recibe entre un 10-14% de la inversión estatal. La brecha es persistente y se ha usado como argumento central tanto por el catalanismo moderado como por el independentismo. Madrid, en cambio, recibe un porcentaje muy superior a su peso en PIB, en parte por ser sede de la administración central.</div>
-</div>
-
-</div><!-- charts-grid catalonia -->
 
 <!-- CHARTS ESPAÑA -->
 <div class="charts-grid">
@@ -266,38 +231,6 @@ govs.forEach(g => {
   tl.appendChild(d);
 });
 
-// ============ CATALONIA TIMELINE ============
-const govsCat = [
-  {y:1980,party:'CiU',pm:'Pujol'},{y:1981,party:'CiU',pm:'Pujol'},{y:1982,party:'CiU',pm:'Pujol'},{y:1983,party:'CiU',pm:'Pujol'},
-  {y:1984,party:'CiU',pm:'Pujol'},{y:1985,party:'CiU',pm:'Pujol'},{y:1986,party:'CiU',pm:'Pujol'},{y:1987,party:'CiU',pm:'Pujol'},
-  {y:1988,party:'CiU',pm:'Pujol'},{y:1989,party:'CiU',pm:'Pujol'},{y:1990,party:'CiU',pm:'Pujol'},{y:1991,party:'CiU',pm:'Pujol'},
-  {y:1992,party:'CiU',pm:'Pujol'},{y:1993,party:'CiU',pm:'Pujol'},{y:1994,party:'CiU',pm:'Pujol'},{y:1995,party:'CiU',pm:'Pujol'},
-  {y:1996,party:'CiU',pm:'Pujol'},{y:1997,party:'CiU',pm:'Pujol'},{y:1998,party:'CiU',pm:'Pujol'},{y:1999,party:'CiU',pm:'Pujol'},
-  {y:2000,party:'CiU',pm:'Pujol'},{y:2001,party:'CiU',pm:'Pujol'},{y:2002,party:'CiU',pm:'Pujol'},{y:2003,party:'CiU',pm:'Pujol'},
-  {y:2004,party:'PSC',pm:'Maragall'},{y:2005,party:'PSC',pm:'Maragall'},{y:2006,party:'PSC',pm:'Maragall'},
-  {y:2007,party:'PSC',pm:'Montilla'},{y:2008,party:'PSC',pm:'Montilla'},{y:2009,party:'PSC',pm:'Montilla'},{y:2010,party:'PSC',pm:'Montilla'},
-  {y:2011,party:'CiU',pm:'Mas'},{y:2012,party:'CiU',pm:'Mas'},{y:2013,party:'CiU',pm:'Mas'},{y:2014,party:'CiU',pm:'Mas'},{y:2015,party:'CiU',pm:'Mas'},
-  {y:2016,party:'JxCat',pm:'Puigdemont'},{y:2017,party:'JxCat',pm:'Puigdemont'},
-  {y:2018,party:'JxCat',pm:'Torra'},{y:2019,party:'JxCat',pm:'Torra'},{y:2020,party:'JxCat',pm:'Torra'},
-  {y:2021,party:'ERC',pm:'Aragonès'},{y:2022,party:'ERC',pm:'Aragonès'},{y:2023,party:'ERC',pm:'Aragonès'},
-  {y:2024,party:'PSC',pm:'Illa'},{y:2025,party:'PSC',pm:'Illa'},
-];
-const tlCat = document.getElementById('timelineCat');
-govsCat.forEach(g => {
-  const d = document.createElement('div');
-  d.className = 'tl-block';
-  const col = g.party === 'PSC' ? 'var(--psoe)' : g.party === 'ERC' ? 'var(--erc)' : 'var(--ciu)';
-  d.style.background = col.replace('var(','').replace(')','');
-  // resolve css var for inline
-  const colMap = {PSC:'#e63946',ERC:'#ffb81c',CiU:'#00b4d8',JxCat:'#00b4d8'};
-  const c = colMap[g.party] || '#00b4d8';
-  d.style.background = c + '22';
-  d.style.borderBottom = `3px solid ${c}`;
-  d.innerHTML = `<div class="year" style="color:${c}">${g.y}</div><div class="party">${g.party}</div><div class="pm">${g.pm}</div>`;
-  d.title = `${g.y}: ${g.party} – ${g.pm}`;
-  tlCat.appendChild(d);
-});
-
 // ============ ECONOMIC DATA ============
 const years = govs.map(g => g.y);
 // GDP growth (real, %) - World Bank / INE
@@ -429,64 +362,25 @@ makeLineChart('chartDeuda', deuda, 'Deuda pública', 'Deuda (% PIB)');
 makeLineChart('chartCorr', corr, 'CPI Corrupción', 'CPI (0-100, mayor=menos corrupción)');
 makeLineChart('chartLibertades', libertades, 'Derechos', 'Índice acumulado derechos (0-100)');
 
-// ============ CATALONIA FISCAL CHARTS ============
-// Deficit fiscal % PIB (flujo monetario, Generalitat/FEDEA) 1986-2021 + estimates
-const deficitYears = [];
-for(let y=1986;y<=2024;y++) deficitYears.push(y);
-const deficitData = [-7.5,-7.8,-8.0,-8.5,-9.2,-9.5,-9.0,-10.1,-8.8,-8.2,-6.8,-7.5,-6.7,-7.2,-7.8,-10.0,-9.5,-8.5,-8.0,-8.2,-8.5,-8.0,-7.8,-8.5,-8.0,-8.2,-8.5,-8.4,-8.0,-7.5,-7.8,-8.0,-8.1,-8.5,-9.8,-9.6,-8.8,-8.5,-8.2];
-new Chart(document.getElementById('chartDeficit'),{
-  type:'bar',data:{labels:deficitYears,datasets:[{data:deficitData,backgroundColor:deficitData.map(v=>v<-8.5?'rgba(248,113,113,0.5)':'rgba(251,191,36,0.4)'),borderColor:deficitData.map(v=>v<-8.5?'#f87171':'#fbbf24'),borderWidth:1,borderRadius:2}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:10}},
-  scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:8},maxRotation:90}},y:{grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Déficit fiscal (% PIB)',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}
-});
-
-// Ejecución presupuestaria Catalunya vs media nacional (%)
-const ejecYears = [];
-for(let y=2000;y<=2024;y++) ejecYears.push(y);
-const ejecCat = [52,48,55,50,58,62,55,60,45,40,42,48,50,55,52,58,60,55,62,65,58,55,60,62,60];
-const ejecEsp = [82,80,85,83,87,88,85,87,78,75,72,78,80,82,85,86,88,85,87,88,85,86,87,88,86];
-new Chart(document.getElementById('chartEjecucion'),{
-  type:'line',data:{labels:ejecYears,datasets:[
-    {label:'Catalunya',data:ejecCat,borderColor:'#00b4d8',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#00b4d8',fill:false,tension:.3},
-    {label:'Media España',data:ejecEsp,borderColor:'#8b949e',borderWidth:2,borderDash:[6,3],pointRadius:2,pointBackgroundColor:'#8b949e',fill:false,tension:.3}
-  ]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:{backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:10}},
-  scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{min:30,max:100,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'% ejecución presupuestaria',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}
-});
-
-// Peso inversión estatal en Cat vs peso PIB
-const pesoYears = ejecYears;
-const pesoPIB = [19.2,19.1,19.0,18.9,18.8,18.9,19.0,19.1,19.0,18.8,18.7,18.8,18.9,19.0,19.1,19.0,18.9,19.0,19.1,19.2,19.2,19.1,19.0,19.1,19.2];
-const pesoInv = [11.5,10.8,12.0,11.0,12.5,13.0,11.5,12.0,10.0,9.5,10.0,11.0,10.5,11.5,12.0,13.5,14.0,12.5,13.0,14.0,12.0,11.5,12.5,13.0,13.5];
-new Chart(document.getElementById('chartPesoCat'),{
-  type:'line',data:{labels:pesoYears,datasets:[
-    {label:'Peso Catalunya en PIB español (%)',data:pesoPIB,borderColor:'#fbbf24',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#fbbf24',fill:false,tension:.3},
-    {label:'% inversión estatal recibida',data:pesoInv,borderColor:'#00b4d8',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#00b4d8',fill:false,tension:.3}
-  ]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:{backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:10}},
-  scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{min:5,max:25,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'%',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}
-});
-
 // ============ LAWS TABLE ============
 const laws = [
   ['1977-1982','Suárez / Calvo-Sotelo','UCD','',
-    '• <b>Constitución de 1978</b> — fundamento de la democracia española, aprobada en referéndum (87.8% a favor)\n• Ley de Amnistía (1977) — reconciliación post-dictadura\n• Pactos de la Moncloa (1977) — acuerdo económico y social transversal\n• Estatutos de Autonomía de Cataluña y País Vasco (1979)\n• Ley del Divorcio (1981) — primera regulación del divorcio en España\n• Despenalización del adulterio y de los anticonceptivos'],
+    '• <b>Constitución de 1978</b> — fundamento de la democracia española\n• Ley de Amnistía (1977)\n• Pactos de la Moncloa (1977)\n• Estatutos de Autonomía de Cataluña y País Vasco (1979)\n• Ley del Divorcio (1981)\n• Despenalización del adulterio y anticonceptivos'],
   ['1982-1996','Felipe González','PSOE','Mayoría absoluta (1982-93), minoría con CiU (1993-96)',
-    '• <b>Entrada en la CEE/UE</b> (1986) — decisión transformadora de la economía española\n• Referéndum OTAN (1986) — permanencia en la Alianza Atlántica\n• Ley General de Sanidad (1986) — sistema sanitario universal\n• LOGSE (1990) — educación obligatoria hasta los 16 años\n• Ley de Extranjería (1985) — primera regulación migratoria\n• Despenalización parcial del aborto (1985) — tres supuestos\n• Expo 92 (Sevilla) y Juegos Olímpicos (Barcelona) — modernización de infraestructuras\n• Ley de Pensiones no contributivas (1990)\n• Privatizaciones parciales de empresas públicas (Repsol, Endesa, Telefónica)'],
-  ['1996-2004','José Mª Aznar','PP','Minoría con CiU/PNV/CC (1996-2000), mayoría absoluta (2000-04)',
-    '• <b>Entrada en el Euro</b> (1999) — cumplimiento de criterios de Maastricht\n• Profesionalización del ejército (2001) — fin del servicio militar obligatorio\n• Ley de Extranjería restrictiva (2000, reformada 2003)\n• Plan Hidrológico Nacional (2001) — trasvase del Ebro (polémico, luego derogado)\n• Ley de Estabilidad Presupuestaria (2001)\n• Liberalización del suelo (1998) — precedente de la burbuja inmobiliaria\n• Apoyo a la guerra de Irak (2003) — sin mandato ONU, gran rechazo social\n• Privatizaciones completadas (Telefónica, Repsol, Tabacalera, Iberia)'],
+    '• <b>Entrada en la CEE/UE</b> (1986)\n• Referéndum OTAN (1986)\n• Ley General de Sanidad (1986) — sistema sanitario universal\n• LOGSE (1990) — educación obligatoria hasta 16 años\n• Despenalización parcial del aborto (1985)\n• Expo 92 y Juegos Olímpicos Barcelona\n• Ley de Pensiones no contributivas (1990)\n• Privatizaciones parciales (Repsol, Endesa, Telefónica)'],
+  ['1996-2004','José Mª Aznar','PP','Minoría con CiU/PNV/CC (96-00), mayoría absoluta (00-04)',
+    '• <b>Entrada en el Euro</b> (1999)\n• Profesionalización del ejército (2001) — fin mili\n• Ley de Extranjería restrictiva (2000)\n• Ley de Estabilidad Presupuestaria (2001)\n• Liberalización del suelo (1998)\n• Apoyo a la guerra de Irak (2003)\n• Privatizaciones completadas (Telefónica, Repsol, Iberia)'],
   ['2004-2011','J. L. Rodríguez Zapatero','PSOE','Minoría (ambas legislaturas)',
-    '• <b>Ley de Matrimonio Igualitario</b> (2005) — España, 3er país del mundo en legalizarlo\n• Ley de Igualdad efectiva de mujeres y hombres (2007)\n• Ley contra la Violencia de Género (2004) — juzgados especializados\n• Ley de Dependencia (2006) — atención a personas dependientes\n• Ley de Memoria Histórica (2007)\n• Ley antitabaco (2006, ampliada 2010)\n• Derogación del trasvase del Ebro; Plan AGUA\n• Reforma laboral (2010) — abaratamiento del despido (presión UE/crisis)\n• Reforma del art. 135 de la Constitución (2011) — techo de gasto (con PP)'],
-  ['2011-2018','Mariano Rajoy','PP','Mayoría absoluta (2011-15), minoría con C\'s (2016-18)',
-    '• <b>Reforma laboral</b> (2012) — flexibilización del despido y negociación colectiva\n• Rescate bancario europeo (2012) — 41.000M€ para la banca española\n• Ley de Emprendedores (2013)\n• Ley Mordaza (Ley de Seguridad Ciudadana, 2015) — restricción de protestas\n• LOMCE "Ley Wert" (2013) — reforma educativa (luego derogada)\n• Ley de Abdicación de Juan Carlos I (2014)\n• Aplicación del Art. 155 en Cataluña (2017) — intervención de la autonomía\n• Intento de reforma de la Ley del Aborto (Gallardón, 2014) — retirada por rechazo social\n• Destituido por moción de censura (2018) — caso Gürtel'],
-  ['2018-2025','Pedro Sánchez','PSOE','Moción censura (2018), minoría (2019), coalición UP (2020-23), coalición Sumar (2023-)',
-    '• <b>Ley de Eutanasia</b> (2021) — España, 5º país de Europa en regularla\n• Ley Trans (2023) — autodeterminación de género\n• Ley del "solo sí es sí" (2022) — consentimiento sexual explícito (polémica por rebajas de penas)\n• Reforma laboral (2021) — prioridad del convenio sectorial, límite a temporalidad\n• Ley de Memoria Democrática (2022) — ampliación de la de 2007\n• Subida del Salario Mínimo (de 736€ a 1.134€, +54% en 6 años)\n• Ingreso Mínimo Vital (2020)\n• Ley de Vivienda (2023) — regulación de alquileres\n• Indultos a los presos del procés catalán (2021)\n• Ley de Amnistía para el procés (2024)\n• Ley de Bienestar Animal (2023)\n• LOMLOE "Ley Celaá" (2020) — derogación de la LOMCE'],
+    '• <b>Ley de Matrimonio Igualitario</b> (2005)\n• Ley de Igualdad (2007)\n• Ley contra Violencia de Género (2004)\n• Ley de Dependencia (2006)\n• Ley de Memoria Histórica (2007)\n• Ley antitabaco (2006)\n• Reforma laboral (2010)\n• Reforma art. 135 Constitución (2011)'],
+  ['2011-2018','Mariano Rajoy','PP','Mayoría absoluta (11-15), minoría con C\'s (16-18)',
+    '• <b>Reforma laboral</b> (2012)\n• Rescate bancario europeo (2012) — 41.000M€\n• Ley Mordaza (2015)\n• LOMCE "Ley Wert" (2013)\n• Aplicación Art. 155 en Cataluña (2017)\n• Intento reforma Ley Aborto (Gallardón, retirada)\n• Destituido por moción de censura (2018)'],
+  ['2018-2025','Pedro Sánchez','PSOE','Coalición UP (20-23), coalición Sumar (23-)',
+    '• <b>Ley de Eutanasia</b> (2021)\n• Ley Trans (2023)\n• Ley "solo sí es sí" (2022)\n• Reforma laboral (2021)\n• Subida SMI de 736€ a 1.134€\n• Ingreso Mínimo Vital (2020)\n• Ley de Vivienda (2023)\n• Ley de Amnistía procés (2024)\n• LOMLOE "Ley Celaá" (2020)'],
 ];
 
-const lawsBody = document.getElementById('lawsBody');
-const lawVotes = {}; // {id: 1|-1|0}
+const lawVotes = {};
 let lawId = 0;
-
+const lawsBody = document.getElementById('lawsBody');
 laws.forEach(([periodo, pm, party, coal, leyes]) => {
   const tag = party === 'PSOE' ? 'tag-psoe' : party === 'PP' ? 'tag-pp' : 'tag-ucd';
   const coalHtml = coal ? `<br><span class="tag-coal">${coal}</span>` : '';
@@ -510,163 +404,43 @@ laws.forEach(([periodo, pm, party, coal, leyes]) => {
 
 function voteLaw(el) {
   const id = el.dataset.id, val = parseInt(el.dataset.val);
-  const cur = lawVotes[id].vote;
-  lawVotes[id].vote = cur === val ? 0 : val;
-  // Update UI
+  lawVotes[id].vote = lawVotes[id].vote === val ? 0 : val;
   const row = el.parentElement;
   row.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active-up','active-down'));
   if (lawVotes[id].vote === 1) row.querySelector('[data-val="1"]').classList.add('active-up');
   if (lawVotes[id].vote === -1) row.querySelector('[data-val="-1"]').classList.add('active-down');
   updateLawsScore();
 }
-
 function updateLawsScore() {
   const scores = {};
-  Object.values(lawVotes).forEach(v => {
-    if (!scores[v.party]) scores[v.party] = { up: 0, down: 0 };
-    if (v.vote === 1) scores[v.party].up++;
-    if (v.vote === -1) scores[v.party].down++;
-  });
-  const partyCol = { PSOE: 'var(--psoe)', PP: 'var(--pp)', UCD: 'var(--ucd)' };
+  Object.values(lawVotes).forEach(v => { if (!scores[v.party]) scores[v.party] = {up:0,down:0}; if (v.vote===1) scores[v.party].up++; if (v.vote===-1) scores[v.party].down++; });
+  const pc = {PSOE:'var(--psoe)',PP:'var(--pp)',UCD:'var(--ucd)'};
   let html = '<strong style="color:var(--text)">📊 Tu puntuación por partido:</strong><br>';
-  let voted = false;
-  for (const [p, s] of Object.entries(scores)) {
-    if (s.up || s.down) voted = true;
-    const net = s.up - s.down;
-    const bar = net > 0 ? '🟢'.repeat(Math.min(net, 10)) : net < 0 ? '🔴'.repeat(Math.min(-net, 10)) : '—';
-    html += `<span style="color:${partyCol[p]};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 = <strong style="color:var(--text)">${net >= 0 ? '+' : ''}${net}</strong> ${bar}<br>`;
-  }
-  if (!voted) html += '<span style="opacity:.5">Vota las leyes para ver los resultados</span>';
+  for (const [p,s] of Object.entries(scores)) { const n=s.up-s.down; const bar=n>0?'🟢'.repeat(Math.min(n,10)):n<0?'🔴'.repeat(Math.min(-n,10)):'—'; html+=`<span style="color:${pc[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 = <strong style="color:var(--text)">${n>=0?'+':''}${n}</strong> ${bar}<br>`; }
   document.getElementById('lawsScore').innerHTML = html;
 }
 updateLawsScore();
 
 // ============ ELECTORAL PROGRAMS 2023 ============
 const programs = [
-  { party: 'VOX', color: '#63be21', tag: 'Extrema derecha', proposals: [
-    'Derogación de la ley del aborto',
-    'Ilegalización de partidos independentistas',
-    'Supresión del Tribunal Constitucional',
-    'Eliminación de las policías autonómicas (Mossos, Ertzaintza)',
-    'Sustitución de la ley de violencia de género por ley de protección de la familia',
-    'Derogación de la ley de memoria histórica',
-    'Muro fronterizo en Ceuta y Melilla; deportación masiva de inmigrantes ilegales',
-    'Eliminación de impuestos: patrimonio, sucesiones, donaciones',
-    'Supresión del Ministerio de Igualdad',
-    'España como nación única: eliminación de competencias autonómicas en educación y sanidad',
-  ]},
-  { party: 'PP', color: '#1d4ed8', tag: 'Centro-derecha', proposals: [
-    'Recuperar el delito de sedición (derogado por Sánchez)',
-    'Eliminar el impuesto a las grandes fortunas',
-    'Castellano como lengua vehicular en toda España',
-    'Suprimir la ley de memoria democrática',
-    'Bajar impuestos: deflactar IRPF, eliminar impuesto patrimonio progresivamente',
-    'Eliminar el mecanismo de excepción ibérica del gas',
-    'Recuperar permiso paterno para aborto de menores de edad',
-    'Ley de conciliación: ampliar flexibilidad horaria laboral',
-    'Fin del servicio militar obligatorio de reservistas (mantener profesionalización)',
-    'Plan de vivienda: construir 200.000 viviendas y liberar suelo público',
-  ]},
-  { party: 'PSOE', color: '#e63946', tag: 'Centro-izquierda', proposals: [
-    'Construir 183.000 viviendas públicas de alquiler (50% para jóvenes)',
-    'Transporte público gratuito para menores de 24 años',
-    'SMI nunca inferior al 60% del salario medio (compromiso legal)',
-    'Educación gratuita universitaria y FP para quienes aprueben a la primera',
-    'Acabar con listas de espera sanitarias: tiempos máximos por ley',
-    'Avales ICO para primera vivienda de menores de 35 años',
-    'Abolición de la prostitución',
-    'Ampliar permisos de paternidad/maternidad a 20 semanas',
-    'Herramienta para que cada ciudadano vea a qué se destinan sus impuestos',
-    'Atraer empresas e industrias con acuerdo social por el pleno empleo',
-  ]},
-  { party: 'Sumar/Podemos', color: '#7b2d8e', tag: 'Izquierda', proposals: [
-    'Jornada laboral de 37.5 horas (con previsión de bajar a 32)',
-    'Herencia universal de 20.000€ para jóvenes al cumplir 23 años',
-    'Subir pensiones mínimas por encima del IPC',
-    'Alquiler social obligatorio para grandes tenedores de vivienda',
-    'Bono de emergencia de 1.000€ para hogares con hipoteca variable',
-    'Creación de un banco público',
-    'Reducir brecha de género en pensiones',
-    'Reforma de la ley sobre trabajo nocturno y turnos',
-    'Impuesto reforzado a grandes fortunas y beneficios extraordinarios',
-    'Ampliación de permisos de maternidad y paternidad',
-  ]},
-  { party: 'ERC', color: '#ffb81c', tag: 'Independentismo izquierda (Cataluña)', proposals: [
-    'Derecho a la autodeterminación de Cataluña (referéndum pactado)',
-    'Amnistía para todos los encausados del procés',
-    'Blindaje de la inmersión lingüística en catalán',
-    'Transición energética: 100% renovables para 2030 en Cataluña',
-    'Fin de la monarquía: república federal plurinacional',
-    'Aumento del SMI a 1.200€',
-    'Mayor inversión en infraestructuras en Cataluña (deuda histórica)',
-    'Reforma fiscal progresiva: más impuestos a grandes patrimonios',
-  ]},
-  { party: 'Junts (antigua CiU)', color: '#00b4d8', tag: 'Independentismo centro-derecha (Cataluña)', proposals: [
-    'Independencia de Cataluña como objetivo irrenunciable',
-    'Amnistía y retorno de Puigdemont sin consecuencias penales',
-    'Cataluña como estado miembro de la UE',
-    'Bajada de impuestos para empresas y autónomos catalanes',
-    'Pacto fiscal: Cataluña recauda y gestiona todos sus impuestos',
-    'Defensa del catalán como lengua preferente en educación y administración',
-    'Apoyo a la empresa y el emprendimiento: menos burocracia',
-    'Modelo de seguridad propio: Mossos como única policía en Cataluña',
-  ]},
+  { party: 'VOX', color: '#63be21', tag: 'Extrema derecha', proposals: ['Derogación de la ley del aborto','Ilegalización de partidos independentistas','Supresión del Tribunal Constitucional','Eliminación de policías autonómicas','Sustitución de ley violencia de género por ley protección familia','Derogación de la ley de memoria histórica','Deportación masiva de inmigrantes ilegales','Eliminación impuestos: patrimonio, sucesiones','Supresión del Ministerio de Igualdad','Eliminación competencias autonómicas en educación y sanidad']},
+  { party: 'PP', color: '#1d4ed8', tag: 'Centro-derecha', proposals: ['Recuperar delito de sedición','Eliminar impuesto grandes fortunas','Castellano como lengua vehicular en toda España','Suprimir ley de memoria democrática','Deflactar IRPF, eliminar impuesto patrimonio','Recuperar permiso paterno para aborto de menores','Plan de vivienda: 200.000 viviendas, liberar suelo público','Ley de conciliación: flexibilidad horaria','Eliminar mecanismo excepción ibérica del gas','Más recursos para Fuerzas de Seguridad']},
+  { party: 'PSOE', color: '#e63946', tag: 'Centro-izquierda', proposals: ['183.000 viviendas públicas de alquiler','Transporte público gratuito menores de 24','SMI nunca inferior al 60% del salario medio','Universidad y FP gratuitas aprobando a la primera','Tiempos máximos en listas de espera sanitarias','Avales ICO primera vivienda menores de 35','Abolición de la prostitución','Ampliar permisos maternidad/paternidad a 20 semanas','Herramienta para ver destino de tus impuestos','Acuerdo social por el pleno empleo']},
+  { party: 'Sumar/Podemos', color: '#7b2d8e', tag: 'Izquierda', proposals: ['Jornada laboral de 37.5h (previsión bajar a 32)','Herencia universal de 20.000€ a los 23 años','Subir pensiones mínimas por encima del IPC','Alquiler social obligatorio grandes tenedores','Bono emergencia 1.000€ hipotecas variables','Creación banco público','Reducir brecha de género en pensiones','Impuesto reforzado grandes fortunas y beneficios','Reforma ley trabajo nocturno y turnos','Ampliación permisos maternidad/paternidad']},
 ];
 
 const progVotes = {};
 let progId = 0;
 const progContainer = document.getElementById('programsContainer');
-
 programs.forEach(prog => {
-  let html = `<div class="prog-party">`;
-  html += `<div class="prog-header" style="background:${prog.color}22;border-left:4px solid ${prog.color}"><span style="color:${prog.color}">${prog.party}</span><span style="font-size:.7rem;color:var(--text-muted);font-weight:400">${prog.tag}</span></div>`;
-  prog.proposals.forEach(p => {
-    const id = 'prog-' + (progId++);
-    progVotes[id] = { vote: 0, party: prog.party };
-    html += `<div class="prog-item">
-      <div class="prog-text">${p}</div>
-      <div class="prog-thumbs">
-        <span class="thumb-btn" data-id="${id}" data-val="1" onclick="voteProg(this)">👍</span>
-        <span class="thumb-btn" data-id="${id}" data-val="-1" onclick="voteProg(this)">👎</span>
-      </div>
-    </div>`;
-  });
+  let html = `<div class="prog-party"><div class="prog-header" style="background:${prog.color}22;border-left:4px solid ${prog.color}"><span style="color:${prog.color}">${prog.party}</span><span style="font-size:.7rem;color:var(--text-muted);font-weight:400">${prog.tag}</span></div>`;
+  prog.proposals.forEach(p => { const id='prog-'+(progId++); progVotes[id]={vote:0,party:prog.party}; html+=`<div class="prog-item"><div class="prog-text">${p}</div><div class="prog-thumbs"><span class="thumb-btn" data-id="${id}" data-val="1" onclick="voteProg(this)">👍</span><span class="thumb-btn" data-id="${id}" data-val="-1" onclick="voteProg(this)">👎</span></div></div>`; });
   html += `</div>`;
   progContainer.innerHTML += html;
 });
 
-function voteProg(el) {
-  const id = el.dataset.id, val = parseInt(el.dataset.val);
-  const cur = progVotes[id].vote;
-  progVotes[id].vote = cur === val ? 0 : val;
-  const row = el.parentElement;
-  row.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active-up','active-down'));
-  if (progVotes[id].vote === 1) row.querySelector('[data-val="1"]').classList.add('active-up');
-  if (progVotes[id].vote === -1) row.querySelector('[data-val="-1"]').classList.add('active-down');
-  updateProgsScore();
-}
-
-function updateProgsScore() {
-  const scores = {};
-  Object.values(progVotes).forEach(v => {
-    if (!scores[v.party]) scores[v.party] = { up: 0, down: 0 };
-    if (v.vote === 1) scores[v.party].up++;
-    if (v.vote === -1) scores[v.party].down++;
-  });
-  const sorted = Object.entries(scores).sort((a, b) => (b[1].up - b[1].down) - (a[1].up - a[1].down));
-  let html = '<strong style="color:var(--text)">📊 Tu afinidad por partido (propuestas 2023):</strong><br>';
-  let voted = false;
-  const progCol = { 'VOX':'#63be21','PP':'#1d4ed8','PSOE':'#e63946','Sumar/Podemos':'#7b2d8e','ERC':'#ffb81c','Junts (antigua CiU)':'#00b4d8' };
-  sorted.forEach(([p, s]) => {
-    if (s.up || s.down) voted = true;
-    const net = s.up - s.down;
-    const pct = s.up + s.down > 0 ? Math.round(s.up / (s.up + s.down) * 100) : 0;
-    const bar = '█'.repeat(Math.round(pct / 10));
-    html += `<span style="color:${progCol[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 → <strong style="color:var(--text)">${pct}% afinidad</strong> <span style="color:${progCol[p]||'#999'};font-size:.7rem">${bar}</span><br>`;
-  });
-  if (!voted) html += '<span style="opacity:.5">Vota las propuestas para ver tu afinidad</span>';
-  document.getElementById('programsScore').innerHTML = html;
-}
+function voteProg(el) { const id=el.dataset.id,val=parseInt(el.dataset.val); progVotes[id].vote=progVotes[id].vote===val?0:val; const row=el.parentElement; row.querySelectorAll('.thumb-btn').forEach(b=>b.classList.remove('active-up','active-down')); if(progVotes[id].vote===1)row.querySelector('[data-val="1"]').classList.add('active-up'); if(progVotes[id].vote===-1)row.querySelector('[data-val="-1"]').classList.add('active-down'); updateProgsScore(); }
+function updateProgsScore() { const sc={}; Object.values(progVotes).forEach(v=>{if(!sc[v.party])sc[v.party]={up:0,down:0};if(v.vote===1)sc[v.party].up++;if(v.vote===-1)sc[v.party].down++;}); const sorted=Object.entries(sc).sort((a,b)=>(b[1].up-b[1].down)-(a[1].up-a[1].down)); const pc={'VOX':'#63be21','PP':'#1d4ed8','PSOE':'#e63946','Sumar/Podemos':'#7b2d8e'}; let html='<strong style="color:var(--text)">📊 Tu afinidad por partido (propuestas 2023):</strong><br>'; sorted.forEach(([p,s])=>{const pct=s.up+s.down>0?Math.round(s.up/(s.up+s.down)*100):0;const bar='█'.repeat(Math.round(pct/10));html+=`<span style="color:${pc[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 → <strong style="color:var(--text)">${pct}% afinidad</strong> <span style="color:${pc[p]||'#999'};font-size:.7rem">${bar}</span><br>`;}); document.getElementById('programsScore').innerHTML=html; }
 updateProgsScore();
 </script>
 </body>
