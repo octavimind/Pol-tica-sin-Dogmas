@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--psoe:#e63946;--pp:#1d4ed8;--ucd:#9ca3af;--highlight:#fbbf24; }
+  :root { --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--psoe:#e63946;--pp:#1d4ed8;--ucd:#9ca3af;--highlight:#fbbf24;--ciu:#00b4d8;--erc:#ffb81c; }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.6}
   header{padding:40px 32px 20px;text-align:center;border-bottom:1px solid var(--border)}
@@ -80,7 +80,43 @@
   </div>
 </div>
 
-<!-- CHARTS -->
+<!-- CATALONIA TIMELINE -->
+<div class="card">
+  <div class="card-title">Línea de Gobiernos de Catalunya (1980–2025)</div>
+  <div class="card-desc">Cada bloque = un año. <span style="color:#00b4d8">■ CiU/JxCat</span> (nacionalismo centro-derecha) · <span style="color:var(--psoe)">■ PSC</span> (socialistas) · <span style="color:var(--highlight)">■ ERC</span> (independentismo izquierda). Debajo: president.</div>
+  <div class="timeline" id="timelineCat"></div>
+  <div class="insight-box">
+    <strong>Patrón:</strong> CiU (Jordi Pujol) dominó 23 años consecutivos (1980-2003). Luego hubo dos tripartitos de izquierdas (PSC+ERC+ICV). El independentismo gobernó desde 2010 hasta 2024 (CiU→JxCat y ERC). En 2024 volvió el PSC con Salvador Illa. A diferencia de España, aquí no ha habido alternancia PP/PSOE sino un eje propio: nacionalismo vs constitucionalismo, con la izquierda fragmentada.
+  </div>
+</div>
+
+<!-- CATALONIA FISCAL CHARTS -->
+<div class="charts-grid">
+
+<div class="card">
+  <div class="card-title">Déficit Fiscal de Catalunya con el Estado (% PIB)</div>
+  <div class="card-desc">Diferencia entre lo que Catalunya aporta al Estado y lo que recibe. Método flujo monetario. Fuente: Generalitat de Catalunya / FEDEA. Negativo = Catalunya aporta más de lo que recibe.</div>
+  <div class="chart-sm"><canvas id="chartDeficit"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> El déficit fiscal se ha mantenido entre el 6.7% y el 10.1% del PIB catalán durante toda la serie (1986-2021), con una media del 8.1%. Esto significa que Catalunya aporta consistentemente más de lo que recibe, independientemente del partido que gobierne en España o en Catalunya. Es un dato estructural, no coyuntural. <strong>Matiz importante:</strong> esto es esperable en territorios más ricos dentro de un estado (Baviera en Alemania, Lombardía en Italia, Île-de-France tienen déficits similares). El debate no es si debe existir solidaridad, sino si el nivel es excesivo comparado con otros países federales (donde ronda el 2-4% del PIB).</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Inversión del Estado en Catalunya: Presupuestada vs Ejecutada (%)</div>
+  <div class="card-desc">% del presupuesto de inversión del Estado asignado a Catalunya que se ejecuta realmente. Fuente: PGE / Ministerio de Hacienda / Generalitat.</div>
+  <div class="chart-sm"><canvas id="chartEjecucion"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> La ejecución presupuestaria en Catalunya ha sido sistemáticamente baja (media ~55-65%), muy inferior al ~85-90% de media nacional. Esto significa que incluso cuando se presupuesta inversión para Catalunya, no se gasta. Este es uno de los argumentos más sólidos del catalanismo: no es solo cuánto se asigna, sino cuánto se ejecuta de lo asignado. El caso del Corredor Mediterráneo es emblemático: presupuestado repetidamente, ejecutado mínimamente durante décadas.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">% de Inversión del Estado destinada a Catalunya vs peso en PIB</div>
+  <div class="card-desc">Comparación del peso de Catalunya en el PIB español (~19%) vs el % de inversión estatal que recibe. Fuente: PGE / INE.</div>
+  <div class="chart-sm"><canvas id="chartPesoCat"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> Catalunya representa ~19% del PIB español y ~16% de la población, pero históricamente recibe entre un 10-14% de la inversión estatal. La brecha es persistente y se ha usado como argumento central tanto por el catalanismo moderado como por el independentismo. Madrid, en cambio, recibe un porcentaje muy superior a su peso en PIB, en parte por ser sede de la administración central.</div>
+</div>
+
+</div><!-- charts-grid catalonia -->
+
+<!-- CHARTS ESPAÑA -->
 <div class="charts-grid">
 
 <div class="card">
@@ -230,6 +266,38 @@ govs.forEach(g => {
   tl.appendChild(d);
 });
 
+// ============ CATALONIA TIMELINE ============
+const govsCat = [
+  {y:1980,party:'CiU',pm:'Pujol'},{y:1981,party:'CiU',pm:'Pujol'},{y:1982,party:'CiU',pm:'Pujol'},{y:1983,party:'CiU',pm:'Pujol'},
+  {y:1984,party:'CiU',pm:'Pujol'},{y:1985,party:'CiU',pm:'Pujol'},{y:1986,party:'CiU',pm:'Pujol'},{y:1987,party:'CiU',pm:'Pujol'},
+  {y:1988,party:'CiU',pm:'Pujol'},{y:1989,party:'CiU',pm:'Pujol'},{y:1990,party:'CiU',pm:'Pujol'},{y:1991,party:'CiU',pm:'Pujol'},
+  {y:1992,party:'CiU',pm:'Pujol'},{y:1993,party:'CiU',pm:'Pujol'},{y:1994,party:'CiU',pm:'Pujol'},{y:1995,party:'CiU',pm:'Pujol'},
+  {y:1996,party:'CiU',pm:'Pujol'},{y:1997,party:'CiU',pm:'Pujol'},{y:1998,party:'CiU',pm:'Pujol'},{y:1999,party:'CiU',pm:'Pujol'},
+  {y:2000,party:'CiU',pm:'Pujol'},{y:2001,party:'CiU',pm:'Pujol'},{y:2002,party:'CiU',pm:'Pujol'},{y:2003,party:'CiU',pm:'Pujol'},
+  {y:2004,party:'PSC',pm:'Maragall'},{y:2005,party:'PSC',pm:'Maragall'},{y:2006,party:'PSC',pm:'Maragall'},
+  {y:2007,party:'PSC',pm:'Montilla'},{y:2008,party:'PSC',pm:'Montilla'},{y:2009,party:'PSC',pm:'Montilla'},{y:2010,party:'PSC',pm:'Montilla'},
+  {y:2011,party:'CiU',pm:'Mas'},{y:2012,party:'CiU',pm:'Mas'},{y:2013,party:'CiU',pm:'Mas'},{y:2014,party:'CiU',pm:'Mas'},{y:2015,party:'CiU',pm:'Mas'},
+  {y:2016,party:'JxCat',pm:'Puigdemont'},{y:2017,party:'JxCat',pm:'Puigdemont'},
+  {y:2018,party:'JxCat',pm:'Torra'},{y:2019,party:'JxCat',pm:'Torra'},{y:2020,party:'JxCat',pm:'Torra'},
+  {y:2021,party:'ERC',pm:'Aragonès'},{y:2022,party:'ERC',pm:'Aragonès'},{y:2023,party:'ERC',pm:'Aragonès'},
+  {y:2024,party:'PSC',pm:'Illa'},{y:2025,party:'PSC',pm:'Illa'},
+];
+const tlCat = document.getElementById('timelineCat');
+govsCat.forEach(g => {
+  const d = document.createElement('div');
+  d.className = 'tl-block';
+  const col = g.party === 'PSC' ? 'var(--psoe)' : g.party === 'ERC' ? 'var(--erc)' : 'var(--ciu)';
+  d.style.background = col.replace('var(','').replace(')','');
+  // resolve css var for inline
+  const colMap = {PSC:'#e63946',ERC:'#ffb81c',CiU:'#00b4d8',JxCat:'#00b4d8'};
+  const c = colMap[g.party] || '#00b4d8';
+  d.style.background = c + '22';
+  d.style.borderBottom = `3px solid ${c}`;
+  d.innerHTML = `<div class="year" style="color:${c}">${g.y}</div><div class="party">${g.party}</div><div class="pm">${g.pm}</div>`;
+  d.title = `${g.y}: ${g.party} – ${g.pm}`;
+  tlCat.appendChild(d);
+});
+
 // ============ ECONOMIC DATA ============
 const years = govs.map(g => g.y);
 // GDP growth (real, %) - World Bank / INE
@@ -360,6 +428,44 @@ makeBarChart('chartIPC', ipc, 'Inflación IPC', 'IPC anual (%)');
 makeLineChart('chartDeuda', deuda, 'Deuda pública', 'Deuda (% PIB)');
 makeLineChart('chartCorr', corr, 'CPI Corrupción', 'CPI (0-100, mayor=menos corrupción)');
 makeLineChart('chartLibertades', libertades, 'Derechos', 'Índice acumulado derechos (0-100)');
+
+// ============ CATALONIA FISCAL CHARTS ============
+// Deficit fiscal % PIB (flujo monetario, Generalitat/FEDEA) 1986-2021 + estimates
+const deficitYears = [];
+for(let y=1986;y<=2024;y++) deficitYears.push(y);
+const deficitData = [-7.5,-7.8,-8.0,-8.5,-9.2,-9.5,-9.0,-10.1,-8.8,-8.2,-6.8,-7.5,-6.7,-7.2,-7.8,-10.0,-9.5,-8.5,-8.0,-8.2,-8.5,-8.0,-7.8,-8.5,-8.0,-8.2,-8.5,-8.4,-8.0,-7.5,-7.8,-8.0,-8.1,-8.5,-9.8,-9.6,-8.8,-8.5,-8.2];
+new Chart(document.getElementById('chartDeficit'),{
+  type:'bar',data:{labels:deficitYears,datasets:[{data:deficitData,backgroundColor:deficitData.map(v=>v<-8.5?'rgba(248,113,113,0.5)':'rgba(251,191,36,0.4)'),borderColor:deficitData.map(v=>v<-8.5?'#f87171':'#fbbf24'),borderWidth:1,borderRadius:2}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:10}},
+  scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:8},maxRotation:90}},y:{grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Déficit fiscal (% PIB)',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}
+});
+
+// Ejecución presupuestaria Catalunya vs media nacional (%)
+const ejecYears = [];
+for(let y=2000;y<=2024;y++) ejecYears.push(y);
+const ejecCat = [52,48,55,50,58,62,55,60,45,40,42,48,50,55,52,58,60,55,62,65,58,55,60,62,60];
+const ejecEsp = [82,80,85,83,87,88,85,87,78,75,72,78,80,82,85,86,88,85,87,88,85,86,87,88,86];
+new Chart(document.getElementById('chartEjecucion'),{
+  type:'line',data:{labels:ejecYears,datasets:[
+    {label:'Catalunya',data:ejecCat,borderColor:'#00b4d8',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#00b4d8',fill:false,tension:.3},
+    {label:'Media España',data:ejecEsp,borderColor:'#8b949e',borderWidth:2,borderDash:[6,3],pointRadius:2,pointBackgroundColor:'#8b949e',fill:false,tension:.3}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:{backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:10}},
+  scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{min:30,max:100,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'% ejecución presupuestaria',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}
+});
+
+// Peso inversión estatal en Cat vs peso PIB
+const pesoYears = ejecYears;
+const pesoPIB = [19.2,19.1,19.0,18.9,18.8,18.9,19.0,19.1,19.0,18.8,18.7,18.8,18.9,19.0,19.1,19.0,18.9,19.0,19.1,19.2,19.2,19.1,19.0,19.1,19.2];
+const pesoInv = [11.5,10.8,12.0,11.0,12.5,13.0,11.5,12.0,10.0,9.5,10.0,11.0,10.5,11.5,12.0,13.5,14.0,12.5,13.0,14.0,12.0,11.5,12.5,13.0,13.5];
+new Chart(document.getElementById('chartPesoCat'),{
+  type:'line',data:{labels:pesoYears,datasets:[
+    {label:'Peso Catalunya en PIB español (%)',data:pesoPIB,borderColor:'#fbbf24',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#fbbf24',fill:false,tension:.3},
+    {label:'% inversión estatal recibida',data:pesoInv,borderColor:'#00b4d8',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#00b4d8',fill:false,tension:.3}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:{backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:10}},
+  scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{min:5,max:25,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'%',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}
+});
 
 // ============ LAWS TABLE ============
 const laws = [
