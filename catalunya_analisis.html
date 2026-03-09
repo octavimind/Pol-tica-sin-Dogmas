@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catalunya: Análisis por Gobiernos (1980-2025)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--psoe:#e63946;--pp:#1d4ed8;--ciu:#00b4d8;--erc:#ffb81c;--cup:#6d28d9;--comuns:#7b2d8e;--psc:#e63946;--highlight:#fbbf24}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.6}
+  header{padding:40px 32px 20px;text-align:center;border-bottom:1px solid var(--border)}
+  h1{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;margin-bottom:6px;background:linear-gradient(135deg,var(--ciu),var(--erc),var(--psoe));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .subtitle{color:var(--text-muted);font-size:.9rem;max-width:750px;margin:0 auto}
+  .back{display:inline-block;margin-top:12px;color:var(--highlight);text-decoration:none;font-size:.85rem;padding:6px 16px;border:1px solid rgba(251,191,36,0.25);border-radius:8px;background:rgba(251,191,36,0.06)}
+  .section{max-width:1400px;margin:0 auto;padding:24px 28px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ciu),var(--erc),var(--psc))}
+  .card-title{font-family:'Instrument Serif',serif;font-size:1.35rem;margin-bottom:12px}
+  .card-desc{color:var(--text-muted);font-size:.8rem;margin-bottom:16px;line-height:1.4}
+  .chart-sm{position:relative;height:320px}
+  .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:20px}
+  .insight-box{margin-top:14px;padding:12px 16px;background:var(--surface2);border-left:3px solid var(--highlight);border-radius:0 8px 8px 0;font-size:.82rem;color:var(--text-muted);line-height:1.5}
+  .insight-box strong{color:var(--text)}
+  .timeline{display:flex;flex-wrap:wrap;gap:2px;padding:8px 0 16px;margin-bottom:8px}
+  .tl-block{flex:1 1 0;min-width:0;text-align:center;padding:8px 2px 6px;border-radius:6px;font-size:.7rem;line-height:1.3;cursor:default;transition:transform .15s}
+  .tl-block:hover{transform:scale(1.08);z-index:2}
+  .tl-block .year{font-weight:700;font-size:.68rem}
+  .tl-block .party{font-size:.55rem;opacity:.8;margin-top:1px}
+  .tl-block .pm{font-size:.5rem;opacity:.6;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .laws-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.8rem}
+  .laws-table th{background:var(--surface2);color:var(--text-muted);padding:10px 12px;text-align:left;font-weight:600;border-bottom:2px solid var(--border);position:sticky;top:0}
+  .laws-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  .laws-table tr:hover td{background:rgba(255,255,255,.03)}
+  .tag-ciu{display:inline-block;background:var(--ciu);color:#000;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-psc{display:inline-block;background:var(--psc);color:#fff;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-erc{display:inline-block;background:var(--erc);color:#000;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-jxcat{display:inline-block;background:var(--ciu);color:#000;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-coal{font-size:.65rem;color:var(--text-muted);font-style:italic}
+  .table-scroll{max-height:700px;overflow-y:auto;border-radius:12px;border:1px solid var(--border)}
+  .thumb-btn{display:inline-block;cursor:pointer;font-size:1.1rem;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;transition:all .15s;margin:0 2px;user-select:none}
+  .thumb-btn:hover{background:var(--surface2);transform:scale(1.15)}
+  .thumb-btn.active-up{background:rgba(52,211,153,0.2);border-color:#34d399}
+  .thumb-btn.active-down{background:rgba(248,113,113,0.2);border-color:#f87171}
+  .prog-party{margin-bottom:20px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .prog-header{padding:12px 16px;font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:10px}
+  .prog-item{display:flex;align-items:flex-start;gap:10px;padding:8px 16px;border-top:1px solid var(--border);font-size:.82rem;color:var(--text-muted);line-height:1.4}
+  .prog-item:hover{background:rgba(255,255,255,.02)}
+  .prog-text{flex:1}
+  .prog-thumbs{flex-shrink:0;white-space:nowrap}
+  .footer-note{text-align:center;padding:24px;color:var(--text-muted);font-size:.72rem;opacity:.7}
+  @media(max-width:600px){.charts-grid{grid-template-columns:1fr}.section{padding:16px}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Catalunya: Análisis por Gobiernos (1980–2025)</h1>
+  <p class="subtitle">Quién ha gobernado, relación fiscal con el Estado, indicadores económicos, leyes clave y programas electorales. Datos de Idescat, INE, Generalitat y fuentes oficiales.</p>
+  <a href="index.html" class="back">← Volver al inicio</a>
+</header>
+
+<div class="section">
+
+<!-- TIMELINE -->
+<div class="card">
+  <div class="card-title">Línea de Gobiernos de Catalunya (1980–2025)</div>
+  <div class="card-desc">Cada bloque = un año. <span style="color:var(--ciu)">■ CiU/JxCat</span> (nacionalismo centro-derecha) · <span style="color:var(--psc)">■ PSC</span> (socialistas) · <span style="color:var(--erc)">■ ERC</span> (independentismo izquierda).</div>
+  <div class="timeline" id="timelineCat"></div>
+  <div class="insight-box">
+    <strong>Patrón:</strong> CiU (Jordi Pujol) dominó 23 años consecutivos (1980-2003). Luego hubo dos tripartitos de izquierdas (PSC+ERC+ICV). El independentismo gobernó de 2010 a 2024 (CiU→JxCat i ERC). El 2024 volvió el PSC con Salvador Illa. A diferencia de España, aquí no ha habido alternancia PP/PSOE sino un eje propio: nacionalismo vs constitucionalismo, con la izquierda fragmentada.
+  </div>
+</div>
+
+<!-- FISCAL CHARTS: Catalunya vs Estat -->
+<div class="charts-grid">
+
+<div class="card">
+  <div class="card-title">Déficit Fiscal de Catalunya con el Estado (% PIB)</div>
+  <div class="card-desc">Diferencia entre lo que Catalunya aporta al Estado y lo que recibe. Método flujo monetario. Fuente: Generalitat / FEDEA. Color = partido que gobierna en España (rojo PSOE, azul PP).</div>
+  <div class="chart-sm"><canvas id="chartDeficit"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> El dèficit fiscal es manté entre el 6,7% i el 10,1% del PIB català durant tota la sèrie (1986-2024), amb una mitjana del 8,1%. Això vol dir que Catalunya aporta consistentment més del que rep, independentment del partit que governi a Espanya o a Catalunya. <strong>Matiz importante:</strong> esto es esperable en territorios más ricos dentro de un estado (Baviera en Alemania, Lombardía en Italia). El debate no es si debe existir solidaridad, sino si el nivel (8%) es excesivo comparado con otros países federales (donde ronda el 2-4% del PIB).</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Inversión del Estado: Presupuestada vs Ejecutada (%)</div>
+  <div class="card-desc">% del presupuesto de inversión del Estado asignado a Catalunya que se ejecuta. Fuente: PGE / Generalitat.</div>
+  <div class="chart-sm"><canvas id="chartEjecucion"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> La ejecución presupuestaria en Catalunya (~55-65%) es sistemáticamente inferior a la media nacional (~85-90%). El Corredor Mediterráneo es el caso emblemático: presupuestado repetidamente, ejecutado mínimamente durante décadas.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">% Inversión estatal en Catalunya vs peso en PIB</div>
+  <div class="card-desc">Peso de Catalunya en el PIB español (~19%) vs % de inversión estatal que recibe. Fuente: PGE / INE.</div>
+  <div class="chart-sm"><canvas id="chartPesoCat"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> Catalunya aporta ~19% del PIB español pero recibe 10-14% de la inversión. Madrid recibe muy por encima de su peso, en parte por ser sede de la administración central.</div>
+</div>
+
+</div>
+
+<!-- ECONOMIC CHARTS -->
+<div class="charts-grid">
+
+<div class="card">
+  <div class="card-title">Crecimiento del PIB real de Catalunya (%)</div>
+  <div class="card-desc">Variación anual del PIB catalán. Fuente: Idescat. Color = gobierno de la Generalitat. Línea gris = España (referencia).</div>
+  <div class="chart-sm"><canvas id="chartPIBCat"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> Catalunya y España siguen ciclos muy similares. Catalunya creció más durante el boom y cayó algo más en la crisis. La recuperación post-COVID (3,6% en 2024) ha sido superior a la media española.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Tasa de Desempleo de Catalunya (%)</div>
+  <div class="card-desc">Media anual. Fuente: Idescat (EPA). Color = gobierno de la Generalitat. Línea gris = España.</div>
+  <div class="chart-sm"><canvas id="chartParoCat"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> El paro en Catalunya ha estado consistentemente 3-5 puntos por debajo de la media española (~9% vs ~11%). La estructura productiva más diversificada y la actividad exportadora contribuyen.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Deuda Pública de la Generalitat (% PIB catalán)</div>
+  <div class="card-desc">Deuda de la Generalitat. Fuente: Banco de España / Generalitat. Color = gobierno de la Generalitat.</div>
+  <div class="chart-sm"><canvas id="chartDeuteCat"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> La deuda explotó durante la crisis 2008-2013 (del 8% al 35% del PIB) por la caída de ingresos. Se estabiliza desde 2015 al 33-35%. Parte se debe al FLA (Fondo de Liquidez Autonómica), que genera dependencia financiera del Estado.</div>
+</div>
+
+</div>
+
+<!-- LAWS TABLE -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Leyes y decisiones más representativas por gobierno (1980–2025)</div>
+  <div class="card-desc">Selección de las leyes y decisiones más importantes de cada legislatura catalana. Vota 👍 o 👎.</div>
+  <div class="table-scroll">
+    <table class="laws-table">
+      <thead><tr><th>Periodo</th><th>President</th><th>Partido</th><th>Leyes / Decisiones clave</th><th style="width:80px;text-align:center">Opinión</th></tr></thead>
+      <tbody id="lawsBody"></tbody>
+    </table>
+  </div>
+  <div id="lawsScore" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.88rem;color:var(--text-muted);line-height:1.6;"></div>
+</div>
+
+<!-- ELECTORAL PROGRAMS -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Propuestas electorales: Elecciones al Parlament 2024</div>
+  <div class="card-desc">Principales propuestas de los partidos catalanes en las últimas elecciones autonómicas. Vota 👍 o 👎 cada propuesta.</div>
+  <div id="programsContainer"></div>
+  <div id="programsScore" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.88rem;color:var(--text-muted);line-height:1.6;"></div>
+  <div class="insight-box" style="margin-top:12px;"><strong>Reflexión:</strong> Después de votar, mira los resultados. ¿Te sorprende el partido con más propuestas que te gustan? Muchas veces coincidimos con partidos que no esperábamos.</div>
+</div>
+
+</div>
+
+<div class="footer-note">
+  Fuentes: Idescat, INE, Banco de España, Generalitat de Catalunya, FEDEA, Eurostat, PGE.<br>
+  Uso exclusivamente educativo. Elaboración propia.
+</div>
+
+<script>
+// ============ TIMELINE ============
+const govsCat = [
+  {y:1980,p:'CiU',pm:'Pujol'},{y:1981,p:'CiU',pm:'Pujol'},{y:1982,p:'CiU',pm:'Pujol'},{y:1983,p:'CiU',pm:'Pujol'},
+  {y:1984,p:'CiU',pm:'Pujol'},{y:1985,p:'CiU',pm:'Pujol'},{y:1986,p:'CiU',pm:'Pujol'},{y:1987,p:'CiU',pm:'Pujol'},
+  {y:1988,p:'CiU',pm:'Pujol'},{y:1989,p:'CiU',pm:'Pujol'},{y:1990,p:'CiU',pm:'Pujol'},{y:1991,p:'CiU',pm:'Pujol'},
+  {y:1992,p:'CiU',pm:'Pujol'},{y:1993,p:'CiU',pm:'Pujol'},{y:1994,p:'CiU',pm:'Pujol'},{y:1995,p:'CiU',pm:'Pujol'},
+  {y:1996,p:'CiU',pm:'Pujol'},{y:1997,p:'CiU',pm:'Pujol'},{y:1998,p:'CiU',pm:'Pujol'},{y:1999,p:'CiU',pm:'Pujol'},
+  {y:2000,p:'CiU',pm:'Pujol'},{y:2001,p:'CiU',pm:'Pujol'},{y:2002,p:'CiU',pm:'Pujol'},{y:2003,p:'CiU',pm:'Pujol'},
+  {y:2004,p:'PSC',pm:'Maragall'},{y:2005,p:'PSC',pm:'Maragall'},{y:2006,p:'PSC',pm:'Maragall'},
+  {y:2007,p:'PSC',pm:'Montilla'},{y:2008,p:'PSC',pm:'Montilla'},{y:2009,p:'PSC',pm:'Montilla'},{y:2010,p:'PSC',pm:'Montilla'},
+  {y:2011,p:'CiU',pm:'Mas'},{y:2012,p:'CiU',pm:'Mas'},{y:2013,p:'CiU',pm:'Mas'},{y:2014,p:'CiU',pm:'Mas'},{y:2015,p:'CiU',pm:'Mas'},
+  {y:2016,p:'JxCat',pm:'Puigdemont'},{y:2017,p:'JxCat',pm:'Puigdemont'},
+  {y:2018,p:'JxCat',pm:'Torra'},{y:2019,p:'JxCat',pm:'Torra'},{y:2020,p:'JxCat',pm:'Torra'},
+  {y:2021,p:'ERC',pm:'Aragonès'},{y:2022,p:'ERC',pm:'Aragonès'},{y:2023,p:'ERC',pm:'Aragonès'},
+  {y:2024,p:'PSC',pm:'Illa'},{y:2025,p:'PSC',pm:'Illa'},
+];
+const colMap={PSC:'#e63946',ERC:'#ffb81c',CiU:'#00b4d8',JxCat:'#00b4d8'};
+const tlCat=document.getElementById('timelineCat');
+govsCat.forEach(g=>{
+  const d=document.createElement('div');d.className='tl-block';
+  const c=colMap[g.p]||'#00b4d8';
+  d.style.background=c+'22';d.style.borderBottom=`3px solid ${c}`;
+  d.innerHTML=`<div class="year" style="color:${c}">${g.y}</div><div class="party">${g.p}</div><div class="pm">${g.pm}</div>`;
+  d.title=`${g.y}: ${g.p} – ${g.pm}`;tlCat.appendChild(d);
+});
+
+// Spain govs for deficit chart coloring
+const govsES=[{y:1986,p:'PSOE'},{y:1987,p:'PSOE'},{y:1988,p:'PSOE'},{y:1989,p:'PSOE'},{y:1990,p:'PSOE'},{y:1991,p:'PSOE'},{y:1992,p:'PSOE'},{y:1993,p:'PSOE'},{y:1994,p:'PSOE'},{y:1995,p:'PSOE'},{y:1996,p:'PP'},{y:1997,p:'PP'},{y:1998,p:'PP'},{y:1999,p:'PP'},{y:2000,p:'PP'},{y:2001,p:'PP'},{y:2002,p:'PP'},{y:2003,p:'PP'},{y:2004,p:'PSOE'},{y:2005,p:'PSOE'},{y:2006,p:'PSOE'},{y:2007,p:'PSOE'},{y:2008,p:'PSOE'},{y:2009,p:'PSOE'},{y:2010,p:'PSOE'},{y:2011,p:'PSOE'},{y:2012,p:'PP'},{y:2013,p:'PP'},{y:2014,p:'PP'},{y:2015,p:'PP'},{y:2016,p:'PP'},{y:2017,p:'PP'},{y:2018,p:'PSOE'},{y:2019,p:'PSOE'},{y:2020,p:'PSOE'},{y:2021,p:'PSOE'},{y:2022,p:'PSOE'},{y:2023,p:'PSOE'},{y:2024,p:'PSOE'}];
+function esColor(y){const g=govsES.find(g=>g.y===y);return g?(g.p==='PSOE'?'rgba(230,57,70,0.45)':'rgba(59,130,246,0.45)'):'rgba(156,163,175,0.3)';}
+function esBorder(y){const g=govsES.find(g=>g.y===y);return g?(g.p==='PSOE'?'#e63946':'#3b82f6'):'#9ca3af';}
+
+// ============ FISCAL CHARTS ============
+const dY=[];for(let y=1986;y<=2024;y++)dY.push(y);
+const dD=[-7.5,-7.8,-8.0,-8.5,-9.2,-9.5,-9.0,-10.1,-8.8,-8.2,-6.8,-7.5,-6.7,-7.2,-7.8,-10.0,-9.5,-8.5,-8.0,-8.2,-8.5,-8.0,-7.8,-8.5,-8.0,-8.2,-8.5,-8.4,-8.0,-7.5,-7.8,-8.0,-8.1,-8.5,-9.8,-9.6,-8.8,-8.5,-8.2];
+const tt={backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:10};
+new Chart(document.getElementById('chartDeficit'),{type:'bar',data:{labels:dY,datasets:[{data:dD,backgroundColor:dY.map(y=>esColor(y)),borderColor:dY.map(y=>esBorder(y)),borderWidth:1.5,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tt,callbacks:{title:i=>{const y=dY[i[0].dataIndex];const g=govsES.find(g=>g.y===y);return g?`${y} — ${g.p} gobierna España`:`${y}`;},label:i=>`Déficit fiscal: ${i.parsed.y}% del PIB`}}},scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:8},maxRotation:90}},y:{grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Déficit fiscal (% PIB) — Rojo=PSOE, Azul=PP',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}});
+
+const eY=[];for(let y=2000;y<=2024;y++)eY.push(y);
+const eCat=[52,48,55,50,58,62,55,60,45,40,42,48,50,55,52,58,60,55,62,65,58,55,60,62,60];
+const eEsp=[82,80,85,83,87,88,85,87,78,75,72,78,80,82,85,86,88,85,87,88,85,86,87,88,86];
+new Chart(document.getElementById('chartEjecucion'),{type:'line',data:{labels:eY,datasets:[{label:'Catalunya',data:eCat,borderColor:'#00b4d8',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#00b4d8',fill:false,tension:.3},{label:'Media España',data:eEsp,borderColor:'#8b949e',borderWidth:2,borderDash:[6,3],pointRadius:2,pointBackgroundColor:'#8b949e',fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:tt},scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{min:30,max:100,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'% ejecución presupuestaria',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}});
+
+const pPIB=[19.2,19.1,19.0,18.9,18.8,18.9,19.0,19.1,19.0,18.8,18.7,18.8,18.9,19.0,19.1,19.0,18.9,19.0,19.1,19.2,19.2,19.1,19.0,19.1,19.2];
+const pInv=[11.5,10.8,12.0,11.0,12.5,13.0,11.5,12.0,10.0,9.5,10.0,11.0,10.5,11.5,12.0,13.5,14.0,12.5,13.0,14.0,12.0,11.5,12.5,13.0,13.5];
+new Chart(document.getElementById('chartPesoCat'),{type:'line',data:{labels:eY,datasets:[{label:'Peso Catalunya en PIB español (%)',data:pPIB,borderColor:'#fbbf24',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#fbbf24',fill:false,tension:.3},{label:'% inversión estatal recibida',data:pInv,borderColor:'#00b4d8',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#00b4d8',fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:tt},scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{min:5,max:25,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'%',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}});
+
+// Cat gov color helpers
+function catBg(y){const g=govsCat.find(g=>g.y===y);if(!g)return'rgba(100,100,100,0.2)';const c=colMap[g.p]||'#00b4d8';return c+'88';}
+function catBorder(y){const g=govsCat.find(g=>g.y===y);return g?(colMap[g.p]||'#00b4d8'):'#555';}
+function catPm(y){const g=govsCat.find(g=>g.y===y);return g?g.p+' ('+g.pm+')':'?';}
+
+// ============ ECONOMIC CHARTS ============
+const ecY=[];for(let y=2000;y<=2024;y++)ecY.push(y);
+const pibCat=[4.8,3.0,2.2,2.8,3.5,3.6,4.0,3.8,0.8,-4.0,-0.5,-1.2,-3.2,-1.5,1.6,3.5,3.2,3.1,2.5,2.1,-12.3,6.9,6.7,2.6,3.6];
+const pibES=[5.3,4.0,2.7,3.2,3.2,3.7,4.2,3.8,1.1,-3.8,-0.3,-1.0,-3.0,-1.4,1.4,3.8,3.0,3.0,2.3,2.0,-10.8,6.4,5.8,2.5,3.5];
+function catGovColor(y){const g=govsCat.find(g=>g.y===y);if(!g)return'rgba(100,100,100,0.15)';const c=colMap[g.p]||'#00b4d8';return c+'22';}
+new Chart(document.getElementById('chartPIBCat'),{type:'bar',data:{labels:ecY,datasets:[{label:'Catalunya',data:pibCat,backgroundColor:ecY.map(y=>catBg(y)),borderColor:ecY.map(y=>catBorder(y)),borderWidth:1.5,borderRadius:2},{type:'line',label:'España',data:pibES,borderColor:'#8b949e',borderWidth:2,borderDash:[6,3],pointRadius:2,fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:{...tt,callbacks:{title:i=>`${ecY[i[0].dataIndex]} — ${catPm(ecY[i[0].dataIndex])} gobierna Catalunya`}}},scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Crecimiento PIB (%) — Turquesa=CiU/JxCat, Rojo=PSC, Amarillo=ERC',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}});
+
+const paroCat=[8.6,8.2,9.1,9.4,9.7,7.0,6.5,6.5,8.9,16.2,17.7,19.2,22.5,23.1,20.3,18.6,15.7,13.4,11.5,11.0,12.6,11.0,10.0,9.8,9.2];
+const paroES=[11.1,10.6,11.5,11.0,11.0,8.5,8.3,8.2,11.3,17.9,19.9,21.4,24.8,26.1,24.4,22.1,19.6,17.2,14.1,14.1,15.5,14.8,12.9,12.1,11.3];
+new Chart(document.getElementById('chartParoCat'),{type:'bar',data:{labels:ecY,datasets:[{label:'Catalunya',data:paroCat,backgroundColor:ecY.map(y=>catBg(y)),borderColor:ecY.map(y=>catBorder(y)),borderWidth:1.5,borderRadius:2},{type:'line',label:'España',data:paroES,borderColor:'#8b949e',borderWidth:2,borderDash:[6,3],pointRadius:2,pointBackgroundColor:'#8b949e',fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:{...tt,callbacks:{title:i=>`${ecY[i[0].dataIndex]} — ${catPm(ecY[i[0].dataIndex])} gobierna Catalunya`}}},scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Tasa de paro (%) — Turquesa=CiU/JxCat, Rojo=PSC, Amarillo=ERC',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}});
+
+const deuteCat=[5,6,6,7,7,7,8,8,8,8,9,10,15,19,22,27,32,34,35,35,37,36,35,34,33];
+new Chart(document.getElementById('chartDeuteCat'),{type:'bar',data:{labels:ecY,datasets:[{label:'Deuda Generalitat (% PIB Cat)',data:deuteCat,backgroundColor:ecY.map(y=>catBg(y)),borderColor:ecY.map(y=>catBorder(y)),borderWidth:1.5,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8b949e',font:{family:'DM Sans',size:11}}},tooltip:{...tt,callbacks:{title:i=>`${ecY[i[0].dataIndex]} — ${catPm(ecY[i[0].dataIndex])} gobierna Catalunya`}}},scales:{x:{grid:{color:'#21262d'},border:{color:'#30363d'},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}},y:{min:0,max:40,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Deuda (% PIB Catalunya) — Turquesa=CiU/JxCat, Rojo=PSC, Amarillo=ERC',color:'#8b949e',font:{family:'DM Sans',size:10}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}});
+
+// ============ LAWS TABLE ============
+const laws=[
+  ['1980-2003','Jordi Pujol','CiU','Mayoría relativa / pactos',['Normalització lingüística (Llei 7/1983) — ús del català a l\'administració i escola','TV3 i Catalunya Ràdio (1983) — mitjans públics en català','Llei d\'Ordenació del Territori (1983)','Pacte de CiU amb PSOE a Madrid (1993-96) — influència en política estatal','Pacte de CiU amb PP a Madrid (1996-2000)','Llei d\'Immersió Lingüística — model escola en català','Jocs Olímpics de Barcelona 1992 — cogestió amb Ajuntament/Estat','Cas Palau de la Música i escàndols de corrupció de CDC (revelats posteriorment)']],
+  ['2003-2010','Maragall / Montilla','PSC','Tripartito (PSC+ERC+ICV)',['Nou Estatut d\'Autonomia (2006) — ampliat, després retallat pel TC el 2010','Llei de Barris (2004) — regeneració de barris degradats','Llei d\'Acollida d\'immigrants (2010)','Agència Tributària de Catalunya (creació)','Llei del Dret a l\'Habitatge (2007)','Prohibició dels correbous (2010)','Sentència del Tribunal Constitucional contra l\'Estatut (2010) — punt d\'inflexió del procés']],
+  ['2010-2017','Mas / Puigdemont','CiU→JxCat','Mayoría independentista',['Consulta del 9-N (2014) — 2,3 milions de vots, declarada il·legal','Llei de Transitorietat Jurídica (2017) — preparació de la república','Referèndum de l\'1-O (2017) — 2,3M vots, violència policial, declarat il·legal','Declaració Unilateral d\'Independència (27-O-2017)','Aplicació de l\'Article 155 — suspensió de l\'autonomia','Empresonament i exili de líders independentistes','Llei de Canvi Climàtic de Catalunya (2017)','Renda Garantida de Ciutadania (2017)']],
+  ['2018-2023','Torra / Aragonès','JxCat→ERC','Gobierno independentista',['Inhabilitació de Torra (2020) per desobediència','Taula de Diàleg Catalunya-Estat (2020)','Indults als presos del procés (2021, decisió del govern espanyol)','Llei de Regulació del Lloguer (2020, posteriorment anul·lada pel TC)','Pla Nacional de la Llengua Catalana','Llei d\'Igualtat de Tracte i No-discriminació (2022)','Amnistia del procés (2024, aprovada al Congrés)']],
+  ['2024-2025','Salvador Illa','PSC','Mayoría con ERC/Comuns',['Pacte d\'investidura: finançament singular per a Catalunya','Compromís de millorar infraestructures (Rodalies, Corredor Mediterrani)','Pla d\'Habitatge: 50.000 pisos públics en 10 anys','Recuperació del diàleg institucional amb l\'Estat','Pla d\'impuls a la reindustrialització']],
+];
+
+const lawVotes={};let lawId=0;
+const lawsBody=document.getElementById('lawsBody');
+laws.forEach(([per,pm,party,coal,items])=>{
+  const tag=party.includes('CiU')||party.includes('JxCat')?'tag-ciu':party==='PSC'?'tag-psc':party==='ERC'?'tag-erc':'tag-ciu';
+  const coalH=coal?`<br><span class="tag-coal">${coal}</span>`:'';
+  items.forEach(item=>{
+    const id='law-'+(lawId++);lawVotes[id]={vote:0,party:party.split('→')[0]};
+    lawsBody.innerHTML+=`<tr><td style="white-space:nowrap;font-weight:600;font-size:.75rem">${per}</td><td style="font-size:.78rem">${pm}</td><td><span class="${tag}">${party}</span>${coalH}</td><td style="font-size:.8rem">${item}</td><td style="text-align:center;white-space:nowrap"><span class="thumb-btn" data-id="${id}" data-val="1" onclick="voteLaw(this)">👍</span><span class="thumb-btn" data-id="${id}" data-val="-1" onclick="voteLaw(this)">👎</span></td></tr>`;
+  });
+});
+
+function voteLaw(el){const id=el.dataset.id,val=parseInt(el.dataset.val),cur=lawVotes[id].vote;lawVotes[id].vote=cur===val?0:val;const row=el.parentElement;row.querySelectorAll('.thumb-btn').forEach(b=>b.classList.remove('active-up','active-down'));if(lawVotes[id].vote===1)row.querySelector('[data-val="1"]').classList.add('active-up');if(lawVotes[id].vote===-1)row.querySelector('[data-val="-1"]').classList.add('active-down');updateLawsScore();}
+function updateLawsScore(){const sc={};Object.values(lawVotes).forEach(v=>{if(!sc[v.party])sc[v.party]={up:0,down:0};if(v.vote===1)sc[v.party].up++;if(v.vote===-1)sc[v.party].down++;});const pc={CiU:'var(--ciu)',PSC:'var(--psc)',ERC:'var(--erc)',JxCat:'var(--ciu)'};let h='<strong style="color:var(--text)">📊 Tu puntuación por partido:</strong><br>';let voted=false;for(const[p,s]of Object.entries(sc)){if(s.up||s.down)voted=true;const n=s.up-s.down;const bar=n>0?'🟢'.repeat(Math.min(n,10)):n<0?'🔴'.repeat(Math.min(-n,10)):'—';h+=`<span style="color:${pc[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 = <strong style="color:var(--text)">${n>=0?'+':''}${n}</strong> ${bar}<br>`;}if(!voted)h+='<span style="opacity:.5">Vota las leyes para ver los resultados</span>';document.getElementById('lawsScore').innerHTML=h;}
+updateLawsScore();
+
+// ============ ELECTORAL PROGRAMS ============
+const programs=[
+  {party:'Junts',color:'#00b4d8',tag:'Independentisme centre-dreta',proposals:['Independència de Catalunya com a objectiu irrenunciable','Amnistia i retorn de Puigdemont sense conseqüències penals','Pacte fiscal: Catalunya recapta i gestiona tots els seus impostos','Baixada d\'impostos per a empreses i autònoms','Defensa del català com a llengua preferent a l\'educació','Mossos com a única policia a Catalunya','Menys burocràcia per a emprenedors','Oposició a la regulació de lloguers']},
+  {party:'ERC',color:'#ffb81c',tag:'Independentisme esquerra',proposals:['Dret a l\'autodeterminació via referèndum pactat','Finançament singular: recaptació pròpia d\'impostos','Transició energètica: 100% renovables per al 2030','Augment del Salari Mínim a 1.200€','Regulació del preu dels lloguers','Escola pública de qualitat en català','República federal plurinacional com a horitzó','Reforma fiscal progressiva: més impostos a grans patrimonis']},
+  {party:'PSC',color:'#e63946',tag:'Socialisme / Federalisme',proposals:['Finançament singular dins del marc constitucional','50.000 pisos públics de lloguer en 10 anys','Millora de Rodalies i Corredor Mediterrani','Escola en català amb més hores de castellà','Reindustrialització de Catalunya','Pla contra la gentrificació turística','Diàleg institucional amb l\'Estat (taula bilateral)','Ampliació de serveis socials i dependència']},
+  {party:'Comuns (Sumar)',color:'#7b2d8e',tag:'Esquerra eco-social',proposals:['Regulació estricta del lloguer i pisos turístics','Jornada laboral de 32 hores setmanals','Transport públic gratuït per a joves','Transició ecològica justa: tancament de centrals tèrmiques','Renda bàsica universal catalana','Fiscalitat verda: impostos a grans contaminadors','Escola pública i laica de qualitat','Desmercantilització de serveis bàsics (aigua, energia)']},
+  {party:'CUP',color:'#6d28d9',tag:'Esquerra independentista anticapitalista',proposals:['Independència per via unilateral si cal','Expropiació de pisos buits de grans tenidors','Nacionalització de serveis bàsics (energia, aigua, banca)','Renda bàsica universal','Decreixement econòmic: economia al servei de la vida','Desobediència als tribunals espanyols','Abolició de la monarquia','Tancament de CIEs (Centres d\'Internament d\'Estrangers)']},
+  {party:'PP Catalunya',color:'#1d4ed8',tag:'Centre-dreta constitucionalista',proposals:['Castellà i català vehiculars a l\'escola (bilingüisme real)','Baixada d\'impostos: eliminar impost patrimoni i successions','Compliment íntegre de la Constitució a Catalunya','Oposició a qualsevol referèndum d\'autodeterminació','Més seguretat: reforç de Mossos i coordinació amb Policia Nacional','Llibertat d\'elecció de llengua a l\'escola','Eliminació de la immersió lingüística obligatòria','Suport al comerç i la petita empresa: menys regulació']},
+];
+
+const progVotes={};let progId=0;
+const progCont=document.getElementById('programsContainer');
+programs.forEach(prog=>{
+  let h=`<div class="prog-party"><div class="prog-header" style="background:${prog.color}22;border-left:4px solid ${prog.color}"><span style="color:${prog.color}">${prog.party}</span><span style="font-size:.7rem;color:var(--text-muted);font-weight:400">${prog.tag}</span></div>`;
+  prog.proposals.forEach(p=>{const id='prog-'+(progId++);progVotes[id]={vote:0,party:prog.party};h+=`<div class="prog-item"><div class="prog-text">${p}</div><div class="prog-thumbs"><span class="thumb-btn" data-id="${id}" data-val="1" onclick="voteProg(this)">👍</span><span class="thumb-btn" data-id="${id}" data-val="-1" onclick="voteProg(this)">👎</span></div></div>`;});
+  h+=`</div>`;progCont.innerHTML+=h;
+});
+
+function voteProg(el){const id=el.dataset.id,val=parseInt(el.dataset.val),cur=progVotes[id].vote;progVotes[id].vote=cur===val?0:val;const row=el.parentElement;row.querySelectorAll('.thumb-btn').forEach(b=>b.classList.remove('active-up','active-down'));if(progVotes[id].vote===1)row.querySelector('[data-val="1"]').classList.add('active-up');if(progVotes[id].vote===-1)row.querySelector('[data-val="-1"]').classList.add('active-down');updateProgsScore();}
+function updateProgsScore(){const sc={};Object.values(progVotes).forEach(v=>{if(!sc[v.party])sc[v.party]={up:0,down:0};if(v.vote===1)sc[v.party].up++;if(v.vote===-1)sc[v.party].down++;});const sorted=Object.entries(sc).sort((a,b)=>(b[1].up-b[1].down)-(a[1].up-a[1].down));const pc={'Junts':'#00b4d8','ERC':'#ffb81c','PSC':'#e63946','Comuns (Sumar)':'#7b2d8e','CUP':'#6d28d9','PP Catalunya':'#1d4ed8'};let h='<strong style="color:var(--text)">📊 Tu afinidad por partido (propuestas 2024):</strong><br>';let voted=false;sorted.forEach(([p,s])=>{if(s.up||s.down)voted=true;const net=s.up-s.down;const pct=s.up+s.down>0?Math.round(s.up/(s.up+s.down)*100):0;const bar='█'.repeat(Math.round(pct/10));h+=`<span style="color:${pc[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 → <strong style="color:var(--text)">${pct}% afinidad</strong> <span style="color:${pc[p]||'#999'};font-size:.7rem">${bar}</span><br>`;});if(!voted)h+='<span style="opacity:.5">Vota las propuestas para ver tu afinidad</span>';document.getElementById('programsScore').innerHTML=h;}
+updateProgsScore();
+</script>
+</body>
+</html>
