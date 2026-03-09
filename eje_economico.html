@@ -77,6 +77,27 @@
 
 <div class="charts-grid" id="chartsGrid"></div>
 
+<!-- COMPOSITE INDEX -->
+<div style="max-width:1600px;margin:0 auto;padding:0 28px 24px;">
+  <div class="chart-card" style="padding:28px 32px;">
+    <div class="chart-title" style="font-size:1.5rem;">🎯 Encuentra tu país ideal: Índice Compuesto Personalizable</div>
+    <div class="chart-desc">Ajusta los pesos de cada indicador según lo que más valores. La puntuación se recalcula en tiempo real. Todos los indicadores normalizados a 0-100.</div>
+    <div id="slidersContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px 24px;margin-bottom:20px;"></div>
+    <div style="text-align:right;margin-bottom:12px;">
+      <button id="btnReset" style="background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);border-radius:8px;padding:6px 16px;font-family:'DM Sans';font-size:0.8rem;cursor:pointer;">Restablecer pesos</button>
+    </div>
+    <div class="chart-container" style="height:380px;"><canvas id="chart-composite"></canvas></div>
+    <div id="rankingBox" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:0.85rem;color:var(--text-muted);line-height:1.6;"></div>
+    <div class="insight-box" style="margin-top:14px;">
+      <strong>Conclusión de los datos:</strong> No hay UN modelo económico ideal único. Hay varios caminos que funcionan, y lo que todos comparten no es un nivel concreto de intervención estatal sino unas características comunes: <strong>instituciones fuertes e independientes, baja corrupción, estado de derecho, educación de calidad y democracia real</strong>. Los países que fracasan (Venezuela, Rusia, Arabia Saudita) no fracasan por ser colectivistas o liberales — fracasan por ser autoritarios, corruptos y con instituciones débiles.
+      <br><br>
+      Los nórdicos (centro-izquierda económica: mucha redistribución pero economía abierta) arrasan en libertades e igualdad. <strong>Suiza</strong> (liberal, bajo gasto social) y <strong>Nueva Zelanda</strong> (mixta) logran resultados similares en democracia y anticorrupción por caminos diferentes. <strong>Singapur</strong> (ultraliberal) tiene altísima eficiencia pero baja democracia.
+      <br><br>
+      <strong>La lección más potente:</strong> lo que determina la calidad de vida no es el modelo económico en sí, sino si tiene instituciones fuertes y democracia real. Mueve los deslizadores y descúbrelo.
+    </div>
+  </div>
+</div>
+
 <div class="legend-section">
   <div class="legend-card">
     <div class="legend-title">Países incluidos (42) — ordenados por eje económico</div>
@@ -85,6 +106,28 @@
 </div>
 
 <div class="footer-note">
+
+<!-- CHINA NOTE -->
+<div class="section-block" style="max-width:1600px;margin:0 auto;padding:0 28px 24px;">
+  <div class="explanation-card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;line-height:1.7;">
+    <h2 style="font-family:'Instrument Serif',serif;font-size:1.3rem;font-weight:400;margin-bottom:12px;">(*) Nota sobre China: ¿por qué cambia tanto de posición entre las dos páginas?</h2>
+    <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:10px;">En la página del <strong>eje político</strong> (izquierda-derecha), China está en -2.5 (extrema izquierda) porque el Partido Comunista controla el Estado, la retórica es marxista-leninista y el gobierno interviene masivamente.</p>
+    <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:10px;">En esta página del <strong>eje económico</strong>, China está en -0.5 (casi mixta) porque desde las reformas de Deng Xiaoping (1978) su economía funciona en gran parte con lógica de mercado: existe propiedad privada de empresas, hay multimillonarios, las zonas económicas especiales son capitalismo puro, y la desigualdad es alta (Gini 38.2).</p>
+    <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:10px;"><strong>Esta diferencia es exactamente la lección que enseña tener dos páginas:</strong> China es "de extrema izquierda" si preguntas por el poder político, pero "casi mixta" si preguntas por cómo funciona su economía en la práctica. La etiqueta depende del marco.</p>
+  </div>
+</div>
+
+<!-- RUSSIA NOTE -->
+<div class="section-block" style="max-width:1600px;margin:0 auto;padding:0 28px 24px;">
+  <div class="explanation-card" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;line-height:1.7;">
+    <h2 style="font-family:'Instrument Serif',serif;font-size:1.3rem;font-weight:400;margin-bottom:12px;">(**) Nota sobre Rusia: ¿por qué está en posición similar en ambas páginas?</h2>
+    <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:10px;">Rusia dejó de ser comunista en 1991. Hizo una transición brutal al capitalismo (privatizaciones masivas, <em>flat tax</em> del 13%, oligarcas). En el eje político está en +1.5 (derecha autoritaria-nacionalista) y en el eje económico en +0.3 (ligeramente liberal).</p>
+    <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:10px;">¿Por qué más al centro económicamente? Porque aunque Rusia tiene impuestos bajos y propiedad privada, el Estado controla sectores estratégicos (Gazprom, Rosneft) y puede confiscar propiedades a voluntad. No es ni planificada ni libre: es <strong>capitalismo de amiguetes</strong> (<em>crony capitalism</em>).</p>
+    <p style="font-size:.88rem;color:var(--text-muted);"><strong>Lección:</strong> Rusia es un ejemplo de que "economía de mercado" no significa "libre mercado". Puedes tener propiedad privada y bajos impuestos y al mismo tiempo que la economía esté controlada por una élite corrupta que responde al poder político.</p>
+  </div>
+</div>
+
+<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:.72rem;opacity:.7">
   Fuentes: Heritage Foundation Index of Economic Freedom, Fraser Institute, OECD Government Spending data, Banco Mundial, FMI.<br>
   Eje económico: elaboración propia basada en gasto público/PIB, libertad económica, regulación, propiedad estatal. Uso exclusivamente educativo.
 </div>
@@ -138,7 +181,7 @@ const countries = [
 ];
 
 const regionColors={"Europa Norte":"#7ee8fa","Europa Occ.":"#80b3ff","Europa Este":"#c084fc","Norteamérica":"#fbbf24","Sudamérica":"#34d399","Centroamérica":"#6ee7b7","Asia-Pacífico":"#f472b6","Asia Sur":"#fb923c","Oceanía":"#a3e635","Oriente Medio":"#f87171","África":"#e879f9","Eurasia":"#94a3b8","Caribe":"#2dd4bf"};
-const alwaysLabel=new Set(["España","EEUU","China","Rusia","Venezuela","Cuba","Arabia Saudita","Singapur","Nueva Zelanda","Suiza","Japón","Israel","Alemania","Francia","Noruega"]);
+const alwaysLabel=new Set(["España","EEUU","China","Rusia","Venezuela","Cuba","Arabia Saudita","Singapur","Nueva Zelanda","Suiza","Japón","Israel","Alemania","Francia","Noruega","Reino Unido"]);
 const ctt={backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:12,titleFont:{family:'DM Sans',size:13,weight:700},bodyFont:{family:'DM Sans',size:12}};
 
 // Regression
@@ -149,8 +192,11 @@ function regLine(reg,xMin,xMax,steps){const pts=[],s=(xMax-xMin)/steps;for(let x
 function regExpl(reg){const r2=(reg.r2*100).toFixed(1);if(reg.type==='linear'){const dir=reg.b>0?'sube':'baja';return`<code>Recta</code> — Por cada punto hacia mercado libre, el indicador ${dir} ~${Math.abs(reg.b).toFixed(2)}. R² = <code>${r2}%</code>.`;}return`<code>Parábola</code> — Relación NO lineal: valores máximos en modelos mixtos, caen en los extremos. R² = <code>${r2}%</code>.`;}
 
 function pbg(i){return regionColors[countries[i].region]+'cc';}
-function pbc(i){return regionColors[countries[i].region]||'#999';}
+function pbc(i){return countries[i].name==='España'?'#fbbf24':regionColors[countries[i].region]||'#999';}
 function sl(i){return alwaysLabel.has(countries[i].name);}
+function pr(i){return countries[i].name==='España'?12:sl(i)?8:6;}
+function dlColor(i){return countries[i].name==='España'?'#fbbf24':'#c9d1d9';}
+function dlSize(i){return countries[i].name==='España'?11:9;}
 
 const ecoDesc=e=>e<=-2?'Colectivista':e<=-1?'Planificada':e<=0?'Socialdemócrata':e<=1?'Mixta/Liberal':e<=2?'Liberal':'Mercado libre';
 
@@ -184,8 +230,8 @@ function createChart(cfg){
   const ctx=document.getElementById(`chart-${cfg.id}`).getContext('2d');
   new Chart(ctx,{type:'scatter',data:{datasets:[
     {type:'line',data:rl,borderColor:'rgba(255,159,67,0.7)',borderWidth:2.5,borderDash:reg.type==='linear'?[8,4]:[],pointRadius:0,pointHoverRadius:0,fill:false,tension:reg.type==='quadratic'?.4:0,order:2,datalabels:{display:false}},
-    {data:pts,backgroundColor:countries.map((_,i)=>pbg(i)),borderColor:countries.map((_,i)=>pbc(i)),borderWidth:1.5,pointRadius:countries.map((_,i)=>sl(i)?8:6),pointHoverRadius:11,order:1,
-      datalabels:{display:ctx2=>sl(ctx2.dataIndex),color:'#c9d1d9',font:{family:'DM Sans',size:9,weight:600},anchor:'end',align:'top',offset:3,formatter:(v,ctx2)=>countries[ctx2.dataIndex].name}}
+    {data:pts,backgroundColor:countries.map((_,i)=>countries[i].name==='España'?'#fbbf24cc':pbg(i)),borderColor:countries.map((_,i)=>pbc(i)),borderWidth:countries.map((_,i)=>countries[i].name==='España'?3:1.5),pointRadius:countries.map((_,i)=>pr(i)),pointHoverRadius:11,order:1,
+      datalabels:{display:ctx2=>sl(ctx2.dataIndex),color:ctx2=>dlColor(ctx2.dataIndex),font:ctx2=>({family:'DM Sans',size:dlSize(ctx2.dataIndex),weight:countries[ctx2.dataIndex].name==='España'?800:600}),anchor:'end',align:'top',offset:3,formatter:(v,ctx2)=>countries[ctx2.dataIndex].name}}
   ]},plugins:[ChartDataLabels],
   options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:16,right:16,bottom:4,left:4}},
     plugins:{legend:{display:false},tooltip:{...ctt,filter:item=>item.datasetIndex===1,callbacks:{
@@ -204,6 +250,31 @@ function createChart(cfg){
 }
 
 cfgs.forEach(createChart);
+
+// ============ COMPOSITE INDEX ============
+const indicators=[
+  {key:'demo',label:'Democracia',icon:'🗳️',max:10,defaultW:20},
+  {key:'corr',label:'Anticorrupción',icon:'⚖️',max:100,defaultW:15},
+  {key:'paz',label:'Paz y Seguridad',icon:'🕊️',max:5,defaultW:10,invert:true},
+  {key:'gender',label:'Igualdad de Género',icon:'♀️',max:1,defaultW:10},
+  {key:'lgbt',label:'Aceptación LGBT+',icon:'🏳️‍🌈',max:10,defaultW:10},
+  {key:'prensa',label:'Libertad de Prensa',icon:'📰',max:100,defaultW:10},
+  {key:'crec',label:'Crecimiento PIB',icon:'📈',max:8,defaultW:10},
+  {key:'gini',label:'Igualdad (inv. Gini)',icon:'⚡',max:65,defaultW:10,invert:true},
+  {key:'gastoSoc',label:'Gasto Social',icon:'🏥',max:55,defaultW:5},
+];
+const weights={};indicators.forEach(ind=>{weights[ind.key]=ind.defaultW;});
+function normalize(c,ind){let val=c[ind.key];if(ind.invert){if(ind.key==='paz')return Math.max(0,(ind.max-val)/(ind.max-1))*100;if(ind.key==='gini')return Math.max(0,(ind.max-val)/(ind.max-20))*100;}if(ind.key==='crec')return Math.max(0,(val+3)/(ind.max+3))*100;return(val/ind.max)*100;}
+function compositeScore(c){let tw=0,ts=0;for(const ind of indicators){const w=weights[ind.key];tw+=w;ts+=w*normalize(c,ind);}return tw>0?ts/tw:0;}
+const slidersCont=document.getElementById('slidersContainer');
+indicators.forEach(ind=>{const div=document.createElement('div');div.style.cssText='display:flex;align-items:center;gap:8px;';div.innerHTML=`<span style="font-size:1.1rem;width:24px;text-align:center;">${ind.icon}</span><span style="font-size:0.8rem;color:var(--text-muted);width:130px;flex-shrink:0;">${ind.label}</span><input type="range" min="0" max="30" value="${ind.defaultW}" data-key="${ind.key}" style="flex:1;accent-color:var(--highlight);height:6px;cursor:pointer;"><span class="slider-val" data-key="${ind.key}" style="font-size:0.8rem;color:var(--highlight);width:28px;text-align:right;font-weight:700;">${ind.defaultW}</span>`;slidersCont.appendChild(div);div.querySelector('input').addEventListener('input',e=>{weights[ind.key]=parseInt(e.target.value);div.querySelector('.slider-val').textContent=e.target.value;updateComposite();});});
+document.getElementById('btnReset').addEventListener('click',()=>{indicators.forEach(ind=>{weights[ind.key]=ind.defaultW;const sl=slidersCont.querySelector(`input[data-key="${ind.key}"]`);if(sl)sl.value=ind.defaultW;const lbl=slidersCont.querySelector(`.slider-val[data-key="${ind.key}"]`);if(lbl)lbl.textContent=ind.defaultW;});updateComposite();});
+let compositeChart=null;
+function buildComposite(){const scored=countries.map((c,i)=>({...c,score:compositeScore(c),idx:i}));const ctx=document.getElementById('chart-composite').getContext('2d');
+compositeChart=new Chart(ctx,{type:'scatter',data:{datasets:[{data:scored.map(s=>({x:s.eco,y:s.score})),backgroundColor:scored.map(s=>countries[s.idx].name==='España'?'#fbbf24cc':pbg(s.idx)),borderColor:scored.map(s=>pbc(s.idx)),borderWidth:scored.map(s=>countries[s.idx].name==='España'?3:1.5),pointRadius:scored.map((_,i)=>pr(i)),pointHoverRadius:12,datalabels:{display:ctx2=>sl(ctx2.dataIndex),color:ctx2=>dlColor(ctx2.dataIndex),font:ctx2=>({family:'DM Sans',size:dlSize(ctx2.dataIndex),weight:countries[ctx2.dataIndex].name==='España'?800:600}),anchor:'end',align:'top',offset:4,formatter:(v,ctx2)=>countries[ctx2.dataIndex].name}}]},plugins:[ChartDataLabels],options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:20,right:20,bottom:10,left:10}},plugins:{legend:{display:false},tooltip:{...ctt,callbacks:{title:items=>countries[items[0].dataIndex].name,label:item=>{const c=countries[item.dataIndex];return[`Puntuación: ${compositeScore(c).toFixed(1)}/100`,`Eje económico: ${c.eco} (${ecoDesc(c.eco)})`,`Región: ${c.region}`];}}}},scales:{x:{min:-3,max:3,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'← Colectivismo       Planificada       Socialdemócrata       Mixta       Liberal       Mercado libre →',color:'#8b949e',font:{family:'DM Sans',size:11}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9},stepSize:1,callback:v=>({'-3':'Colect.','-2':'Planif.','-1':'Sociald.','0':'Mixta','1':'Liberal','2':'Libre'}[String(v)]||'')}},y:{min:0,max:100,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Puntuación Compuesta (0-100) →',color:'#8b949e',font:{family:'DM Sans',size:11}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}}}});updateRanking();}
+function updateComposite(){if(!compositeChart)return;const scored=countries.map((c,i)=>({score:compositeScore(c),idx:i}));compositeChart.data.datasets[0].data=scored.map(s=>({x:countries[s.idx].eco,y:s.score}));compositeChart.update();updateRanking();}
+function updateRanking(){const scored=countries.map((c,i)=>({name:c.name,score:compositeScore(c),eco:c.eco,region:c.region,idx:i}));scored.sort((a,b)=>b.score-a.score);const top10=scored.slice(0,10),bot5=scored.slice(-5).reverse();let html=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"><div><strong style="color:var(--text);font-size:0.95rem;">🏆 Top 10</strong><br>`;top10.forEach((s,i)=>{html+=`<span style="color:${regionColors[s.region]};font-weight:600;">${i+1}. ${s.name}</span> <span style="color:var(--highlight);font-weight:700;">${s.score.toFixed(1)}</span> <span style="opacity:0.5;font-size:0.75rem;">(${ecoDesc(s.eco)})</span><br>`;});html+=`</div><div><strong style="color:var(--text);font-size:0.95rem;">📉 Últimos 5</strong><br>`;bot5.forEach(s=>{html+=`<span style="color:${regionColors[s.region]};">${scored.indexOf(s)+1}. ${s.name}</span> <span style="opacity:0.7;">${s.score.toFixed(1)}</span> <span style="opacity:0.5;font-size:0.75rem;">(${ecoDesc(s.eco)})</span><br>`;});html+=`</div></div>`;const sr=scored.findIndex(s=>s.name==='España')+1,ss=scored.find(s=>s.name==='España')?.score.toFixed(1);html+=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><strong style="color:var(--text);">🇪🇸 España:</strong> puesto <span style="color:var(--highlight);font-weight:700;">${sr}º</span> de 42 con <span style="color:var(--highlight);font-weight:700;">${ss}</span> puntos</div>`;document.getElementById('rankingBox').innerHTML=html;}
+buildComposite();
 
 // Legend
 const lg=document.getElementById('legendGrid');

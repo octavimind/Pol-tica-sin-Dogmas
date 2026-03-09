@@ -228,7 +228,7 @@ const regionColors = {
   "Asia-Pacífico":"#f472b6","Asia Sur":"#fb923c","Oceanía":"#a3e635",
   "Oriente Medio":"#f87171","África":"#e879f9","Eurasia":"#94a3b8","Caribe":"#2dd4bf",
 };
-const alwaysLabel = new Set(["España","EEUU","China (*)","Rusia (**)","Venezuela","Cuba","Arabia Saudita","Singapur","Nueva Zelanda","Suiza","Japón","Israel","Alemania","Francia","Noruega"]);
+const alwaysLabel = new Set(["España","EEUU","China (*)","Rusia (**)","Venezuela","Cuba","Arabia Saudita","Singapur","Nueva Zelanda","Suiza","Japón","Israel","Alemania","Francia","Noruega","Reino Unido"]);
 
 // ============ REGRESSION ============
 function linearRegression(pts) {
@@ -279,10 +279,10 @@ function updateSearchResults(query){
 }
 function highlightCountry(name){highlightedCountry=name;allCharts.forEach(ch=>ch.update());document.querySelector('.compass-section')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{highlightedCountry=null;allCharts.forEach(ch=>ch.update());},8000);}
 
-function pr(i){return highlightedCountry&&countries[i].name===highlightedCountry?14:alwaysLabel.has(countries[i].name)?8:6;}
-function pbw(i){return highlightedCountry&&countries[i].name===highlightedCountry?3:1.5;}
-function pbc(i){return highlightedCountry&&countries[i].name===highlightedCountry?'#fbbf24':regionColors[countries[i].region]||'#999';}
-function pbg(i){if(highlightedCountry)return countries[i].name===highlightedCountry?regionColors[countries[i].region]+'ff':regionColors[countries[i].region]+'33';return regionColors[countries[i].region]+'cc';}
+function pr(i){return highlightedCountry&&countries[i].name===highlightedCountry?14:countries[i].name==='España'?12:alwaysLabel.has(countries[i].name)?8:6;}
+function pbw(i){return highlightedCountry&&countries[i].name===highlightedCountry?3:countries[i].name==='España'?3:1.5;}
+function pbc(i){return highlightedCountry&&countries[i].name===highlightedCountry?'#fbbf24':countries[i].name==='España'?'#fbbf24':regionColors[countries[i].region]||'#999';}
+function pbg(i){if(highlightedCountry)return countries[i].name===highlightedCountry?regionColors[countries[i].region]+'ff':regionColors[countries[i].region]+'33';return countries[i].name==='España'?'#fbbf24cc':regionColors[countries[i].region]+'cc';}
 function sl(i){return highlightedCountry?countries[i].name===highlightedCountry:alwaysLabel.has(countries[i].name);}
 
 const ctt={backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:12,titleFont:{family:'DM Sans',size:13,weight:700},bodyFont:{family:'DM Sans',size:12}};
@@ -306,7 +306,7 @@ function createCompass(){
       backgroundColor:countries.map((_,i)=>pbg(i)),borderColor:countries.map((_,i)=>pbc(i)),
       borderWidth:countries.map((_,i)=>pbw(i)),pointRadius:countries.map((_,i)=>pr(i)),
       pointHoverRadius:12,
-      datalabels:{display:ctx=>sl(ctx.dataIndex),color:'#e6edf3',font:{family:'DM Sans',size:10,weight:600},anchor:'end',align:'top',offset:4,formatter:(v,ctx)=>countries[ctx.dataIndex].name}
+      datalabels:{display:ctx=>sl(ctx.dataIndex),color:ctx=>countries[ctx.dataIndex].name==='España'?'#fbbf24':'#e6edf3',font:ctx=>({family:'DM Sans',size:countries[ctx.dataIndex].name==='España'?12:10,weight:countries[ctx.dataIndex].name==='España'?800:600}),anchor:'end',align:'top',offset:4,formatter:(v,ctx)=>countries[ctx.dataIndex].name}
     }]},
     plugins:[ChartDataLabels],
     options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:20,right:20,bottom:10,left:10}},
@@ -390,7 +390,7 @@ function createChart(cfg){
     data:countries.map(c=>({x:c.pol,y:c[cfg.field]})),
     backgroundColor:countries.map((_,i)=>pbg(i)),borderColor:countries.map((_,i)=>pbc(i)),
     borderWidth:countries.map((_,i)=>pbw(i)),pointRadius:countries.map((_,i)=>pr(i)),pointHoverRadius:11,order:1,
-    datalabels:{display:ctx2=>sl(ctx2.dataIndex),color:'#c9d1d9',font:{family:'DM Sans',size:9,weight:600},anchor:'end',align:'top',offset:3,formatter:(v,ctx2)=>countries[ctx2.dataIndex].name}
+    datalabels:{display:ctx2=>sl(ctx2.dataIndex),color:ctx2=>countries[ctx2.dataIndex].name==='España'?'#fbbf24':'#c9d1d9',font:ctx2=>({family:'DM Sans',size:countries[ctx2.dataIndex].name==='España'?11:9,weight:countries[ctx2.dataIndex].name==='España'?800:600}),anchor:'end',align:'top',offset:3,formatter:(v,ctx2)=>countries[ctx2.dataIndex].name}
   });
 
   const ctx=document.getElementById(`chart-${cfg.id}`).getContext('2d');
