@@ -147,6 +147,20 @@
   <div class="insight-box" style="margin-top:12px;"><strong>Ejercicio:</strong> Vota cada ley con 👍 o 👎 según tu percepción personal. El contador de abajo te mostrará qué partido tiene más leyes que tú consideras positivas. No hay respuestas correctas: es un ejercicio de autoconocimiento político.</div>
 </div>
 
+<!-- CORRUPTION -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Principales casos de corrupción política en España</div>
+  <div class="card-desc">Casos judiciales más relevantes desde la Transición, con partido implicado, importe estimado, personas condenadas/investigadas y estado judicial. Fuentes: sentencias judiciales, Fiscalía Anticorrupción, prensa nacional, Verificat, Casos-Aislados.com.</div>
+  <div class="table-scroll" style="max-height:600px">
+    <table class="laws-table" id="corrTable">
+      <thead><tr><th>Caso</th><th>Partido</th><th>Periodo</th><th>Importe estimado</th><th>Implicados</th><th>Estado</th><th>Descripción</th></tr></thead>
+      <tbody id="corrBody"></tbody>
+    </table>
+  </div>
+  <div id="corrSummary" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.85rem;color:var(--text-muted);line-height:1.6;"></div>
+  <div class="insight-box" style="margin-top:12px"><strong>Observación:</strong> La corrupción en España ha sido transversal. El PP acumula más casos y mayor importe total judicializado (~3.000M€ según Verificat), pero el PSOE tiene el mayor caso individual (ERE de Andalucía, ~680M€ en condena firme). CiU tuvo el caso Palau y el 3% que afectaron a la financiación del partido. Ningún gran partido español está libre de escándalos graves. La diferencia está en si fueron casos individuales o tramas sistémicas.</div>
+</div>
+
 <!-- ELECTORAL PROGRAMS -->
 <div class="card" style="margin-top:20px">
   <div class="card-title">Propuestas electorales: Elecciones Generales 2023 (23-J)</div>
@@ -361,6 +375,32 @@ makeBarChart('chartIPC', ipc, 'Inflación IPC', 'IPC anual (%)');
 makeLineChart('chartDeuda', deuda, 'Deuda pública', 'Deuda (% PIB)');
 makeLineChart('chartCorr', corr, 'CPI Corrupción', 'CPI (0-100, mayor=menos corrupción)');
 makeLineChart('chartLibertades', libertades, 'Derechos', 'Índice acumulado derechos (0-100)');
+
+// ============ CORRUPTION CASES ============
+const corrCases = [
+  {caso:'Caso ERE de Andalucía',party:'PSOE',periodo:'2000-2009',importe:'680M€ (condena) / ~1.000M€ (investigados)',implicados:'22 condenados (expresidentes Chaves y Griñán entre ellos)',estado:'Condena firme (2022, Tribunal Constitucional anuló parte en 2024)',desc:'Desvío masivo de fondos para prejubilaciones fraudulentas desde la Junta de Andalucía. Mayor caso de corrupción por importe con condena firme.'},
+  {caso:'Trama Gürtel',party:'PP',periodo:'1999-2009',importe:'~120M€ en contratos amañados',implicados:'37 condenados; Francisco Correa, Luis Bárcenas y otros altos cargos PP',estado:'Condena firme (3 sentencias: 2018, 2021, pendiente pieza final)',desc:'Red de empresarios que obtenían contratos públicos a cambio de sobornos a cargos del PP. Provocó la moción de censura contra Rajoy (2018).'},
+  {caso:'Caja B del PP / Caso Bárcenas',party:'PP',periodo:'1990-2009',importe:'~8,4M€ en pagos opacos documentados',implicados:'2 condenados (Bárcenas, Páez) + PP multado como partido',estado:'Condena firme (2021)',desc:'Financiación ilegal del PP mediante contabilidad B. Sobresueldos en negro a dirigentes del partido.'},
+  {caso:'Operación Púnica',party:'PP (+ 1 PSOE)',periodo:'2003-2014',importe:'~250M€ en contratos amañados',implicados:'90+ investigados, 51 detenidos, 37 irán a juicio',estado:'Pendiente de juicio (2025)',desc:'Red de alcaldes y consejeros del PP en Madrid que adjudicaban contratos a empresas afines a cambio de comisiones.'},
+  {caso:'Caso Filesa',party:'PSOE',periodo:'1989-1993',importe:'~6M€',implicados:'11 condenados',estado:'Condena firme (1997)',desc:'Primera condena por financiación ilegal de un partido en la democracia española. Empresas pantalla facturaban por informes ficticios.'},
+  {caso:'Caso Nóos / Urdangarin',party:'Casa Real / PP Baleares',periodo:'2004-2006',importe:'~6M€ en fondos públicos desviados',implicados:'Iñaki Urdangarin condenado (cuñado del Rey); Jaume Matas (PP) condenado separadamente',estado:'Condena firme (2017)',desc:'Desvío de fondos públicos a través del Instituto Nóos. Urdangarin entró en prisión. Matas (expresidente balear PP) también condenado.'},
+  {caso:'Caso Roldán',party:'PSOE',periodo:'1986-1993',importe:'~3M€ en enriquecimiento ilícito',implicados:'Luis Roldán (Director Gral. Guardia Civil) condenado',estado:'Condena firme (1998)',desc:'El director de la Guardia Civil se enriqueció ilícitamente y huyó de España. Fue capturado en Laos.'},
+  {caso:'Operación Kitchen',party:'PP',periodo:'2013-2015',importe:'Espionaje político (sin importe directo)',implicados:'Exministro Fernández Díaz y altos cargos de Interior procesados',estado:'Pendiente de juicio (2026)',desc:'El Ministerio del Interior de Rajoy creó una brigada parapolicial para espiar a Bárcenas y destruir pruebas de la caja B del PP.'},
+  {caso:'Caso Koldo',party:'PSOE',periodo:'2020-2023',importe:'~52M€ en contratos de mascarillas',implicados:'Koldo García (asesor ministerial) y empresarios investigados',estado:'En instrucción judicial',desc:'Presuntas comisiones ilegales en la compra de mascarillas durante la pandemia por parte de un asesor del ministro Ábalos.'},
+  {caso:'Caso Lezo',party:'PP',periodo:'2003-2014',importe:'~70M€ en irregularidades en Canal de Isabel II',estado:'Parcialmente juzgado',implicados:'Ignacio González (expresidente Madrid) procesado',desc:'Corrupción en la gestión de la empresa pública Canal de Isabel II bajo el gobierno PP de Madrid.'},
+  {caso:'Caso 3% / Palau de la Música',party:'CiU',periodo:'1990-2010',importe:'~6,6M€ (Palau) + comisiones sistémicas del 3%',implicados:'Millet y Montull condenados (Palau); Mas y otros procesados (3%)',estado:'Condenas firmes (Palau 2017); 3% en instrucción',desc:'CDC (parte de CiU) cobraba presuntamente una comisión del 3% en obra pública catalana. El Palau de la Música fue un caso derivado de desvío de fondos.'},
+  {caso:'Caso GAL',party:'PSOE',periodo:'1983-1987',importe:'Fondos reservados del Estado',implicados:'Exministro Barrionuevo y exsecretario de Estado Vera condenados',estado:'Condena firme (1998)',desc:'Grupos Antiterroristas de Liberación: terrorismo de Estado contra ETA financiado con fondos reservados. 27 asesinatos.'},
+];
+const corrBody = document.getElementById('corrBody');
+corrCases.forEach(c => {
+  const tag = c.party.includes('PSOE') ? 'tag-psoe' : c.party.includes('PP') ? 'tag-pp' : c.party.includes('CiU') ? 'tag-ucd' : 'tag-ucd';
+  corrBody.innerHTML += `<tr><td style="font-weight:600;white-space:nowrap;font-size:.78rem">${c.caso}</td><td><span class="${tag}">${c.party}</span></td><td style="font-size:.75rem;white-space:nowrap">${c.periodo}</td><td style="font-size:.78rem;font-weight:600;color:var(--highlight)">${c.importe}</td><td style="font-size:.75rem">${c.implicados}</td><td style="font-size:.75rem">${c.estado}</td><td style="font-size:.78rem">${c.desc}</td></tr>`;
+});
+// Summary
+const ppTotal = corrCases.filter(c=>c.party.includes('PP')).length;
+const psoeTotal = corrCases.filter(c=>c.party.includes('PSOE')).length;
+const otherTotal = corrCases.length - ppTotal - psoeTotal;
+document.getElementById('corrSummary').innerHTML = `<strong style="color:var(--text)">📊 Resumen:</strong> De los ${corrCases.length} casos principales listados: <span style="color:var(--pp);font-weight:700">PP: ${ppTotal} casos</span> · <span style="color:var(--psoe);font-weight:700">PSOE: ${psoeTotal} casos</span> · <span style="color:var(--text-muted);font-weight:700">Otros: ${otherTotal} casos</span>. Según Verificat (2025), el PP acumula ~3.027M€ judicializados en total y el PSOE ~1.177M€. La corrupción ha afectado a todos los grandes partidos.`;
 
 // ============ LAWS TABLE ============
 const laws = [

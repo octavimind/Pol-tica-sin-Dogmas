@@ -138,6 +138,20 @@
   <div id="lawsScore" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.88rem;color:var(--text-muted);line-height:1.6;"></div>
 </div>
 
+<!-- CORRUPTION CATALUNYA -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Principales casos de corrupción política en Catalunya</div>
+  <div class="card-desc">Casos judiciales más relevantes vinculados a la política catalana. Fuentes: sentencias judiciales, Fiscalía, prensa.</div>
+  <div class="table-scroll" style="max-height:500px">
+    <table class="laws-table">
+      <thead><tr><th>Caso</th><th>Partido</th><th>Periodo</th><th>Importe estimado</th><th>Implicados</th><th>Estado</th><th>Descripción</th></tr></thead>
+      <tbody id="corrBodyCat"></tbody>
+    </table>
+  </div>
+  <div id="corrSummaryCat" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.85rem;color:var(--text-muted);line-height:1.6;"></div>
+  <div class="insight-box" style="margin-top:12px"><strong>Observación:</strong> La corrupción en Catalunya se ha concentrado históricamente en CiU/CDC (caso 3%, Palau, Pujol) y en el PSC a nivel municipal (caso Pretoria). El independentismo de nueva generación (ERC, JxCat post-Puigdemont) no tiene casos de corrupción económica relevantes, aunque sí causas por desobediencia institucional vinculadas al procés. La familia Pujol es el caso más grave por su duración y sistematicidad.</div>
+</div>
+
 <!-- ELECTORAL PROGRAMS -->
 <div class="card" style="margin-top:20px">
   <div class="card-title">Propuestas electorales: Elecciones al Parlament 2024</div>
@@ -243,6 +257,24 @@ laws.forEach(([per,pm,party,coal,items])=>{
 function voteLaw(el){const id=el.dataset.id,val=parseInt(el.dataset.val),cur=lawVotes[id].vote;lawVotes[id].vote=cur===val?0:val;const row=el.parentElement;row.querySelectorAll('.thumb-btn').forEach(b=>b.classList.remove('active-up','active-down'));if(lawVotes[id].vote===1)row.querySelector('[data-val="1"]').classList.add('active-up');if(lawVotes[id].vote===-1)row.querySelector('[data-val="-1"]').classList.add('active-down');updateLawsScore();}
 function updateLawsScore(){const sc={};Object.values(lawVotes).forEach(v=>{if(!sc[v.party])sc[v.party]={up:0,down:0};if(v.vote===1)sc[v.party].up++;if(v.vote===-1)sc[v.party].down++;});const pc={CiU:'var(--ciu)',PSC:'var(--psc)',ERC:'var(--erc)',JxCat:'var(--ciu)'};let h='<strong style="color:var(--text)">📊 Tu puntuación por partido:</strong><br>';let voted=false;for(const[p,s]of Object.entries(sc)){if(s.up||s.down)voted=true;const n=s.up-s.down;const bar=n>0?'🟢'.repeat(Math.min(n,10)):n<0?'🔴'.repeat(Math.min(-n,10)):'—';h+=`<span style="color:${pc[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 = <strong style="color:var(--text)">${n>=0?'+':''}${n}</strong> ${bar}<br>`;}if(!voted)h+='<span style="opacity:.5">Vota las leyes para ver los resultados</span>';document.getElementById('lawsScore').innerHTML=h;}
 updateLawsScore();
+
+// ============ CORRUPTION CATALUNYA ============
+const corrCat = [
+  {caso:'Caso 3% de CDC',party:'CiU/CDC',periodo:'1990-2010',importe:'Comisiones del 3% en obra pública (decenas de M€)',implicados:'Varios cargos de CDC procesados',estado:'En instrucción / parcialmente archivado',desc:'CDC cobraba presuntamente una comisión del 3% de toda la obra pública en Catalunya. Trama sistémica durante décadas.'},
+  {caso:'Caso Palau de la Música',party:'CiU/CDC',periodo:'1999-2009',importe:'~6,6M€ desviados',implicados:'Millet y Montull condenados; Osàcar (tesorero CDC) condenado',estado:'Condena firme (2017)',desc:'Desvío de fondos del Palau de la Música para financiar CDC y enriquecimiento personal de Millet.'},
+  {caso:'Familia Pujol',party:'CiU/CDC',periodo:'1980-2012',importe:'Herencia opaca ~4M€ + patrimonio oculto en extranjero',implicados:'Jordi Pujol hijo y 6 hermanos procesados; Pujol padre investigado',estado:'En instrucción (Audiencia Nacional)',desc:'La familia del expresident acumuló patrimonio en el extranjero de origen presuntamente ilícito. Pujol confesó en 2014 tener dinero oculto en Andorra durante 34 años.'},
+  {caso:'Caso Pretoria',party:'PSC',periodo:'2003-2009',importe:'~18M€ en comisiones',implicados:'Varios alcaldes y concejales del PSC del área metropolitana condenados',estado:'Condena firme (2014)',desc:'Trama de comisiones ilegales en obras municipales del cinturón industrial de Barcelona.'},
+  {caso:'Caso ITV',party:'CiU',periodo:'1998-2003',importe:'~3M€ en comisiones',implicados:'Exconseller Alavedra condenado',estado:'Condena firme',desc:'Cobro de comisiones por la adjudicación de estaciones de ITV en Catalunya.'},
+  {caso:'Caso Procés (desobediencia)',party:'JxCat/ERC',periodo:'2017',importe:'Sin importe (delitos institucionales)',implicados:'9 condenados; Puigdemont exiliado; todos indultados/amnistiados',estado:'Indultos (2021) + Amnistía (2024)',desc:'No es corrupción económica sino institucional: referéndum 1-O y DUI. Incluido por relevancia penal.'},
+];
+const corrBodyCat = document.getElementById('corrBodyCat');
+corrCat.forEach(c => {
+  const tag = c.party.includes('CiU')||c.party.includes('CDC') ? 'tag-ciu' : c.party.includes('PSC') ? 'tag-psc' : 'tag-erc';
+  corrBodyCat.innerHTML += `<tr><td style="font-weight:600;white-space:nowrap;font-size:.78rem">${c.caso}</td><td><span class="${tag}">${c.party}</span></td><td style="font-size:.75rem;white-space:nowrap">${c.periodo}</td><td style="font-size:.78rem;font-weight:600;color:var(--highlight)">${c.importe}</td><td style="font-size:.75rem">${c.implicados}</td><td style="font-size:.75rem">${c.estado}</td><td style="font-size:.78rem">${c.desc}</td></tr>`;
+});
+const ciuCorr = corrCat.filter(c=>c.party.includes('CiU')||c.party.includes('CDC')).length;
+const pscCorr = corrCat.filter(c=>c.party.includes('PSC')).length;
+document.getElementById('corrSummaryCat').innerHTML = `<strong style="color:var(--text)">📊 Resumen:</strong> De los ${corrCat.length} casos principales: <span style="color:var(--ciu);font-weight:700">CiU/CDC: ${ciuCorr} casos</span> · <span style="color:var(--psc);font-weight:700">PSC: ${pscCorr} caso</span> · <span style="color:var(--text-muted);font-weight:700">Otros: 1 caso (procés, no económico)</span>. CiU/CDC concentra la gran mayoría de la corrupción económica catalana.`;
 
 // ============ ELECTORAL PROGRAMS ============
 const programs=[
