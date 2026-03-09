@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eje Económico: Colectivismo vs Mercado Libre</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--gradient-left:#e74c3c;--gradient-center:#f39c12;--gradient-right:#2ecc71;--highlight:#fbbf24;--regression:#ff9f43}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.6;overflow-x:hidden}
+  .noise-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:1000}
+  header{padding:48px 40px 20px;text-align:center;position:relative}
+  header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+  h1{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;letter-spacing:-0.02em;margin-bottom:8px;background:linear-gradient(135deg,var(--gradient-left),var(--gradient-center),var(--gradient-right));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .subtitle{color:var(--text-muted);font-size:.95rem;max-width:800px;margin:0 auto}
+  .back{display:inline-block;margin-bottom:14px;color:var(--highlight);text-decoration:none;font-size:.85rem;padding:6px 16px;border:1px solid rgba(251,191,36,0.25);border-radius:8px;background:rgba(251,191,36,0.06)}
+  .spectrum-bar{margin:24px auto 0;max-width:600px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--gradient-left) 0%,var(--gradient-center) 50%,var(--gradient-right) 100%)}
+  .spectrum-labels{display:flex;justify-content:space-between;max-width:700px;margin:8px auto 0;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
+  .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:20px;padding:8px 28px 32px;max-width:1600px;margin:0 auto}
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+  .chart-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+  .chart-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gradient-left),var(--gradient-center),var(--gradient-right));opacity:.6}
+  .chart-title{font-family:'Instrument Serif',serif;font-size:1.35rem;margin-bottom:2px;font-weight:400}
+  .chart-desc{color:var(--text-muted);font-size:.78rem;margin-bottom:16px;line-height:1.4}
+  .chart-container{position:relative;height:340px}
+  .insight-box{margin-top:14px;padding:12px 16px;background:var(--surface2);border-left:3px solid var(--highlight);border-radius:0 8px 8px 0;font-size:.82rem;color:var(--text-muted);line-height:1.5}
+  .insight-box strong{color:var(--text)}
+  .reg-info{margin-top:8px;padding:8px 12px;background:rgba(255,159,67,.08);border-left:3px solid var(--regression);border-radius:0 6px 6px 0;font-size:.76rem;color:var(--text-muted);line-height:1.4}
+  .reg-info code{color:var(--regression);font-family:'DM Sans',sans-serif;font-weight:700}
+  .note-box{margin-top:10px;padding:12px 16px;background:rgba(121,192,255,.06);border-left:3px solid #79c0ff;border-radius:0 8px 8px 0;font-size:.8rem;color:var(--text-muted);line-height:1.55}
+  .note-box strong{color:#79c0ff}
+  .section-block{max-width:1600px;margin:0 auto;padding:0 28px 24px}
+  .explanation-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;line-height:1.7}
+  .explanation-card h2{font-family:'Instrument Serif',serif;font-size:1.3rem;font-weight:400;margin-bottom:12px;color:var(--text)}
+  .explanation-card p{font-size:.88rem;color:var(--text-muted);margin-bottom:10px}
+  .explanation-card p strong{color:var(--text)}
+  .legend-section{max-width:1600px;margin:0 auto;padding:0 28px 20px}
+  .legend-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 28px}
+  .legend-title{font-family:'Instrument Serif',serif;font-size:1.2rem;margin-bottom:12px}
+  .legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 16px;font-size:.78rem}
+  .legend-item{display:flex;align-items:center;gap:8px;padding:3px 0;cursor:pointer}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.2)}
+  .legend-name{color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .footer-note{text-align:center;padding:24px;color:var(--text-muted);font-size:.72rem;opacity:.7}
+  @media(max-width:600px){.charts-grid{grid-template-columns:1fr;padding:16px}header{padding:32px 20px 16px}}
+</style>
+</head>
+<body>
+<div class="noise-overlay"></div>
+
+<header>
+  <a href="index.html" class="back">← Volver al inicio</a>
+  <h1>Eje Económico: Colectivismo vs Mercado Libre</h1>
+  <p class="subtitle">Los mismos 42 países, pero reposicionados en un eje puramente económico: cuánto interviene el Estado en la economía. Sin connotaciones políticas de "izquierda" o "derecha". Compara con la página internacional para ver cómo cambian las posiciones según el marco de análisis.</p>
+  <div class="spectrum-bar"></div>
+  <div class="spectrum-labels">
+    <span>← Colectivismo</span>
+    <span>Economía planificada</span>
+    <span>Socialdemócrata</span>
+    <span>Mixta</span>
+    <span>Liberal</span>
+    <span>Mercado libre →</span>
+  </div>
+</header>
+
+<div class="section-block" style="padding-top:24px">
+  <div class="explanation-card">
+    <h2>¿Por qué un eje diferente?</h2>
+    <p>La página de <strong>Política Internacional</strong> usa el eje clásico izquierda-derecha, que mezcla economía con valores sociales (libertades, inmigración, género). Esta página usa un eje <strong>puramente económico</strong>: cuánto interviene el Estado en la producción, distribución y regulación.</p>
+    <p><strong>¿Qué cambia?</strong> Países como <strong>China</strong> pasan de "extrema izquierda" (-2.5) a una posición mucho más centrada (-0.5), porque su economía ya es bastante de mercado. <strong>Singapur</strong> se mueve al extremo del mercado libre (+2.2). Los <strong>nórdicos</strong> se mantienen en centro-izquierda pero más cerca del centro que en el eje político, porque su economía es de mercado abierto aunque redistribuyan mucho. <strong>EEUU</strong> se desplaza más a la derecha que en el eje político porque económicamente es más liberal de lo que su posición política sugiere.</p>
+    <p>Ver los mismos datos con dos marcos diferentes es una lección de pensamiento crítico: <strong>la posición de un país depende de qué pregunta hagas</strong>.</p>
+  </div>
+</div>
+
+<div class="charts-grid" id="chartsGrid"></div>
+
+<div class="legend-section">
+  <div class="legend-card">
+    <div class="legend-title">Países incluidos (42) — ordenados por eje económico</div>
+    <div class="legend-grid" id="legendGrid"></div>
+  </div>
+</div>
+
+<div class="footer-note">
+  Fuentes: Heritage Foundation Index of Economic Freedom, Fraser Institute, OECD Government Spending data, Banco Mundial, FMI.<br>
+  Eje económico: elaboración propia basada en gasto público/PIB, libertad económica, regulación, propiedad estatal. Uso exclusivamente educativo.
+</div>
+
+<script>
+// ============ DATA: Same countries, new economic axis (eco) ============
+// eco scale: -3 = fully planned economy, 0 = mixed, +3 = fully free market
+const countries = [
+  {name:"Noruega",eco:-0.5,pol:-1.5,demo:9.81,corr:84,paz:1.32,gender:0.875,lgbt:9.8,prensa:92,crec:1.8,gini:27.7,gastoSoc:25.3,region:"Europa Norte"},
+  {name:"Suecia",eco:-0.6,pol:-1.3,demo:9.39,corr:82,paz:1.36,gender:0.816,lgbt:9.7,prensa:89,crec:2.0,gini:28.8,gastoSoc:26.1,region:"Europa Norte"},
+  {name:"Dinamarca",eco:-0.3,pol:-1.0,demo:9.32,corr:90,paz:1.35,gender:0.770,lgbt:9.6,prensa:90,crec:1.6,gini:28.2,gastoSoc:28.3,region:"Europa Norte"},
+  {name:"Finlandia",eco:-0.3,pol:-0.8,demo:9.30,corr:87,paz:1.36,gender:0.875,lgbt:9.4,prensa:88,crec:1.4,gini:27.3,gastoSoc:29.1,region:"Europa Norte"},
+  {name:"Alemania",eco:0.2,pol:0.0,demo:8.68,corr:79,paz:1.46,gender:0.810,lgbt:8.7,prensa:82,crec:1.3,gini:31.7,gastoSoc:25.9,region:"Europa Occ."},
+  {name:"Francia",eco:-0.2,pol:-0.3,demo:7.99,corr:68,paz:1.73,gender:0.756,lgbt:8.2,prensa:78,crec:1.2,gini:32.4,gastoSoc:31.5,region:"Europa Occ."},
+  {name:"Países Bajos",eco:0.6,pol:0.3,demo:9.00,corr:79,paz:1.38,gender:0.770,lgbt:9.3,prensa:87,crec:1.5,gini:28.5,gastoSoc:22.1,region:"Europa Occ."},
+  {name:"Suiza",eco:1.3,pol:0.5,demo:9.15,corr:82,paz:1.29,gender:0.783,lgbt:9.0,prensa:85,crec:1.7,gini:33.1,gastoSoc:16.7,region:"Europa Occ."},
+  {name:"Reino Unido",eco:0.9,pol:0.3,demo:8.36,corr:71,paz:1.63,gender:0.756,lgbt:8.6,prensa:73,crec:1.4,gini:35.1,gastoSoc:20.6,region:"Europa Occ."},
+  {name:"España",eco:0.0,pol:-0.5,demo:8.13,corr:60,paz:1.47,gender:0.795,lgbt:8.4,prensa:81,crec:2.0,gini:33.0,gastoSoc:24.7,region:"Europa Occ."},
+  {name:"Italia",eco:0.2,pol:0.3,demo:7.75,corr:56,paz:1.55,gender:0.703,lgbt:7.1,prensa:74,crec:0.6,gini:35.2,gastoSoc:28.2,region:"Europa Occ."},
+  {name:"Portugal",eco:-0.1,pol:-0.7,demo:8.08,corr:67,paz:1.26,gender:0.795,lgbt:8.5,prensa:87,crec:1.3,gini:33.8,gastoSoc:22.6,region:"Europa Occ."},
+  {name:"Polonia",eco:0.7,pol:0.5,demo:7.47,corr:54,paz:1.57,gender:0.744,lgbt:5.0,prensa:67,crec:3.8,gini:29.7,gastoSoc:21.3,region:"Europa Este"},
+  {name:"Hungría",eco:0.6,pol:1.5,demo:6.50,corr:42,paz:1.60,gender:0.690,lgbt:4.2,prensa:50,crec:2.8,gini:30.6,gastoSoc:19.4,region:"Europa Este"},
+  {name:"EEUU",eco:1.6,pol:0.5,demo:7.85,corr:65,paz:2.45,gender:0.769,lgbt:7.9,prensa:70,crec:2.2,gini:39.8,gastoSoc:18.7,region:"Norteamérica"},
+  {name:"Canadá",eco:0.6,pol:-0.5,demo:8.88,corr:76,paz:1.35,gender:0.770,lgbt:9.3,prensa:83,crec:1.9,gini:33.3,gastoSoc:17.3,region:"Norteamérica"},
+  {name:"Chile",eco:1.2,pol:0.0,demo:8.22,corr:66,paz:1.58,gender:0.755,lgbt:6.8,prensa:73,crec:3.3,gini:44.9,gastoSoc:17.0,region:"Sudamérica"},
+  {name:"Uruguay",eco:0.0,pol:-0.5,demo:8.66,corr:74,paz:1.34,gender:0.750,lgbt:7.5,prensa:77,crec:2.7,gini:40.2,gastoSoc:21.2,region:"Sudamérica"},
+  {name:"Brasil",eco:0.1,pol:-0.3,demo:6.86,corr:36,paz:2.38,gender:0.755,lgbt:6.3,prensa:65,crec:2.1,gini:48.9,gastoSoc:26.0,region:"Sudamérica"},
+  {name:"Argentina",eco:-0.6,pol:-1.0,demo:7.11,corr:42,paz:1.75,gender:0.752,lgbt:6.5,prensa:56,crec:1.5,gini:42.3,gastoSoc:24.6,region:"Sudamérica"},
+  {name:"México",eco:0.0,pol:-0.5,demo:6.40,corr:31,paz:2.56,gender:0.765,lgbt:5.0,prensa:55,crec:2.0,gini:45.4,gastoSoc:14.2,region:"Norteamérica"},
+  {name:"Colombia",eco:0.5,pol:0.3,demo:7.05,corr:40,paz:2.73,gender:0.737,lgbt:5.5,prensa:60,crec:3.5,gini:51.3,gastoSoc:13.1,region:"Sudamérica"},
+  {name:"Venezuela",eco:-2.2,pol:-2.5,demo:2.28,corr:10,paz:2.56,gender:0.720,lgbt:4.0,prensa:22,crec:-2.5,gini:44.8,gastoSoc:18.0,region:"Sudamérica"},
+  {name:"El Salvador",eco:1.0,pol:1.5,demo:5.68,corr:34,paz:1.78,gender:0.690,lgbt:3.5,prensa:38,crec:2.3,gini:38.8,gastoSoc:12.5,region:"Centroamérica"},
+  {name:"Japón",eco:0.7,pol:1.0,demo:8.09,corr:73,paz:1.34,gender:0.663,lgbt:5.5,prensa:60,crec:0.8,gini:32.9,gastoSoc:24.0,region:"Asia-Pacífico"},
+  {name:"Corea del Sur",eco:0.8,pol:0.3,demo:7.96,corr:63,paz:1.62,gender:0.727,lgbt:5.3,prensa:56,crec:3.2,gini:31.4,gastoSoc:14.8,region:"Asia-Pacífico"},
+  {name:"Australia",eco:1.0,pol:0.3,demo:8.71,corr:73,paz:1.30,gender:0.778,lgbt:8.5,prensa:81,crec:2.5,gini:34.3,gastoSoc:17.8,region:"Oceanía"},
+  {name:"Nueva Zelanda",eco:0.8,pol:-0.3,demo:9.25,corr:85,paz:1.15,gender:0.835,lgbt:9.1,prensa:88,crec:2.3,gini:32.0,gastoSoc:18.4,region:"Oceanía"},
+  {name:"India",eco:0.3,pol:0.5,demo:7.18,corr:39,paz:2.69,gender:0.641,lgbt:3.8,prensa:37,crec:6.5,gini:35.7,gastoSoc:7.5,region:"Asia Sur"},
+  {name:"Singapur",eco:2.2,pol:1.5,demo:6.02,corr:84,paz:1.16,gender:0.726,lgbt:5.4,prensa:44,crec:4.5,gini:45.9,gastoSoc:10.9,region:"Asia-Pacífico"},
+  {name:"Taiwán",eco:0.7,pol:-0.3,demo:8.94,corr:68,paz:1.50,gender:0.745,lgbt:6.0,prensa:70,crec:3.5,gini:34.1,gastoSoc:12.8,region:"Asia-Pacífico"},
+  {name:"Israel",eco:0.8,pol:1.0,demo:7.77,corr:56,paz:3.57,gender:0.724,lgbt:5.8,prensa:56,crec:3.2,gini:39.0,gastoSoc:16.3,region:"Oriente Medio"},
+  {name:"EAU",eco:2.0,pol:2.0,demo:2.78,corr:68,paz:1.69,gender:0.647,lgbt:3.5,prensa:20,crec:5.0,gini:32.5,gastoSoc:7.5,region:"Oriente Medio"},
+  {name:"Arabia Saudita",eco:1.2,pol:2.5,demo:2.08,corr:40,paz:2.06,gender:0.548,lgbt:1.5,prensa:15,crec:4.2,gini:45.9,gastoSoc:16.0,region:"Oriente Medio"},
+  {name:"Sudáfrica",eco:0.1,pol:-0.8,demo:7.12,corr:41,paz:2.29,gender:0.772,lgbt:5.5,prensa:59,crec:1.5,gini:63.0,gastoSoc:12.0,region:"África"},
+  {name:"Ruanda",eco:-0.3,pol:-1.5,demo:3.14,corr:53,paz:1.84,gender:0.811,lgbt:2.0,prensa:35,crec:7.2,gini:43.7,gastoSoc:13.8,region:"África"},
+  {name:"Nigeria",eco:0.5,pol:0.5,demo:4.10,corr:24,paz:2.74,gender:0.641,lgbt:1.5,prensa:25,crec:4.5,gini:35.1,gastoSoc:4.5,region:"África"},
+  {name:"China",eco:-0.5,pol:-2.5,demo:2.17,corr:43,paz:1.89,gender:0.740,lgbt:3.0,prensa:25,crec:7.5,gini:38.2,gastoSoc:10.8,region:"Asia-Pacífico"},
+  {name:"Rusia",eco:0.3,pol:1.5,demo:2.22,corr:26,paz:3.69,gender:0.708,lgbt:2.0,prensa:30,crec:2.5,gini:36.0,gastoSoc:17.1,region:"Eurasia"},
+  {name:"Cuba",eco:-2.5,pol:-3.0,demo:2.84,corr:42,paz:1.86,gender:0.740,lgbt:3.5,prensa:20,crec:1.5,gini:40.0,gastoSoc:51.0,region:"Caribe"},
+  {name:"Vietnam",eco:-0.8,pol:-2.0,demo:2.75,corr:34,paz:1.63,gender:0.713,lgbt:3.0,prensa:30,crec:6.3,gini:35.7,gastoSoc:6.8,region:"Asia-Pacífico"},
+  {name:"Turquía",eco:0.5,pol:1.0,demo:4.35,corr:34,paz:2.53,gender:0.685,lgbt:3.0,prensa:40,crec:4.5,gini:41.9,gastoSoc:12.5,region:"Eurasia"},
+];
+
+const regionColors={"Europa Norte":"#7ee8fa","Europa Occ.":"#80b3ff","Europa Este":"#c084fc","Norteamérica":"#fbbf24","Sudamérica":"#34d399","Centroamérica":"#6ee7b7","Asia-Pacífico":"#f472b6","Asia Sur":"#fb923c","Oceanía":"#a3e635","Oriente Medio":"#f87171","África":"#e879f9","Eurasia":"#94a3b8","Caribe":"#2dd4bf"};
+const alwaysLabel=new Set(["España","EEUU","China","Rusia","Venezuela","Cuba","Arabia Saudita","Singapur","Nueva Zelanda","Suiza","Japón","Israel","Alemania","Francia","Noruega"]);
+const ctt={backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:12,titleFont:{family:'DM Sans',size:13,weight:700},bodyFont:{family:'DM Sans',size:12}};
+
+// Regression
+function linReg(pts){const n=pts.length;let sx=0,sy=0,sxx=0,sxy=0;for(const p of pts){sx+=p.x;sy+=p.y;sxx+=p.x*p.x;sxy+=p.x*p.y;}const d=n*sxx-sx*sx,b=(n*sxy-sx*sy)/d,a=(sy-b*sx)/n,mean=sy/n;let ssTot=0,ssRes=0;for(const p of pts){ssTot+=(p.y-mean)**2;ssRes+=(p.y-(a+b*p.x))**2;}return{a,b,r2:ssTot?1-ssRes/ssTot:0,type:'linear'};}
+function quadReg(pts){const n=pts.length;let sx=0,sx2=0,sx3=0,sx4=0,sy=0,sxy=0,sx2y=0;for(const p of pts){const x2=p.x*p.x;sx+=p.x;sx2+=x2;sx3+=x2*p.x;sx4+=x2*x2;sy+=p.y;sxy+=p.x*p.y;sx2y+=x2*p.y;}const M=[[n,sx,sx2],[sx,sx2,sx3],[sx2,sx3,sx4]],V=[sy,sxy,sx2y];function det3(m){return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);}const D=det3(M);if(Math.abs(D)<1e-10)return{a:0,b:0,c:0,r2:0,type:'quadratic'};const Da=det3([[V[0],M[0][1],M[0][2]],[V[1],M[1][1],M[1][2]],[V[2],M[2][1],M[2][2]]]),Db=det3([[M[0][0],V[0],M[0][2]],[M[1][0],V[1],M[1][2]],[M[2][0],V[2],M[2][2]]]),Dc=det3([[M[0][0],M[0][1],V[0]],[M[1][0],M[1][1],V[1]],[M[2][0],M[2][1],V[2]]]);const a=Da/D,b=Db/D,c=Dc/D,mean=sy/n;let ssTot=0,ssRes=0;for(const p of pts){ssTot+=(p.y-mean)**2;ssRes+=(p.y-(a+b*p.x+c*p.x*p.x))**2;}return{a,b,c,r2:ssTot?1-ssRes/ssTot:0,type:'quadratic'};}
+function bestReg(pts){const l=linReg(pts),q=quadReg(pts);return(q.r2-l.r2>0.05)?q:l;}
+function regLine(reg,xMin,xMax,steps){const pts=[],s=(xMax-xMin)/steps;for(let x=xMin;x<=xMax;x+=s){pts.push({x,y:reg.type==='linear'?reg.a+reg.b*x:reg.a+reg.b*x+reg.c*x*x});}return pts;}
+function regExpl(reg){const r2=(reg.r2*100).toFixed(1);if(reg.type==='linear'){const dir=reg.b>0?'sube':'baja';return`<code>Recta</code> — Por cada punto hacia mercado libre, el indicador ${dir} ~${Math.abs(reg.b).toFixed(2)}. R² = <code>${r2}%</code>.`;}return`<code>Parábola</code> — Relación NO lineal: valores máximos en modelos mixtos, caen en los extremos. R² = <code>${r2}%</code>.`;}
+
+function pbg(i){return regionColors[countries[i].region]+'cc';}
+function pbc(i){return regionColors[countries[i].region]||'#999';}
+function sl(i){return alwaysLabel.has(countries[i].name);}
+
+const ecoDesc=e=>e<=-2?'Colectivista':e<=-1?'Planificada':e<=0?'Socialdemócrata':e<=1?'Mixta/Liberal':e<=2?'Liberal':'Mercado libre';
+
+const cfgs=[
+  {id:'demo',title:'Nivel de Democracia',desc:'EIU Democracy Index 2024 (0-10)',field:'demo',yLabel:'Democracia (0-10)',yMin:0,yMax:10.5,
+    insight:'<strong>Comparación con eje político:</strong> En el eje político, la parábola era clarísima (centro = más democracia). En el eje económico, la parábola se mantiene pero es más suave: las economías mixtas socialdemócratas (nórdicos) y liberales (Suiza, N. Zelanda) son igual de democráticas. Los extremos colectivistas (Cuba, Venezuela) siguen siendo autoritarios, pero el extremo liberal (Singapur, EAU) también.'},
+  {id:'corr',title:'Anticorrupción',desc:'Transparency Intl CPI 2024 (0-100)',field:'corr',yLabel:'CPI (0-100)',yMin:0,yMax:100,
+    insight:'<strong>Hallazgo:</strong> La baja corrupción se asocia con instituciones fuertes, no con el modelo económico. Singapur (mercado ultraliberal, CPI 84) y Dinamarca (socialdemócrata, CPI 90) demuestran que ambos modelos pueden ser limpios si las instituciones son sólidas.'},
+  {id:'paz',title:'Seguridad y Paz',desc:'GPI 2024 (menor = más pacífico)',field:'paz',yLabel:'GPI (menor=más paz)',yMin:1,yMax:4,invert:true,
+    insight:'<strong>Observación:</strong> Los países más pacíficos están repartidos por todo el eje económico (Noruega socialdemócrata, Suiza liberal, N. Zelanda mixta). La paz no depende del modelo económico sino de la estabilidad institucional.'},
+  {id:'gender',title:'Igualdad de Género',desc:'WEF Gender Gap 2024 (0-1)',field:'gender',yLabel:'Gender Gap (0-1)',yMin:0.5,yMax:0.95,
+    insight:'<strong>Observación:</strong> En el eje político, la igualdad de género correlacionaba claramente con la izquierda. En el eje económico, la correlación es más débil: los nórdicos lideran, pero N. Zelanda y Australia (economías bastante liberales) también puntúan alto. El modelo económico importa menos que la cultura y las políticas específicas de igualdad.'},
+  {id:'lgbt',title:'Aceptación LGBT+',desc:'Williams Institute GAI (0-10)',field:'lgbt',yLabel:'Aceptación LGBT+ (0-10)',yMin:0,yMax:10.5,
+    insight:'<strong>Observación:</strong> Patrón similar al eje político: los extremos (colectivista y ultraliberal autoritario) son menos tolerantes. Pero España (economía mixta, 8.4) puntúa casi igual que Países Bajos (más liberal, 9.3). La tolerancia es más cultural que económica.'},
+  {id:'crec',title:'Crecimiento Económico (media 20 años)',desc:'PIB real medio 2004-2024 (%)',field:'crec',yLabel:'Crecimiento PIB (%)',yMin:-3,yMax:8,
+    insight:'<strong>Hallazgo clave:</strong> En el eje político, la recta era casi plana. En el eje económico también. Ni el colectivismo ni el mercado libre garantizan crecimiento. Venezuela (colectivista, -2.5%) y Cuba (planificada, 1.5%) crecen poco, pero China (semi-planificada, 7.5%) crece mucho. Singapur (ultraliberal, 4.5%) crece bien pero Italia (mixta, 0.6%) no. El crecimiento depende de factores específicos, no del modelo.'},
+  {id:'gini',title:'Desigualdad (Gini)',desc:'0 = igualdad, 100 = desigualdad total',field:'gini',yLabel:'Gini',yMin:20,yMax:65,invert:true,
+    insight:'<strong>Hallazgo más claro de esta página:</strong> Aquí SÍ hay una correlación más visible que en el eje político. Los países más colectivistas/socialdemócratas tienden a ser más igualitarios (nórdicos ~27-29). Los más liberales tienden a ser más desiguales (EEUU 39.8, Singapur 45.9, Chile 44.9). La redistribución económica SÍ reduce la desigualdad medida. Invertido: arriba = más igualdad.'},
+  {id:'gastoSoc',title:'Gasto Social (% del PIB)',desc:'% PIB en protección social',field:'gastoSoc',yLabel:'Gasto Social (% PIB)',yMin:0,yMax:55,
+    insight:'<strong>Observación:</strong> En el eje económico la correlación es mucho más clara que en el político: las economías con más intervención estatal gastan más en social (Francia 31.5%, Finlandia 29.1%) y las más liberales gastan menos (Singapur 10.9%, EEUU 18.7%). Cuba (51%) sigue siendo el outlier extremo.'},
+  {id:'prensa',title:'Libertad de Prensa',desc:'RSF 2024 (0-100)',field:'prensa',yLabel:'Libertad Prensa (0-100)',yMin:0,yMax:100,
+    insight:'<strong>Observación:</strong> La libertad de prensa es alta tanto en socialdemocracias (Noruega 92) como en economías liberales (Suiza 85, N. Zelanda 88). Colapsa en los extremos autoritarios de ambos lados (Cuba 20, Arabia Saudita 15). La prensa libre requiere democracia, no un modelo económico específico.'},
+];
+
+function createChart(cfg){
+  const card=document.createElement('div');card.className='chart-card';
+  const pts=countries.map(c=>({x:c.eco,y:c[cfg.field]}));
+  const reg=bestReg(pts);const rl=regLine(reg,-2.8,2.5,80);const re=regExpl(reg);
+  card.innerHTML=`<div class="chart-title">${cfg.title}</div><div class="chart-desc">${cfg.desc}</div><div class="chart-container"><canvas id="chart-${cfg.id}"></canvas></div><div class="reg-info">${re}</div><div class="insight-box">${cfg.insight}</div>`;
+  document.getElementById('chartsGrid').appendChild(card);
+  const ctx=document.getElementById(`chart-${cfg.id}`).getContext('2d');
+  new Chart(ctx,{type:'scatter',data:{datasets:[
+    {type:'line',data:rl,borderColor:'rgba(255,159,67,0.7)',borderWidth:2.5,borderDash:reg.type==='linear'?[8,4]:[],pointRadius:0,pointHoverRadius:0,fill:false,tension:reg.type==='quadratic'?.4:0,order:2,datalabels:{display:false}},
+    {data:pts,backgroundColor:countries.map((_,i)=>pbg(i)),borderColor:countries.map((_,i)=>pbc(i)),borderWidth:1.5,pointRadius:countries.map((_,i)=>sl(i)?8:6),pointHoverRadius:11,order:1,
+      datalabels:{display:ctx2=>sl(ctx2.dataIndex),color:'#c9d1d9',font:{family:'DM Sans',size:9,weight:600},anchor:'end',align:'top',offset:3,formatter:(v,ctx2)=>countries[ctx2.dataIndex].name}}
+  ]},plugins:[ChartDataLabels],
+  options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:16,right:16,bottom:4,left:4}},
+    plugins:{legend:{display:false},tooltip:{...ctt,filter:item=>item.datasetIndex===1,callbacks:{
+      title:items=>{if(!items.length||items[0].datasetIndex!==1)return'';return countries[items[0].dataIndex].name;},
+      label:item=>{if(item.datasetIndex!==1)return'';const c=countries[item.dataIndex];return[`Región: ${c.region}`,`Eje económico: ${c.eco} (${ecoDesc(c.eco)})`,`Eje político (otra página): ${c.pol}`,`${cfg.yLabel}: ${c[cfg.field]}`];}
+    }}},
+    scales:{
+      x:{min:-3,max:3,grid:{color:'#21262d',lineWidth:.5},border:{color:'#30363d'},
+        title:{display:true,text:'← Colectivismo       Planificada       Socialdemócrata       Mixta       Liberal       Mercado libre →',color:'#8b949e',font:{family:'DM Sans',size:10}},
+        ticks:{color:'#8b949e',font:{family:'DM Sans',size:9},stepSize:1,callback:v=>({'-3':'Colect.','-2':'Planif.','-1':'Sociald.','0':'Mixta','1':'Liberal','2':'Libre'}[String(v)]||'')}},
+      y:{min:cfg.yMin,max:cfg.yMax,reverse:cfg.invert||false,grid:{color:'#21262d',lineWidth:.5},border:{color:'#30363d'},
+        title:{display:true,text:cfg.yLabel+(cfg.invert?' (invertido: arriba=mejor)':''),color:'#8b949e',font:{family:'DM Sans',size:10}},
+        ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}
+    }
+  }});
+}
+
+cfgs.forEach(createChart);
+
+// Legend
+const lg=document.getElementById('legendGrid');
+countries.slice().sort((a,b)=>a.eco-b.eco).forEach(c=>{
+  const it=document.createElement('div');it.className='legend-item';
+  it.innerHTML=`<div class="legend-dot" style="background:${regionColors[c.region]}"></div><span class="legend-name">${c.name} (eco:${c.eco>=0?'+':''}${c.eco} | pol:${c.pol>=0?'+':''}${c.pol})</span>`;
+  lg.appendChild(it);
+});
+</script>
+</body>
+</html>
