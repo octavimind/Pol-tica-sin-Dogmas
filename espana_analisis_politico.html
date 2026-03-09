@@ -47,6 +47,16 @@
   .legend-bar{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:.82rem;align-items:center}
   .legend-bar .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
   .footer-note{text-align:center;padding:24px;color:var(--text-muted);font-size:.72rem;opacity:.7}
+  .thumb-btn{display:inline-block;cursor:pointer;font-size:1.1rem;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;transition:all .15s;margin:0 2px;user-select:none}
+  .thumb-btn:hover{background:var(--surface2);transform:scale(1.15)}
+  .thumb-btn.active-up{background:rgba(52,211,153,0.2);border-color:#34d399}
+  .thumb-btn.active-down{background:rgba(248,113,113,0.2);border-color:#f87171}
+  .prog-party{margin-bottom:20px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .prog-header{padding:12px 16px;font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:10px}
+  .prog-item{display:flex;align-items:flex-start;gap:10px;padding:8px 16px;border-top:1px solid var(--border);font-size:.82rem;color:var(--text-muted);line-height:1.4}
+  .prog-item:hover{background:rgba(255,255,255,.02)}
+  .prog-text{flex:1}
+  .prog-thumbs{flex-shrink:0;white-space:nowrap}
   @media(max-width:600px){.charts-grid{grid-template-columns:1fr}.section{padding:16px}}
 </style>
 </head>
@@ -55,6 +65,7 @@
 <header>
   <h1>España: Análisis por Gobiernos (1977–2025)</h1>
   <p class="subtitle">Quién ha gobernado, con qué resultados económicos y sociales, y qué leyes clave ha aprobado cada partido. Datos de INE, Banco de España, Banco Mundial y fuentes oficiales.</p>
+  <a href="index.html" style="display:inline-block;margin-top:12px;color:var(--highlight);text-decoration:none;font-size:.85rem;padding:6px 16px;border:1px solid rgba(251,191,36,0.25);border-radius:8px;background:rgba(251,191,36,0.06);">← Volver al inicio</a>
 </header>
 
 <div class="section">
@@ -127,10 +138,21 @@
   </div>
   <div class="table-scroll">
     <table class="laws-table">
-      <thead><tr><th>Periodo</th><th>Presidente</th><th>Partido</th><th>Leyes / Decisiones clave</th></tr></thead>
+      <thead><tr><th>Periodo</th><th>Presidente</th><th>Partido</th><th>Leyes / Decisiones clave</th><th style="width:80px;text-align:center">Tu opinión</th></tr></thead>
       <tbody id="lawsBody"></tbody>
     </table>
   </div>
+  <div id="lawsScore" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.88rem;color:var(--text-muted);line-height:1.6;"></div>
+  <div class="insight-box" style="margin-top:12px;"><strong>Ejercicio:</strong> Vota cada ley con 👍 o 👎 según tu percepción personal. El contador de abajo te mostrará qué partido tiene más leyes que tú consideras positivas. No hay respuestas correctas: es un ejercicio de autoconocimiento político.</div>
+</div>
+
+<!-- ELECTORAL PROGRAMS -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Propuestas electorales: Elecciones Generales 2023 (23-J)</div>
+  <div class="card-desc">Principales propuestas de cada partido en las últimas elecciones generales. Vota 👍 o 👎 cada propuesta según tu criterio. Fuentes: programas electorales oficiales publicados por cada partido.</div>
+  <div id="programsContainer"></div>
+  <div id="programsScore" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.88rem;color:var(--text-muted);line-height:1.6;"></div>
+  <div class="insight-box" style="margin-top:12px;"><strong>Reflexión:</strong> Después de votar, mira los resultados. ¿Te sorprende el partido con más propuestas que te gustan? Muchas veces coincidimos con partidos que no esperábamos. Esto demuestra que las propuestas concretas importan más que las etiquetas.</div>
 </div>
 
 </div><!-- section -->
@@ -356,17 +378,190 @@ const laws = [
 ];
 
 const lawsBody = document.getElementById('lawsBody');
+const lawVotes = {}; // {id: 1|-1|0}
+let lawId = 0;
+
 laws.forEach(([periodo, pm, party, coal, leyes]) => {
   const tag = party === 'PSOE' ? 'tag-psoe' : party === 'PP' ? 'tag-pp' : 'tag-ucd';
-  const formatted = leyes.replace(/\n/g, '<br>');
   const coalHtml = coal ? `<br><span class="tag-coal">${coal}</span>` : '';
-  lawsBody.innerHTML += `<tr>
-    <td style="white-space:nowrap;font-weight:600">${periodo}</td>
-    <td>${pm}</td>
-    <td><span class="${tag}">${party}</span>${coalHtml}</td>
-    <td>${formatted}</td>
-  </tr>`;
+  const items = leyes.split('\n');
+  items.forEach(item => {
+    const id = 'law-' + (lawId++);
+    lawVotes[id] = { vote: 0, party };
+    const clean = item.replace(/^• /, '');
+    lawsBody.innerHTML += `<tr>
+      <td style="white-space:nowrap;font-weight:600;font-size:.75rem">${periodo}</td>
+      <td style="font-size:.78rem">${pm}</td>
+      <td><span class="${tag}">${party}</span>${coalHtml}</td>
+      <td style="font-size:.8rem">${clean}</td>
+      <td style="text-align:center;white-space:nowrap">
+        <span class="thumb-btn" data-id="${id}" data-val="1" onclick="voteLaw(this)">👍</span>
+        <span class="thumb-btn" data-id="${id}" data-val="-1" onclick="voteLaw(this)">👎</span>
+      </td>
+    </tr>`;
+  });
 });
+
+function voteLaw(el) {
+  const id = el.dataset.id, val = parseInt(el.dataset.val);
+  const cur = lawVotes[id].vote;
+  lawVotes[id].vote = cur === val ? 0 : val;
+  // Update UI
+  const row = el.parentElement;
+  row.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active-up','active-down'));
+  if (lawVotes[id].vote === 1) row.querySelector('[data-val="1"]').classList.add('active-up');
+  if (lawVotes[id].vote === -1) row.querySelector('[data-val="-1"]').classList.add('active-down');
+  updateLawsScore();
+}
+
+function updateLawsScore() {
+  const scores = {};
+  Object.values(lawVotes).forEach(v => {
+    if (!scores[v.party]) scores[v.party] = { up: 0, down: 0 };
+    if (v.vote === 1) scores[v.party].up++;
+    if (v.vote === -1) scores[v.party].down++;
+  });
+  const partyCol = { PSOE: 'var(--psoe)', PP: 'var(--pp)', UCD: 'var(--ucd)' };
+  let html = '<strong style="color:var(--text)">📊 Tu puntuación por partido:</strong><br>';
+  let voted = false;
+  for (const [p, s] of Object.entries(scores)) {
+    if (s.up || s.down) voted = true;
+    const net = s.up - s.down;
+    const bar = net > 0 ? '🟢'.repeat(Math.min(net, 10)) : net < 0 ? '🔴'.repeat(Math.min(-net, 10)) : '—';
+    html += `<span style="color:${partyCol[p]};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 = <strong style="color:var(--text)">${net >= 0 ? '+' : ''}${net}</strong> ${bar}<br>`;
+  }
+  if (!voted) html += '<span style="opacity:.5">Vota las leyes para ver los resultados</span>';
+  document.getElementById('lawsScore').innerHTML = html;
+}
+updateLawsScore();
+
+// ============ ELECTORAL PROGRAMS 2023 ============
+const programs = [
+  { party: 'VOX', color: '#63be21', tag: 'Extrema derecha', proposals: [
+    'Derogación de la ley del aborto',
+    'Ilegalización de partidos independentistas',
+    'Supresión del Tribunal Constitucional',
+    'Eliminación de las policías autonómicas (Mossos, Ertzaintza)',
+    'Sustitución de la ley de violencia de género por ley de protección de la familia',
+    'Derogación de la ley de memoria histórica',
+    'Muro fronterizo en Ceuta y Melilla; deportación masiva de inmigrantes ilegales',
+    'Eliminación de impuestos: patrimonio, sucesiones, donaciones',
+    'Supresión del Ministerio de Igualdad',
+    'España como nación única: eliminación de competencias autonómicas en educación y sanidad',
+  ]},
+  { party: 'PP', color: '#1d4ed8', tag: 'Centro-derecha', proposals: [
+    'Recuperar el delito de sedición (derogado por Sánchez)',
+    'Eliminar el impuesto a las grandes fortunas',
+    'Castellano como lengua vehicular en toda España',
+    'Suprimir la ley de memoria democrática',
+    'Bajar impuestos: deflactar IRPF, eliminar impuesto patrimonio progresivamente',
+    'Eliminar el mecanismo de excepción ibérica del gas',
+    'Recuperar permiso paterno para aborto de menores de edad',
+    'Ley de conciliación: ampliar flexibilidad horaria laboral',
+    'Fin del servicio militar obligatorio de reservistas (mantener profesionalización)',
+    'Plan de vivienda: construir 200.000 viviendas y liberar suelo público',
+  ]},
+  { party: 'PSOE', color: '#e63946', tag: 'Centro-izquierda', proposals: [
+    'Construir 183.000 viviendas públicas de alquiler (50% para jóvenes)',
+    'Transporte público gratuito para menores de 24 años',
+    'SMI nunca inferior al 60% del salario medio (compromiso legal)',
+    'Educación gratuita universitaria y FP para quienes aprueben a la primera',
+    'Acabar con listas de espera sanitarias: tiempos máximos por ley',
+    'Avales ICO para primera vivienda de menores de 35 años',
+    'Abolición de la prostitución',
+    'Ampliar permisos de paternidad/maternidad a 20 semanas',
+    'Herramienta para que cada ciudadano vea a qué se destinan sus impuestos',
+    'Atraer empresas e industrias con acuerdo social por el pleno empleo',
+  ]},
+  { party: 'Sumar/Podemos', color: '#7b2d8e', tag: 'Izquierda', proposals: [
+    'Jornada laboral de 37.5 horas (con previsión de bajar a 32)',
+    'Herencia universal de 20.000€ para jóvenes al cumplir 23 años',
+    'Subir pensiones mínimas por encima del IPC',
+    'Alquiler social obligatorio para grandes tenedores de vivienda',
+    'Bono de emergencia de 1.000€ para hogares con hipoteca variable',
+    'Creación de un banco público',
+    'Reducir brecha de género en pensiones',
+    'Reforma de la ley sobre trabajo nocturno y turnos',
+    'Impuesto reforzado a grandes fortunas y beneficios extraordinarios',
+    'Ampliación de permisos de maternidad y paternidad',
+  ]},
+  { party: 'ERC', color: '#ffb81c', tag: 'Independentismo izquierda (Cataluña)', proposals: [
+    'Derecho a la autodeterminación de Cataluña (referéndum pactado)',
+    'Amnistía para todos los encausados del procés',
+    'Blindaje de la inmersión lingüística en catalán',
+    'Transición energética: 100% renovables para 2030 en Cataluña',
+    'Fin de la monarquía: república federal plurinacional',
+    'Aumento del SMI a 1.200€',
+    'Mayor inversión en infraestructuras en Cataluña (deuda histórica)',
+    'Reforma fiscal progresiva: más impuestos a grandes patrimonios',
+  ]},
+  { party: 'Junts (antigua CiU)', color: '#00b4d8', tag: 'Independentismo centro-derecha (Cataluña)', proposals: [
+    'Independencia de Cataluña como objetivo irrenunciable',
+    'Amnistía y retorno de Puigdemont sin consecuencias penales',
+    'Cataluña como estado miembro de la UE',
+    'Bajada de impuestos para empresas y autónomos catalanes',
+    'Pacto fiscal: Cataluña recauda y gestiona todos sus impuestos',
+    'Defensa del catalán como lengua preferente en educación y administración',
+    'Apoyo a la empresa y el emprendimiento: menos burocracia',
+    'Modelo de seguridad propio: Mossos como única policía en Cataluña',
+  ]},
+];
+
+const progVotes = {};
+let progId = 0;
+const progContainer = document.getElementById('programsContainer');
+
+programs.forEach(prog => {
+  let html = `<div class="prog-party">`;
+  html += `<div class="prog-header" style="background:${prog.color}22;border-left:4px solid ${prog.color}"><span style="color:${prog.color}">${prog.party}</span><span style="font-size:.7rem;color:var(--text-muted);font-weight:400">${prog.tag}</span></div>`;
+  prog.proposals.forEach(p => {
+    const id = 'prog-' + (progId++);
+    progVotes[id] = { vote: 0, party: prog.party };
+    html += `<div class="prog-item">
+      <div class="prog-text">${p}</div>
+      <div class="prog-thumbs">
+        <span class="thumb-btn" data-id="${id}" data-val="1" onclick="voteProg(this)">👍</span>
+        <span class="thumb-btn" data-id="${id}" data-val="-1" onclick="voteProg(this)">👎</span>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  progContainer.innerHTML += html;
+});
+
+function voteProg(el) {
+  const id = el.dataset.id, val = parseInt(el.dataset.val);
+  const cur = progVotes[id].vote;
+  progVotes[id].vote = cur === val ? 0 : val;
+  const row = el.parentElement;
+  row.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active-up','active-down'));
+  if (progVotes[id].vote === 1) row.querySelector('[data-val="1"]').classList.add('active-up');
+  if (progVotes[id].vote === -1) row.querySelector('[data-val="-1"]').classList.add('active-down');
+  updateProgsScore();
+}
+
+function updateProgsScore() {
+  const scores = {};
+  Object.values(progVotes).forEach(v => {
+    if (!scores[v.party]) scores[v.party] = { up: 0, down: 0 };
+    if (v.vote === 1) scores[v.party].up++;
+    if (v.vote === -1) scores[v.party].down++;
+  });
+  const sorted = Object.entries(scores).sort((a, b) => (b[1].up - b[1].down) - (a[1].up - a[1].down));
+  let html = '<strong style="color:var(--text)">📊 Tu afinidad por partido (propuestas 2023):</strong><br>';
+  let voted = false;
+  const progCol = { 'VOX':'#63be21','PP':'#1d4ed8','PSOE':'#e63946','Sumar/Podemos':'#7b2d8e','ERC':'#ffb81c','Junts (antigua CiU)':'#00b4d8' };
+  sorted.forEach(([p, s]) => {
+    if (s.up || s.down) voted = true;
+    const net = s.up - s.down;
+    const pct = s.up + s.down > 0 ? Math.round(s.up / (s.up + s.down) * 100) : 0;
+    const bar = '█'.repeat(Math.round(pct / 10));
+    html += `<span style="color:${progCol[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 → <strong style="color:var(--text)">${pct}% afinidad</strong> <span style="color:${progCol[p]||'#999'};font-size:.7rem">${bar}</span><br>`;
+  });
+  if (!voted) html += '<span style="opacity:.5">Vota las propuestas para ver tu afinidad</span>';
+  document.getElementById('programsScore').innerHTML = html;
+}
+updateProgsScore();
 </script>
 </body>
 </html>
