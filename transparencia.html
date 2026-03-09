@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transparencia: Todos los prompts usados</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--accent:#fbbf24}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7}
+  header{padding:40px 32px 20px;text-align:center;border-bottom:1px solid var(--border)}
+  h1{font-family:'Instrument Serif',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:400;margin-bottom:6px;color:var(--accent)}
+  .subtitle{color:var(--text-muted);font-size:.9rem;max-width:700px;margin:0 auto}
+  .back{display:inline-block;margin-top:12px;color:var(--accent);text-decoration:none;font-size:.85rem;padding:6px 16px;border:1px solid rgba(251,191,36,0.25);border-radius:8px;background:rgba(251,191,36,0.06)}
+  .section{max-width:900px;margin:0 auto;padding:32px 28px}
+  .page-block{margin-bottom:32px}
+  .page-title{font-family:'Instrument Serif',serif;font-size:1.3rem;color:var(--accent);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .prompt{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:12px;font-size:.88rem;color:var(--text);white-space:pre-wrap;word-wrap:break-word;line-height:1.6}
+  .prompt-num{display:inline-block;background:var(--accent);color:#000;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:8px}
+  .note{background:var(--surface2);border-radius:12px;padding:16px 20px;font-size:.85rem;color:var(--text-muted);margin-bottom:24px;line-height:1.6}
+  .footer-note{text-align:center;padding:24px;color:var(--text-muted);font-size:.72rem;opacity:.5}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Transparencia: los prompts originales</h1>
+  <p class="subtitle">Todas las instrucciones que se dieron a Claude (IA de Anthropic) para generar esta web, tal cual fueron escritas, sin editar ni filtrar. Así se puede juzgar si hay sesgo en lo que se pidió.</p>
+  <a href="index.html" class="back">← Volver al inicio</a>
+</header>
+
+<div class="section">
+
+<div class="note">
+  <strong>¿Qué es esto?</strong> Esta página muestra, palabra por palabra, todos los mensajes ("prompts") que se enviaron a la inteligencia artificial Claude para crear los dashboards de política internacional y el análisis de España. El objetivo es la transparencia total: que cualquiera pueda verificar qué se pidió y juzgar si hay sesgos en las instrucciones. Los prompts aparecen en orden cronológico, agrupados por la página a la que afectan.
+</div>
+
+<!-- ============ PÁGINA INTERNACIONAL ============ -->
+<div class="page-block">
+<div class="page-title">🌍 Dashboard de Política Internacional</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 1</span>
+QUiero hacer una sesión de política con mi hija, que esté alejada de dogmas y creencias preestablecidas y se base en datos reales.
+Crea una lista de países donde se indique el PIB, el nivel de democracia según organismos oficiales y su equilibrio político medio de los últimos 20 años (desde extrama izquierda para los países comunistas, izquierda los países socialistas con gran estado del bienestar, altos impuestos y cobertura social amplia, derecha con países más capitalistas con menores coberturas sociales y derecha extrema con países con un estado mínimo que ofrezca ejército y poco más). Indica el crecimiento medio del PIB en esos 20 años para cada país. Asimismo indica el nivel de tolerancia en varios aspectos: inmigración, sexualidad, feminismo, etc.</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 2</span>
+1 Tabla tipo excel
+1. 40 países estábien
+2. perfecto, también usa indices reconocidos para niveles de corrupcion (que no lo había dicho pero es interesante), democracia y seguridad pública
+ok adelante</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 3</span>
+prepara varias visualizaciones donde en el eje horizontal haya siempre la misma (a la izquierda comunismo, a continuación países socialistas o de izquierdas, después de derechas y finalmente extrema derecha)  y en el eje vertical pon en cada gráfico uno distinto (nivel de democracia, nivel de seguridad, igualdad de oportunidades, crecimiento del PIB, respeto, etc.)</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 4</span>
+me llama la atención que china esté en extrema izquierda cuando ahora no hay democracia, pero si que hay capitalismo y la gente se puede hacer rica, cómo funciona realmente o se interpreta esto?</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 5</span>
+añade el gráfico que comentas: dos ejes: uno económico (estado vs mercado) y otro de libertades (autoritarismo vs democracia)
+Añade a los gráficos anyteriores Venzuela, el Salvador
+En los gráficos, cuando pase el mouse que se siga viendo el país, pero que a priori solo salgan los nombres de España, EEUU, China, Rusia, Venezuela, Cuba, Arabia Saudita, Singapur, Nueva Zelanda, Suiza, Japón, Israel
+Al hacer Control+F que se busque también entre las bolas de los gráficos</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 6</span>
+Ahora añade una recta de regresión en cada gráfico. Cuando sea suficiente una recta mejor para simplificar la epxlicación, si para dar una buena explicación se necesitan cuadráticas o diferentes puedes usarlo.
+Añade en los gráficos los nombres en los siguientes países: Alemania, Francia, Noruega</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 7</span>
+Ha salido un error en el dashboard (Uncaught Error: Uncaught TypeError: Cannot read properties of undefined (reading 'dataIndex'))
+me sorprende el gráfico de gasto social como % del PIB, no se ve una correlación entre si son países de derechas o izquierdas... y pensaba que esa era la base de la diferencia. Añade una nota justificativa
+Cuál sería el factor que explica más la desigualdad, ya que veoi que el ser de izquierdas o derechas no explica mucho. Añade una nota que lo explique
+Añade la explicación anterior que me has dado de China tras la leyenda de países (poniendo en china un (*) como referencia</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 8</span>
+como sería la recta de regresión de Gasto Social (% del PIB) si no hubiera Cuba? añádela y pon una nota</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 9</span>
+Si valoras las libertades y el respeto, también consideras que es importante el crecimiento económico, cuál debería ser tu país ideal y tu referente político</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 10</span>
+ok, hazlo de tamaño grande como el primero y añade este último comentario</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 11</span>
+Lo mismo que me sorprendía de China, que lo veía bastante a la izquierda para lo "empresarial" que es, me sucede pero al revés con Rusia, lo tenía como un país comunista (de izquierdas), pero sale como un país de derechas?</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 12</span>
+añádelo tambien como nota final</div>
+
+</div>
+
+<!-- ============ PÁGINA ESPAÑA ============ -->
+<div class="page-block">
+<div class="page-title">🇪🇸 España: Análisis por Gobiernos</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 13</span>
+Creo que un muy buen siguiente paso sería crear una nueva pestaña en la que entraramos más a fondo en España, que es donde deberá votar, pero quiero seguir con el mismo rigor basado en datos.
+Añade una primera linea de qué países ha mandado un partido de derechas o de izquierdas (indica el nombre del partido + si ha necesitado coalición)
+A continuación crea varios gráficos, en la horizontal los años, en color saber qué partido (rojo PSO, azul PP) y en la vertical un elemento por gráfico (crecimiento del PIB, inflación, nivel de corrupción, aumento de libertades, etc sigue el mismo enfoque)
+A continuación añade una tabla que marque las leyes más representativas que ha aprobado cada partido desde el inicio de la democracia</div>
+
+</div>
+
+<!-- ============ ESTRUCTURA Y NAVEGACIÓN ============ -->
+<div class="page-block">
+<div class="page-title">🔧 Estructura, navegación y publicación</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 14</span>
+crea una cabecera, que tenga acceso a los dos tabs, el de política internacional, y el de españa</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 15</span>
+La Línea de Gobiernos de España (1977–2025) quiero que se vea sin scroll lateral</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 16</span>
+qué sería necesario hacer para compartir esto por whatsapp?</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 17</span>
+vayamos con la opción 1</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 18</span>
+[captura de pantalla del repositorio GitHub creado]
+he hecho el 1, guiame en el 2</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 19</span>
+[captura de pantalla de los archivos subidos a GitHub]</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 20</span>
+[captura de pantalla de GitHub Pages settings]
+Deploy from a Branch está desactivado</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 21</span>
+[captura de pantalla de GitHub Pages configurado]</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 22</span>
+[captura de pantalla: 404 en GitHub Pages]</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 23</span>
+ok ya va</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 24</span>
+En la página principal añade que esta página se ha creado para tener una conversación polítivca con una hija de 14 años llamada Ivet
+Me faltan botones para volver al índice desde las dos página secundarias 
+En España: Análisis por Gobiernos (1977–2025) en la parte de leyes relevantes, añade la posibilidad de poner un thumbs up o thumbs down a las leyes que se quiera, para ver en base a la percepción de cada uno, quien tiene más leyes positivas
+Añade a continuación en esa página un resumen de los últimos proyectos electorales en las últimas elecciones, tb con la posibilidad de poner thumbs up or down. Hazlo para Vox, PP, PSOE, Podemos, ERC y CIU</div>
+
+<div class="prompt"><span class="prompt-num">Prompt 25</span>
+Para dar transparencia al proceso, crea una cuarta página donde salgan todos mis prompts, por página y pon un link en el índice inicial. No resumas ni filtres, quiero que salgan tal cual</div>
+
+</div>
+
+</div><!-- section -->
+
+<div class="footer-note">
+  Todos los prompts se han copiado literalmente de la conversación con Claude (Anthropic), sin edición.<br>
+  Los prompts que incluían capturas de pantalla se indican con [captura de pantalla] ya que las imágenes no se pueden reproducir en texto.
+</div>
+
+</body>
+</html>
