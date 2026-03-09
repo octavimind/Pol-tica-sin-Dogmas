@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política y Datos: Sesión Educativa</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2333; --border: #30363d;
+    --text: #e6edf3; --text-muted: #8b949e;
+    --gradient-left: #ff6b6b; --gradient-center: #feca57; --gradient-right: #48dbfb;
+    --accent: #fbbf24; --psoe: #e63946; --pp: #1d4ed8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+  .noise {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  .container {
+    position: relative; z-index: 1; text-align: center; max-width: 860px; padding: 40px 28px;
+  }
+
+  .badge {
+    display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent);
+    border: 1px solid rgba(251, 191, 36, 0.25); background: rgba(251, 191, 36, 0.06);
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif; font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 400; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--gradient-left), var(--gradient-center), var(--gradient-right));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--text-muted); font-size: 1.05rem; max-width: 620px; margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .cards {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%;
+  }
+
+  .card-link {
+    text-decoration: none; color: inherit;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 32px 28px; position: relative; overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+
+  .card-link:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .card-link.world::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--gradient-left), var(--gradient-center), var(--gradient-right));
+  }
+  .card-link.world:hover { border-color: var(--gradient-center); }
+
+  .card-link.spain::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--psoe), var(--accent), var(--pp));
+  }
+  .card-link.spain:hover { border-color: var(--accent); }
+
+  .card-icon {
+    font-size: 3rem; margin-bottom: 16px; line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+
+  .card-title {
+    font-family: 'Instrument Serif', serif; font-size: 1.4rem; font-weight: 400;
+    margin-bottom: 8px;
+  }
+
+  .card-desc {
+    color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 16px;
+  }
+
+  .card-stats {
+    display: flex; gap: 16px; justify-content: center; font-size: 0.75rem; color: var(--text-muted);
+  }
+  .card-stat {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .card-stat .num {
+    font-size: 1.3rem; font-weight: 700; color: var(--accent);
+  }
+
+  .card-cta {
+    margin-top: 20px; display: inline-flex; align-items: center; gap: 6px;
+    color: var(--accent); font-size: 0.88rem; font-weight: 600;
+    padding: 8px 20px; border-radius: 10px;
+    background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.2);
+    transition: background 0.2s, transform 0.15s;
+  }
+  .card-link:hover .card-cta { background: rgba(251, 191, 36, 0.15); transform: scale(1.02); }
+
+  .footer {
+    margin-top: 48px; color: var(--text-muted); font-size: 0.72rem; opacity: 0.5;
+    max-width: 600px; line-height: 1.5;
+  }
+
+  @media (max-width: 650px) {
+    .cards { grid-template-columns: 1fr; }
+    .container { padding: 32px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<div class="container">
+  <div class="badge">Sesión educativa · basada en datos</div>
+
+  <h1>Política sin dogmas</h1>
+
+  <p class="subtitle">
+    Dos análisis para entender la política con datos reales, índices oficiales y sin ideología preconcebida. Elige por dónde empezar.
+  </p>
+
+  <div class="cards">
+
+    <a href="dashboard_politico_v4.html" class="card-link world">
+      <div class="card-icon">🌍</div>
+      <div class="card-title">Política Internacional</div>
+      <div class="card-desc">
+        42 países del mundo analizados en el espectro izquierda-derecha. Democracia, corrupción, igualdad, crecimiento, libertades… y un índice compuesto interactivo para encontrar tu país ideal.
+      </div>
+      <div class="card-stats">
+        <div class="card-stat"><span class="num">42</span> países</div>
+        <div class="card-stat"><span class="num">11</span> gráficos</div>
+        <div class="card-stat"><span class="num">10</span> índices</div>
+      </div>
+      <div class="card-cta">Explorar →</div>
+    </a>
+
+    <a href="espana_analisis_politico.html" class="card-link spain">
+      <div class="card-icon">🇪🇸</div>
+      <div class="card-title">España en profundidad</div>
+      <div class="card-desc">
+        48 años de democracia bajo la lupa: quién ha gobernado, con qué resultados económicos, qué leyes ha aprobado cada partido y cómo han evolucionado los derechos y las libertades.
+      </div>
+      <div class="card-stats">
+        <div class="card-stat"><span class="num">48</span> años</div>
+        <div class="card-stat"><span class="num">6</span> gráficos</div>
+        <div class="card-stat"><span class="num">40+</span> leyes</div>
+      </div>
+      <div class="card-cta">Explorar →</div>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    Fuentes: EIU Democracy Index · Transparency International · WEF Gender Gap · Williams Institute · Global Peace Index · MIPEX · RSF · FMI · Banco Mundial · INE · Banco de España · Eurostat · BOE<br>
+    Todos los datos son de fuentes oficiales o académicas reconocidas. Uso exclusivamente educativo.
+  </div>
+</div>
+
+</body>
+</html>

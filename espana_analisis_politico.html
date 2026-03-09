@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>España: Análisis Político por Gobiernos (1977-2025)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--psoe:#e63946;--pp:#1d4ed8;--ucd:#9ca3af;--highlight:#fbbf24; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.6}
+  header{padding:40px 32px 20px;text-align:center;border-bottom:1px solid var(--border)}
+  h1{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;margin-bottom:6px;background:linear-gradient(135deg,var(--psoe),var(--highlight),var(--pp));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .subtitle{color:var(--text-muted);font-size:.9rem;max-width:750px;margin:0 auto}
+  .back-link{display:inline-block;margin-top:12px;color:var(--highlight);text-decoration:none;font-size:.82rem;opacity:.7}
+  .section{max-width:1400px;margin:0 auto;padding:24px 28px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--psoe),var(--highlight),var(--pp))}
+  .card-title{font-family:'Instrument Serif',serif;font-size:1.35rem;margin-bottom:12px}
+  .card-desc{color:var(--text-muted);font-size:.8rem;margin-bottom:16px;line-height:1.4}
+  .chart-h{position:relative;height:380px}
+  .chart-sm{position:relative;height:320px}
+  .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:20px}
+  .insight-box{margin-top:14px;padding:12px 16px;background:var(--surface2);border-left:3px solid var(--highlight);border-radius:0 8px 8px 0;font-size:.82rem;color:var(--text-muted);line-height:1.5}
+  .insight-box strong{color:var(--text)}
+
+  /* Timeline */
+  .timeline{display:flex;flex-wrap:wrap;gap:2px;padding:8px 0 16px;margin-bottom:8px}
+  .tl-block{flex:1 1 0;min-width:0;text-align:center;padding:8px 2px 6px;border-radius:6px;font-size:.7rem;line-height:1.3;position:relative;cursor:default;transition:transform .15s}
+  .tl-block:hover{transform:scale(1.08);z-index:2}
+  .tl-block .year{font-weight:700;font-size:.68rem}
+  .tl-block .party{font-size:.55rem;opacity:.8;margin-top:1px}
+  .tl-block .pm{font-size:.5rem;opacity:.6;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* Laws table */
+  .laws-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.8rem}
+  .laws-table th{background:var(--surface2);color:var(--text-muted);padding:10px 12px;text-align:left;font-weight:600;border-bottom:2px solid var(--border);position:sticky;top:0}
+  .laws-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  .laws-table tr:hover td{background:rgba(255,255,255,.03)}
+  .tag-psoe{display:inline-block;background:var(--psoe);color:#fff;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-pp{display:inline-block;background:var(--pp);color:#fff;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-ucd{display:inline-block;background:var(--ucd);color:#000;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-coal{font-size:.65rem;color:var(--text-muted);font-style:italic}
+  .table-scroll{max-height:700px;overflow-y:auto;border-radius:12px;border:1px solid var(--border)}
+  .legend-bar{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:.82rem;align-items:center}
+  .legend-bar .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
+  .footer-note{text-align:center;padding:24px;color:var(--text-muted);font-size:.72rem;opacity:.7}
+  @media(max-width:600px){.charts-grid{grid-template-columns:1fr}.section{padding:16px}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>España: Análisis por Gobiernos (1977–2025)</h1>
+  <p class="subtitle">Quién ha gobernado, con qué resultados económicos y sociales, y qué leyes clave ha aprobado cada partido. Datos de INE, Banco de España, Banco Mundial y fuentes oficiales.</p>
+</header>
+
+<div class="section">
+
+<!-- TIMELINE -->
+<div class="card">
+  <div class="card-title">Línea de Gobiernos de España (1977–2025)</div>
+  <div class="card-desc">Cada bloque = un año. <span style="color:var(--ucd)">■ UCD</span> (centro) · <span style="color:var(--psoe)">■ PSOE</span> (centro-izquierda) · <span style="color:var(--pp)">■ PP</span> (centro-derecha). Debajo: presidente y si gobernó en coalición.</div>
+  <div class="timeline" id="timeline"></div>
+  <div class="insight-box">
+    <strong>Patrón:</strong> España ha alternado entre PSOE y PP de forma bastante equilibrada: ~24 años de PSOE y ~16 años de PP desde 1982 (más 5 años de UCD al inicio). El PSOE ha gobernado más tiempo, pero el PP ha tenido dos periodos con mayoría absoluta (2000-2004, 2011-2015). Desde 2015 ningún partido ha logrado mayoría absoluta, obligando a coaliciones y gobiernos minoritarios.
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="charts-grid">
+
+<div class="card">
+  <div class="card-title">Crecimiento del PIB real (%)</div>
+  <div class="card-desc">Variación anual del PIB en volumen. Fuente: Banco Mundial / INE. Franjas de color = partido en el gobierno.</div>
+  <div class="chart-sm"><canvas id="chartPIB"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> El crecimiento alto de los 80 fue con PSOE (González), la burbuja inmobiliaria creció bajo PP (Aznar) y PSOE (Zapatero), y la crisis de 2008-2013 afectó a ambos. La recuperación post-COVID (2021-2024) bajo PSOE (Sánchez) ha sido fuerte (3.5% en 2024). Las recesiones no respetan colores políticos: las provocan ciclos globales.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Tasa de Desempleo (%)</div>
+  <div class="card-desc">Media anual. Fuente: INE (EPA) / Eurostat. El desempleo es el gran problema estructural español.</div>
+  <div class="chart-sm"><canvas id="chartParo"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> El paro bajó con González (de 21% a 16%), se disparó en la recesión del 93, bajó a mínimos con Aznar (11%), volvió a subir con la crisis de 2008 bajo Zapatero y Rajoy (26%), y ha bajado bajo Sánchez (~11%). Ambos partidos han tenido éxitos y fracasos en empleo: el ciclo económico global pesa más que la política nacional.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Inflación (IPC, %)</div>
+  <div class="card-desc">Variación anual del IPC. Fuente: INE / Banco Mundial.</div>
+  <div class="chart-sm"><canvas id="chartIPC"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> La gran desinflación fue mérito de González/Solchaga (de 14% a 4%) para entrar en la UE y el euro. Desde el euro, la inflación se ha mantenido baja con ambos partidos (~2-3%). El pico de 2022 (8.4%) fue global por la guerra de Ucrania y la energía, no un fallo de política nacional.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Deuda Pública (% del PIB)</div>
+  <div class="card-desc">Deuda de las Administraciones Públicas. Fuente: Banco de España / Eurostat.</div>
+  <div class="chart-sm"><canvas id="chartDeuda"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> González heredó deuda alta y la redujo. Aznar la bajó al mínimo histórico (36% en 2007). Zapatero y Rajoy la dispararon por la crisis bancaria y el rescate. Sánchez la mantiene alta (~105%) pero estable. La deuda sube en crisis (inevitable) y debería bajar en bonanza (no siempre ocurre).</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Índice de Percepción de Corrupción (Transparency Intl)</div>
+  <div class="card-desc">Escala 0-100. Mayor = menos corrupción. Datos comparables desde 2012 (cambio metodológico TI).</div>
+  <div class="chart-sm"><canvas id="chartCorr"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> España empeoró en corrupción durante la burbuja inmobiliaria (casos Gürtel, ERE, Bárcenas, Nóos). Ambos partidos han tenido escándalos graves: Gürtel/Bárcenas (PP), ERE de Andalucía (PSOE), Nóos (Monarquía). La corrupción ha sido transversal, no de un solo partido.</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Avance en Derechos y Libertades (hitos acumulados)</div>
+  <div class="card-desc">Índice cualitativo: acumulación de leyes de derechos civiles, sociales y políticos aprobadas. Elaboración propia.</div>
+  <div class="chart-sm"><canvas id="chartLibertades"></canvas></div>
+  <div class="insight-box"><strong>Observación:</strong> Las grandes expansiones de derechos han sido bajo PSOE (divorcio, aborto, matrimonio gay, eutanasia, trans), mientras el PP ha tendido a consolidar sin ampliar (y en algunos casos intentó revertir, como la ley del aborto de Gallardón). Ambos aprobaron leyes contra violencia de género y de igualdad. En derechos civiles, la diferencia entre partidos SÍ es notable.</div>
+</div>
+
+</div><!-- charts-grid -->
+
+<!-- LAWS TABLE -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Leyes más representativas por gobierno (1977–2025)</div>
+  <div class="card-desc">Selección de las leyes y decisiones más importantes de cada legislatura, agrupadas por presidente.</div>
+  <div class="legend-bar">
+    <span><span class="swatch" style="background:var(--ucd)"></span> UCD (Suárez/Calvo-Sotelo)</span>
+    <span><span class="swatch" style="background:var(--psoe)"></span> PSOE</span>
+    <span><span class="swatch" style="background:var(--pp)"></span> PP</span>
+  </div>
+  <div class="table-scroll">
+    <table class="laws-table">
+      <thead><tr><th>Periodo</th><th>Presidente</th><th>Partido</th><th>Leyes / Decisiones clave</th></tr></thead>
+      <tbody id="lawsBody"></tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- section -->
+
+<div class="footer-note">
+  Fuentes: INE, Banco de España, Banco Mundial, Eurostat, Transparency International, BOE, Congreso de los Diputados.<br>
+  Datos económicos: PIB real (Banco Mundial/INE), Desempleo (EPA/Eurostat), IPC (INE), Deuda (Eurostat/BdE), CPI (TI desde 1995).<br>
+  Uso exclusivamente educativo. Elaboración propia.
+</div>
+
+<script>
+// ============ GOVERNMENT DATA ============
+const govs = [
+  {y:1977,party:'UCD',pm:'Suárez',coal:''},
+  {y:1978,party:'UCD',pm:'Suárez',coal:''},
+  {y:1979,party:'UCD',pm:'Suárez',coal:''},
+  {y:1980,party:'UCD',pm:'Suárez',coal:''},
+  {y:1981,party:'UCD',pm:'Calvo-Sotelo',coal:''},
+  {y:1982,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1983,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1984,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1985,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1986,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1987,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1988,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1989,party:'PSOE',pm:'González',coal:'Mayoría absoluta'},
+  {y:1990,party:'PSOE',pm:'González',coal:'Mayoría (ajustada)'},
+  {y:1991,party:'PSOE',pm:'González',coal:'Mayoría (ajustada)'},
+  {y:1992,party:'PSOE',pm:'González',coal:'Mayoría (ajustada)'},
+  {y:1993,party:'PSOE',pm:'González',coal:'Minoría (pacto CiU)'},
+  {y:1994,party:'PSOE',pm:'González',coal:'Minoría (pacto CiU)'},
+  {y:1995,party:'PSOE',pm:'González',coal:'Minoría (pacto CiU)'},
+  {y:1996,party:'PP',pm:'Aznar',coal:'Minoría (pacto CiU, PNV, CC)'},
+  {y:1997,party:'PP',pm:'Aznar',coal:'Minoría (pacto CiU, PNV, CC)'},
+  {y:1998,party:'PP',pm:'Aznar',coal:'Minoría (pacto CiU, PNV, CC)'},
+  {y:1999,party:'PP',pm:'Aznar',coal:'Minoría (pacto CiU, PNV, CC)'},
+  {y:2000,party:'PP',pm:'Aznar',coal:'Mayoría absoluta'},
+  {y:2001,party:'PP',pm:'Aznar',coal:'Mayoría absoluta'},
+  {y:2002,party:'PP',pm:'Aznar',coal:'Mayoría absoluta'},
+  {y:2003,party:'PP',pm:'Aznar',coal:'Mayoría absoluta'},
+  {y:2004,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2005,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2006,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2007,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2008,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2009,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2010,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2011,party:'PSOE',pm:'Zapatero',coal:'Minoría'},
+  {y:2012,party:'PP',pm:'Rajoy',coal:'Mayoría absoluta'},
+  {y:2013,party:'PP',pm:'Rajoy',coal:'Mayoría absoluta'},
+  {y:2014,party:'PP',pm:'Rajoy',coal:'Mayoría absoluta'},
+  {y:2015,party:'PP',pm:'Rajoy',coal:'Mayoría absoluta'},
+  {y:2016,party:'PP',pm:'Rajoy',coal:'Minoría (pacto C\'s)'},
+  {y:2017,party:'PP',pm:'Rajoy',coal:'Minoría (pacto C\'s)'},
+  {y:2018,party:'PSOE',pm:'Sánchez',coal:'Moción de censura'},
+  {y:2019,party:'PSOE',pm:'Sánchez',coal:'Minoría'},
+  {y:2020,party:'PSOE',pm:'Sánchez',coal:'Coalición (Podemos/UP)'},
+  {y:2021,party:'PSOE',pm:'Sánchez',coal:'Coalición (UP)'},
+  {y:2022,party:'PSOE',pm:'Sánchez',coal:'Coalición (UP)'},
+  {y:2023,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar)'},
+  {y:2024,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar)'},
+  {y:2025,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar)'},
+];
+
+// Timeline
+const tl = document.getElementById('timeline');
+govs.forEach(g => {
+  const d = document.createElement('div');
+  d.className = 'tl-block';
+  const col = g.party === 'PSOE' ? 'var(--psoe)' : g.party === 'PP' ? 'var(--pp)' : 'var(--ucd)';
+  d.style.background = col + '22';
+  d.style.borderBottom = `3px solid ${col}`;
+  d.innerHTML = `<div class="year" style="color:${col}">${g.y}</div><div class="party">${g.party}</div><div class="pm">${g.pm}</div>`;
+  d.title = `${g.y}: ${g.party} – ${g.pm}${g.coal ? '\n' + g.coal : ''}`;
+  tl.appendChild(d);
+});
+
+// ============ ECONOMIC DATA ============
+const years = govs.map(g => g.y);
+// GDP growth (real, %) - World Bank / INE
+const pib = [3.3,1.5,0.0,-0.1,-0.1,1.2,1.8,1.8,2.3,3.3,5.5,5.1,4.8,3.8,3.7,2.5,0.9,-1.0,2.8,2.7,4.7,4.7,4.5,5.3,4.0,2.7,2.4,3.2,3.7,4.2,3.8,3.8,1.1,-3.8,-0.3,-1.0,-3.0,-1.4,1.4,3.8,3.0,3.0,2.3,2.0,-10.8,6.4,5.8,2.5,3.5,2.8];
+// Unemployment rate (%) - EPA / Eurostat
+const paro = [5.3,7.0,8.7,11.5,14.4,16.2,17.5,20.1,21.0,20.5,20.2,19.5,17.3,16.3,18.4,22.7,24.1,22.8,19.6,17.2,15.9,13.0,11.3,11.1,10.5,10.6,11.5,11.0,11.0,8.5,8.3,8.2,11.3,17.9,19.9,21.4,24.8,26.1,24.4,22.1,19.6,17.2,14.1,14.1,15.5,14.8,12.9,12.1,11.3,11.0];
+// CPI Inflation (%) - INE
+const ipc = [24.5,19.8,15.7,15.5,14.6,14.4,12.2,11.3,8.8,8.3,5.2,4.8,6.8,6.7,5.9,4.7,4.6,4.3,3.6,1.6,3.5,2.8,3.5,3.5,2.3,3.6,3.1,2.7,3.0,3.6,2.7,4.2,1.4,-0.3,2.0,3.2,2.4,1.5,1.0,-0.2,1.7,2.0,0.7,0.3,-0.3,3.1,8.4,3.5,2.8,2.3];
+// Public debt (% GDP) - Eurostat / BdE - estimated for early years
+const deuda = [14,16,18,20,25,30,38,43,44,44,43,41,42,42,48,57,60,63,65,67,62,61,59,55,52,48,43,39,36,36,39,40,53,62,60,69,86,95,100,99,99,99,98,96,120,118,113,107,105,103];
+// Corruption CPI - TI (comparable from 1995; earlier estimated)
+const corr = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44,44,44,44,70,70,70,69,69,71,70,68,65,67,65,61,61,65,65,60,60,58,57,57,62,62,62,61,60,60,60,60];
+// Rights/freedoms cumulative index (qualitative, 0-100)
+const libertades = [15,25,30,32,33,38,40,42,42,44,46,47,47,47,48,48,48,48,48,48,50,50,50,50,50,50,50,50,55,60,62,64,64,64,64,64,64,64,65,65,66,66,68,68,68,72,74,78,82,84];
+
+function partyColor(y) {
+  const g = govs.find(g => g.y === y);
+  if (!g) return '#555';
+  return g.party === 'PSOE' ? '#e63946' : g.party === 'PP' ? '#3b82f6' : '#9ca3af';
+}
+function partyBg(y) {
+  const g = govs.find(g => g.y === y);
+  if (!g) return 'rgba(100,100,100,0.2)';
+  return g.party === 'PSOE' ? 'rgba(230,57,70,0.25)' : g.party === 'PP' ? 'rgba(59,130,246,0.25)' : 'rgba(156,163,175,0.2)';
+}
+
+// Annotation boxes for government periods
+function govAnnotations() {
+  const periods = [];
+  let start = govs[0].y, cur = govs[0].party;
+  for (let i = 1; i <= govs.length; i++) {
+    if (i === govs.length || govs[i].party !== cur) {
+      periods.push({ x1: start - 0.5, x2: (i < govs.length ? govs[i].y : govs[i-1].y + 1) - 0.5, party: cur });
+      if (i < govs.length) { start = govs[i].y; cur = govs[i].party; }
+    }
+  }
+  const annotations = {};
+  periods.forEach((p, i) => {
+    const col = p.party === 'PSOE' ? 'rgba(230,57,70,0.08)' : p.party === 'PP' ? 'rgba(59,130,246,0.08)' : 'rgba(156,163,175,0.06)';
+    annotations['bg' + i] = { type: 'box', xMin: p.x1, xMax: p.x2, backgroundColor: col, borderWidth: 0 };
+  });
+  return annotations;
+}
+
+const commonOpts = (title, yLabel) => ({
+  responsive: true, maintainAspectRatio: false,
+  layout: { padding: { top: 8, right: 12 } },
+  plugins: {
+    legend: { display: false },
+    annotation: { annotations: govAnnotations() },
+    tooltip: {
+      backgroundColor: '#1c2333ee', titleColor: '#e6edf3', bodyColor: '#8b949e',
+      borderColor: '#30363d', borderWidth: 1, cornerRadius: 8, padding: 10,
+      titleFont: { family: 'DM Sans', size: 12, weight: 700 },
+      bodyFont: { family: 'DM Sans', size: 11 },
+    }
+  },
+  scales: {
+    x: { grid: { color: '#21262d' }, border: { color: '#30363d' },
+      ticks: { color: '#8b949e', font: { family: 'DM Sans', size: 9 }, maxRotation: 90, autoSkip: true, autoSkipPadding: 10 } },
+    y: { grid: { color: '#21262d' }, border: { color: '#30363d' },
+      title: { display: true, text: yLabel, color: '#8b949e', font: { family: 'DM Sans', size: 10 } },
+      ticks: { color: '#8b949e', font: { family: 'DM Sans', size: 9 } } }
+  }
+});
+
+function makeBarChart(canvasId, data, label, yLabel) {
+  new Chart(document.getElementById(canvasId), {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        data,
+        backgroundColor: years.map(y => partyBg(y)),
+        borderColor: years.map(y => partyColor(y)),
+        borderWidth: 1.5,
+        borderRadius: 2,
+      }]
+    },
+    options: {
+      ...commonOpts(label, yLabel),
+      plugins: {
+        ...commonOpts(label, yLabel).plugins,
+        tooltip: {
+          ...commonOpts(label, yLabel).plugins.tooltip,
+          callbacks: {
+            title: items => {
+              const y = years[items[0].dataIndex];
+              const g = govs.find(g => g.y === y);
+              return `${y} — ${g.party} (${g.pm})`;
+            },
+            afterTitle: items => {
+              const g = govs.find(g => g.y === years[items[0].dataIndex]);
+              return g.coal || '';
+            },
+            label: item => `${label}: ${item.parsed.y !== null ? item.parsed.y + (yLabel.includes('%') ? '%' : '') : 'N/D'}`
+          }
+        }
+      }
+    }
+  });
+}
+
+function makeLineChart(canvasId, data, label, yLabel) {
+  new Chart(document.getElementById(canvasId), {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [{
+        data,
+        borderColor: '#fbbf24',
+        borderWidth: 2,
+        pointRadius: years.map((y, i) => data[i] !== null ? 3 : 0),
+        pointBackgroundColor: years.map(y => partyColor(y)),
+        pointBorderColor: years.map(y => partyColor(y)),
+        fill: false,
+        tension: 0.3,
+        spanGaps: true,
+      }]
+    },
+    options: commonOpts(label, yLabel)
+  });
+}
+
+makeBarChart('chartPIB', pib, 'Crecimiento PIB', 'PIB real (%)');
+makeLineChart('chartParo', paro, 'Desempleo', 'Tasa de paro (%)');
+makeBarChart('chartIPC', ipc, 'Inflación IPC', 'IPC anual (%)');
+makeLineChart('chartDeuda', deuda, 'Deuda pública', 'Deuda (% PIB)');
+makeLineChart('chartCorr', corr, 'CPI Corrupción', 'CPI (0-100, mayor=menos corrupción)');
+makeLineChart('chartLibertades', libertades, 'Derechos', 'Índice acumulado derechos (0-100)');
+
+// ============ LAWS TABLE ============
+const laws = [
+  ['1977-1982','Suárez / Calvo-Sotelo','UCD','',
+    '• <b>Constitución de 1978</b> — fundamento de la democracia española, aprobada en referéndum (87.8% a favor)\n• Ley de Amnistía (1977) — reconciliación post-dictadura\n• Pactos de la Moncloa (1977) — acuerdo económico y social transversal\n• Estatutos de Autonomía de Cataluña y País Vasco (1979)\n• Ley del Divorcio (1981) — primera regulación del divorcio en España\n• Despenalización del adulterio y de los anticonceptivos'],
+  ['1982-1996','Felipe González','PSOE','Mayoría absoluta (1982-93), minoría con CiU (1993-96)',
+    '• <b>Entrada en la CEE/UE</b> (1986) — decisión transformadora de la economía española\n• Referéndum OTAN (1986) — permanencia en la Alianza Atlántica\n• Ley General de Sanidad (1986) — sistema sanitario universal\n• LOGSE (1990) — educación obligatoria hasta los 16 años\n• Ley de Extranjería (1985) — primera regulación migratoria\n• Despenalización parcial del aborto (1985) — tres supuestos\n• Expo 92 (Sevilla) y Juegos Olímpicos (Barcelona) — modernización de infraestructuras\n• Ley de Pensiones no contributivas (1990)\n• Privatizaciones parciales de empresas públicas (Repsol, Endesa, Telefónica)'],
+  ['1996-2004','José Mª Aznar','PP','Minoría con CiU/PNV/CC (1996-2000), mayoría absoluta (2000-04)',
+    '• <b>Entrada en el Euro</b> (1999) — cumplimiento de criterios de Maastricht\n• Profesionalización del ejército (2001) — fin del servicio militar obligatorio\n• Ley de Extranjería restrictiva (2000, reformada 2003)\n• Plan Hidrológico Nacional (2001) — trasvase del Ebro (polémico, luego derogado)\n• Ley de Estabilidad Presupuestaria (2001)\n• Liberalización del suelo (1998) — precedente de la burbuja inmobiliaria\n• Apoyo a la guerra de Irak (2003) — sin mandato ONU, gran rechazo social\n• Privatizaciones completadas (Telefónica, Repsol, Tabacalera, Iberia)'],
+  ['2004-2011','J. L. Rodríguez Zapatero','PSOE','Minoría (ambas legislaturas)',
+    '• <b>Ley de Matrimonio Igualitario</b> (2005) — España, 3er país del mundo en legalizarlo\n• Ley de Igualdad efectiva de mujeres y hombres (2007)\n• Ley contra la Violencia de Género (2004) — juzgados especializados\n• Ley de Dependencia (2006) — atención a personas dependientes\n• Ley de Memoria Histórica (2007)\n• Ley antitabaco (2006, ampliada 2010)\n• Derogación del trasvase del Ebro; Plan AGUA\n• Reforma laboral (2010) — abaratamiento del despido (presión UE/crisis)\n• Reforma del art. 135 de la Constitución (2011) — techo de gasto (con PP)'],
+  ['2011-2018','Mariano Rajoy','PP','Mayoría absoluta (2011-15), minoría con C\'s (2016-18)',
+    '• <b>Reforma laboral</b> (2012) — flexibilización del despido y negociación colectiva\n• Rescate bancario europeo (2012) — 41.000M€ para la banca española\n• Ley de Emprendedores (2013)\n• Ley Mordaza (Ley de Seguridad Ciudadana, 2015) — restricción de protestas\n• LOMCE "Ley Wert" (2013) — reforma educativa (luego derogada)\n• Ley de Abdicación de Juan Carlos I (2014)\n• Aplicación del Art. 155 en Cataluña (2017) — intervención de la autonomía\n• Intento de reforma de la Ley del Aborto (Gallardón, 2014) — retirada por rechazo social\n• Destituido por moción de censura (2018) — caso Gürtel'],
+  ['2018-2025','Pedro Sánchez','PSOE','Moción censura (2018), minoría (2019), coalición UP (2020-23), coalición Sumar (2023-)',
+    '• <b>Ley de Eutanasia</b> (2021) — España, 5º país de Europa en regularla\n• Ley Trans (2023) — autodeterminación de género\n• Ley del "solo sí es sí" (2022) — consentimiento sexual explícito (polémica por rebajas de penas)\n• Reforma laboral (2021) — prioridad del convenio sectorial, límite a temporalidad\n• Ley de Memoria Democrática (2022) — ampliación de la de 2007\n• Subida del Salario Mínimo (de 736€ a 1.134€, +54% en 6 años)\n• Ingreso Mínimo Vital (2020)\n• Ley de Vivienda (2023) — regulación de alquileres\n• Indultos a los presos del procés catalán (2021)\n• Ley de Amnistía para el procés (2024)\n• Ley de Bienestar Animal (2023)\n• LOMLOE "Ley Celaá" (2020) — derogación de la LOMCE'],
+];
+
+const lawsBody = document.getElementById('lawsBody');
+laws.forEach(([periodo, pm, party, coal, leyes]) => {
+  const tag = party === 'PSOE' ? 'tag-psoe' : party === 'PP' ? 'tag-pp' : 'tag-ucd';
+  const formatted = leyes.replace(/\n/g, '<br>');
+  const coalHtml = coal ? `<br><span class="tag-coal">${coal}</span>` : '';
+  lawsBody.innerHTML += `<tr>
+    <td style="white-space:nowrap;font-weight:600">${periodo}</td>
+    <td>${pm}</td>
+    <td><span class="${tag}">${party}</span>${coalHtml}</td>
+    <td>${formatted}</td>
+  </tr>`;
+});
+</script>
+</body>
+</html>

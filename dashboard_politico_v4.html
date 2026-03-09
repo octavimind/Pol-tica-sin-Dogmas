@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espectro Político vs Indicadores Mundiales</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2333; --border: #30363d;
+    --text: #e6edf3; --text-muted: #8b949e;
+    --gradient-left: #ff6b6b; --gradient-center: #feca57; --gradient-right: #48dbfb;
+    --highlight: #fbbf24; --regression: #ff9f43;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; line-height: 1.6; overflow-x: hidden; }
+  .noise-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000;
+  }
+  .search-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: flex-start; padding-top: 80px; }
+  .search-overlay.active { display: flex; }
+  .search-box { background: var(--surface); border: 2px solid var(--highlight); border-radius: 16px; padding: 20px 24px; width: 480px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .search-box input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; }
+  .search-box input:focus { border-color: var(--highlight); }
+  .search-box input::placeholder { color: var(--text-muted); }
+  .search-hint { margin-top: 8px; font-size: 0.75rem; color: var(--text-muted); }
+  .search-results { margin-top: 12px; max-height: 300px; overflow-y: auto; }
+  .search-result-item { padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.88rem; display: flex; align-items: center; gap: 10px; transition: background 0.15s; }
+  .search-result-item:hover { background: var(--surface2); }
+  .search-result-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .search-result-item .pol-tag { font-size: 0.7rem; background: var(--surface2); padding: 2px 8px; border-radius: 4px; color: var(--text-muted); margin-left: auto; }
+  header { padding: 48px 40px 20px; text-align: center; position: relative; }
+  header::after { content: ''; position: absolute; bottom: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+  h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 400; letter-spacing: -0.02em; margin-bottom: 8px; background: linear-gradient(135deg, var(--gradient-left), var(--gradient-center), var(--gradient-right)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .subtitle { color: var(--text-muted); font-size: 0.95rem; max-width: 780px; margin: 0 auto; }
+  .search-tip { margin-top: 14px; font-size: 0.78rem; color: var(--text-muted); opacity: 0.6; }
+  .search-tip kbd { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-family: inherit; font-size: 0.75rem; }
+  .spectrum-bar { margin: 24px auto 0; max-width: 600px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--gradient-left) 0%, var(--gradient-center) 50%, var(--gradient-right) 100%); }
+  .spectrum-labels { display: flex; justify-content: space-between; max-width: 640px; margin: 8px auto 0; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); }
+  .compass-section { padding: 28px; max-width: 1600px; margin: 0 auto; }
+  .compass-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; position: relative; overflow: hidden; }
+  .compass-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--gradient-left), var(--gradient-center), var(--gradient-right)); }
+  .compass-container { position: relative; height: 520px; }
+  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 20px; padding: 8px 28px 32px; max-width: 1600px; margin: 0 auto; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .chart-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .chart-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gradient-left), var(--gradient-center), var(--gradient-right)); opacity: 0.6; }
+  .chart-title { font-family: 'Instrument Serif', serif; font-size: 1.35rem; margin-bottom: 2px; font-weight: 400; }
+  .chart-desc { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 16px; line-height: 1.4; }
+  .chart-container { position: relative; height: 340px; }
+  .insight-box { margin-top: 14px; padding: 12px 16px; background: var(--surface2); border-left: 3px solid var(--gradient-center); border-radius: 0 8px 8px 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+  .insight-box strong { color: var(--text); }
+  .reg-info { margin-top: 8px; padding: 8px 12px; background: rgba(255,159,67,0.08); border-left: 3px solid var(--regression); border-radius: 0 6px 6px 0; font-size: 0.76rem; color: var(--text-muted); line-height: 1.4; }
+  .reg-info code { color: var(--regression); font-family: 'DM Sans', sans-serif; font-weight: 700; }
+  .note-box { margin-top: 10px; padding: 12px 16px; background: rgba(121,192,255,0.06); border-left: 3px solid #79c0ff; border-radius: 0 8px 8px 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.55; }
+  .note-box strong { color: #79c0ff; }
+  .section-block { max-width: 1600px; margin: 0 auto; padding: 0 28px 24px; }
+  .explanation-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 32px; line-height: 1.7; }
+  .explanation-card h2 { font-family: 'Instrument Serif', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 12px; color: var(--text); }
+  .explanation-card h3 { font-family: 'Instrument Serif', serif; font-size: 1.1rem; font-weight: 400; margin: 18px 0 8px; color: var(--gradient-center); }
+  .explanation-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; }
+  .explanation-card p strong { color: var(--text); }
+  .legend-section { max-width: 1600px; margin: 0 auto; padding: 0 28px 20px; }
+  .legend-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; }
+  .legend-title { font-family: 'Instrument Serif', serif; font-size: 1.2rem; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px 16px; font-size: 0.78rem; }
+  .legend-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.2); }
+  .legend-name { color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .footer-note { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.72rem; opacity: 0.7; }
+  @media (max-width: 600px) { .charts-grid { grid-template-columns: 1fr; padding: 16px; } .compass-section { padding: 16px; } header { padding: 32px 20px 16px; } }
+</style>
+</head>
+<body>
+<div class="noise-overlay"></div>
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Buscar país..." autocomplete="off">
+    <div class="search-hint">Escribe el nombre de un país · <kbd>Esc</kbd> para cerrar</div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<header>
+  <h1>Espectro Político vs Indicadores Mundiales</h1>
+  <p class="subtitle">42 países. Eje horizontal = orientación política media (20 años). Línea <span style="color:var(--regression)">naranja = regresión</span> (lineal o cuadrática según patrón). Pasa el ratón sobre los puntos para detalles.</p>
+  <p class="search-tip"><kbd>Ctrl</kbd>+<kbd>F</kbd> para buscar y resaltar un país en todos los gráficos</p>
+  <div class="spectrum-bar"></div>
+  <div class="spectrum-labels">
+    <span>← Ext. Izquierda</span><span>Izquierda</span><span>Centro</span><span>Derecha</span><span>Ext. Derecha →</span>
+  </div>
+</header>
+
+<div class="compass-section">
+  <div class="compass-card">
+    <div class="chart-title" style="font-size:1.5rem;">Brújula Política: Economía vs Libertades</div>
+    <div class="chart-desc">Eje X: Economía (izq = más estado, der = más mercado). Eje Y: Libertades (abajo = autoritario, arriba = democrático). Sin regresión: este gráfico bidimensional no tiene eje político lineal.</div>
+    <div class="compass-container"><canvas id="chart-compass"></canvas></div>
+    <div class="insight-box"><strong>Observación clave:</strong> China (*) y Cuba están ambos abajo (autoritarios) pero China ya está más al centro económicamente por su capitalismo de estado. Singapur es ultraliberal económicamente pero con libertades limitadas. Los nórdicos combinan libertad máxima con economía mixta. EEUU tiene alta libertad pero economía muy de mercado.</div>
+  </div>
+</div>
+
+<div class="charts-grid" id="chartsGrid"></div>
+
+<!-- COMPOSITE INDEX: Interactive -->
+<div class="compass-section">
+  <div class="compass-card">
+    <div class="chart-title" style="font-size:1.5rem;">🎯 Encuentra tu país ideal: Índice Compuesto Personalizable</div>
+    <div class="chart-desc">Ajusta los pesos de cada indicador según lo que más valores. La puntuación de cada país se recalcula en tiempo real. Todos los indicadores están normalizados a escala 0-100.</div>
+    
+    <div id="slidersContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px 24px;margin-bottom:20px;"></div>
+    <div style="text-align:right;margin-bottom:12px;">
+      <button id="btnReset" style="background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);border-radius:8px;padding:6px 16px;font-family:'DM Sans';font-size:0.8rem;cursor:pointer;">Restablecer pesos</button>
+    </div>
+    
+    <div class="compass-container"><canvas id="chart-composite"></canvas></div>
+    
+    <div id="rankingBox" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:0.85rem;color:var(--text-muted);line-height:1.6;"></div>
+    
+    <div class="insight-box" style="margin-top:14px;">
+      <strong>Conclusión de los datos:</strong> No hay UN modelo ideal único. Hay varios caminos que funcionan, y lo que todos comparten no es una ideología concreta sino unas características comunes: <strong>instituciones fuertes e independientes, baja corrupción, estado de derecho, educación de calidad, y democracia real con alternancia</strong>. Los países que fracasan en todos los indicadores (Venezuela, Rusia, Arabia Saudita) no fracasan por ser "de izquierdas" o "de derechas" — fracasan por ser autoritarios, corruptos y con instituciones débiles.
+      <br><br>
+      Los nórdicos (Noruega, Suecia, Finlandia, Dinamarca) arrasan en libertades, igualdad e instituciones. Su crecimiento es modesto (1.4-2.0%), pero eso tiene trampa: crecen poco porque ya son ricos — es mucho más fácil crecer al 7% desde el PIB per cápita de India que al 2% desde el de Noruega.
+      <br><br>
+      <strong>Nueva Zelanda</strong> (-0.3, centro) ofrece un equilibrio notable: 9.25 en democracia, 85 en anticorrupción, buena igualdad, alta aceptación LGBT+, y crecimiento del 2.3%. <strong>Canadá</strong> (-0.5) y <strong>Australia</strong> (+0.3) ofrecen perfiles similares. <strong>Suiza</strong> (+0.5) es el caso fascinante del otro lado: centro-derecha, baja fiscalidad, poco gasto social (16.7%), y sin embargo 9.15 en democracia y 82 en anticorrupción. Demuestra que se puede lograr calidad de vida excelente con un modelo muy diferente al nórdico.
+      <br><br>
+      <strong>La lección más potente de este dashboard:</strong> lo que determina la calidad de vida de un país no es tanto si es "de izquierdas" o "de derechas", sino si tiene instituciones fuertes, democracia real y baja corrupción. Mueve los deslizadores de arriba y descúbrelo tú misma.
+    </div>
+  </div>
+</div>
+
+<div class="legend-section">
+  <div class="legend-card">
+    <div class="legend-title">Países incluidos (42) — clic para resaltar · color por región</div>
+    <div class="legend-grid" id="legendGrid"></div>
+  </div>
+</div>
+
+<!-- CHINA EXPLANATION -->
+<div class="section-block">
+  <div class="explanation-card">
+    <h2>(*) Nota sobre China: ¿por qué aparece en la extrema izquierda?</h2>
+    <p>China se autodefine como <strong>"socialismo con características chinas"</strong>, un sistema sin equivalente histórico claro. Su clasificación en la escala izquierda-derecha es controvertida porque mezcla elementos de ambos lados simultáneamente.</p>
+    <h3>Lo que China tiene de "izquierda"</h3>
+    <p>La estructura de poder: el Partido Comunista controla el Estado, las empresas estratégicas son estatales (banca, energía, telecomunicaciones, infraestructuras), el suelo es propiedad estatal (se conceden derechos de uso, no propiedad plena), y el gobierno interviene masivamente en la economía con planes quinquenales, manipulación de divisas, subsidios industriales y control de capitales. La retórica oficial sigue siendo marxista-leninista.</p>
+    <h3>Lo que China tiene de "derecha"</h3>
+    <p>El funcionamiento económico real desde las reformas de Deng Xiaoping (1978): existe propiedad privada de empresas, hay multimillonarios (más que en cualquier país salvo EEUU), las zonas económicas especiales funcionan con lógica capitalista pura, la desigualdad ha crecido enormemente (Gini de 38.2, alto para un país "comunista"), y el mercado laboral es muy flexible con poca protección al trabajador.</p>
+    <h3>Cómo interpretarlo</h3>
+    <p>China demuestra que <strong>el eje izquierda-derecha unidimensional es una simplificación</strong>. Por eso incluimos la Brújula Política (gráfico de arriba) con dos ejes. En ese esquema, China está en <strong>"autoritario + economía mixta con fuerte control estatal"</strong>, lo cual no es lo mismo que Cuba (autoritario + economía planificada) ni que Singapur (semiautoritario + capitalismo ultraliberal). En la escala clásica la situamos en -2.5 por el peso del Estado en la economía y el control del Partido, pero en el eje puramente económico de la Brújula su posición real (-0.5) refleja mejor su hibridación actual.</p>
+  </div>
+</div>
+
+<!-- RUSSIA EXPLANATION -->
+<div class="section-block">
+  <div class="explanation-card">
+    <h2>(**) Nota sobre Rusia: ¿por qué aparece en la derecha si era comunista?</h2>
+    <p><strong>Rusia dejó de ser comunista en 1991.</strong> Cuando cayó la URSS, Rusia hizo una transición brutal al capitalismo bajo Yeltsin en los años 90: privatizaciones masivas de empresas estatales, apertura de mercados, liberalización de precios. El problema es que esas privatizaciones se hicieron de forma caótica y corrupta, y las empresas estatales acabaron en manos de un puñado de personas cercanas al poder — los famosos oligarcas. Eso no es comunismo, es capitalismo de amiguetes (<em>crony capitalism</em>).</p>
+    <h3>Lo que Rusia tiene de "derecha" hoy</h3>
+    <p>Existe propiedad privada (aunque el Estado puede confiscarla si quiere), hay multimillonarios enormes (Rusia tenía más de 100 billonarios antes de las sanciones), los impuestos son bajos (el IRPF es un <em>flat tax</em> del 13%, mucho más bajo que cualquier país nórdico), el gasto social es modesto (17.1% del PIB, menos que Francia o Alemania), el estado del bienestar es débil comparado con Europa occidental, y la retórica oficial es nacionalista y conservadora (valores tradicionales, Iglesia ortodoxa, anti-LGBT). Putin se opone activamente a todo lo que suene a progresismo occidental.</p>
+    <h3>Lo que Rusia NO tiene de "izquierda"</h3>
+    <p>No hay planificación económica centralizada, no hay control de precios, no hay retórica marxista (Putin ha criticado explícitamente a Lenin y la revolución bolchevique), no hay partido comunista en el poder, y la desigualdad es alta (Gini 36).</p>
+    <h3>¿Por qué mucha gente sigue pensando que Rusia es "de izquierdas"?</h3>
+    <p>Por tres razones: <strong>1)</strong> la inercia mental de la Guerra Fría (URSS = comunismo = Rusia), <strong>2)</strong> el hecho de que el Estado ruso controla sectores estratégicos como Gazprom o Rosneft (pero eso también lo hace Noruega con Equinor y Arabia Saudita con Aramco, y nadie los llama comunistas), y <strong>3)</strong> porque Putin viene del KGB soviético, lo cual crea una asociación emocional con el antiguo régimen.</p>
+    <h3>Cómo interpretarlo</h3>
+    <p>La Rusia de Putin se parece mucho más a una <strong>autocracia nacionalista de derechas con capitalismo de estado</strong> que a cualquier forma de socialismo. Ideológicamente tiene más en común con la Hungría de Orbán o la Turquía de Erdogan que con Cuba o Vietnam. Por eso en nuestra escala está en +1.5 (derecha autoritaria). De hecho, Rusia y China son casi un espejo invertido: China mantiene la etiqueta comunista pero ha abrazado el capitalismo; Rusia abandonó la etiqueta comunista pero el Estado sigue controlando la economía a través de oligarcas leales. Ambos son autoritarios, pero uno viene "de la izquierda" y el otro ya ha girado claramente a la derecha.</p>
+  </div>
+</div>
+
+<div class="footer-note">
+  Fuentes: EIU Democracy Index 2024 · Transparency Intl CPI 2024 · Global Peace Index 2024 · WEF Gender Gap 2024 · Williams Institute GAI · MIPEX · RSF · FMI · Banco Mundial<br>
+  Escala política: elaboración propia basada en V-Dem y Manifesto Project (media 2004-2024). Regresiones por mínimos cuadrados ordinarios. Uso exclusivamente educativo.
+</div>
+
+<script>
+const countries = [
+  { name: "Noruega", pol: -1.5, demo: 9.81, corr: 84, paz: 1.32, gender: 0.875, lgbt: 9.8, migra: 82, prensa: 92, crec: 1.8, gini: 27.7, gastoSoc: 25.3, region: "Europa Norte", ecoAxis: -0.8, libAxis: 9.81 },
+  { name: "Suecia", pol: -1.3, demo: 9.39, corr: 82, paz: 1.36, gender: 0.816, lgbt: 9.7, migra: 86, prensa: 89, crec: 2.0, gini: 28.8, gastoSoc: 26.1, region: "Europa Norte", ecoAxis: -0.9, libAxis: 9.39 },
+  { name: "Dinamarca", pol: -1.0, demo: 9.32, corr: 90, paz: 1.35, gender: 0.770, lgbt: 9.6, migra: 49, prensa: 90, crec: 1.6, gini: 28.2, gastoSoc: 28.3, region: "Europa Norte", ecoAxis: -0.6, libAxis: 9.32 },
+  { name: "Finlandia", pol: -0.8, demo: 9.30, corr: 87, paz: 1.36, gender: 0.875, lgbt: 9.4, migra: 85, prensa: 88, crec: 1.4, gini: 27.3, gastoSoc: 29.1, region: "Europa Norte", ecoAxis: -0.5, libAxis: 9.30 },
+  { name: "Alemania", pol: 0.0, demo: 8.68, corr: 79, paz: 1.46, gender: 0.810, lgbt: 8.7, migra: 63, prensa: 82, crec: 1.3, gini: 31.7, gastoSoc: 25.9, region: "Europa Occ.", ecoAxis: 0.2, libAxis: 8.68 },
+  { name: "Francia", pol: -0.3, demo: 7.99, corr: 68, paz: 1.73, gender: 0.756, lgbt: 8.2, migra: 56, prensa: 78, crec: 1.2, gini: 32.4, gastoSoc: 31.5, region: "Europa Occ.", ecoAxis: -0.3, libAxis: 7.99 },
+  { name: "Países Bajos", pol: 0.3, demo: 9.00, corr: 79, paz: 1.38, gender: 0.770, lgbt: 9.3, migra: 72, prensa: 87, crec: 1.5, gini: 28.5, gastoSoc: 22.1, region: "Europa Occ.", ecoAxis: 0.5, libAxis: 9.00 },
+  { name: "Suiza", pol: 0.5, demo: 9.15, corr: 82, paz: 1.29, gender: 0.783, lgbt: 9.0, migra: 50, prensa: 85, crec: 1.7, gini: 33.1, gastoSoc: 16.7, region: "Europa Occ.", ecoAxis: 1.2, libAxis: 9.15 },
+  { name: "Reino Unido", pol: 0.3, demo: 8.36, corr: 71, paz: 1.63, gender: 0.756, lgbt: 8.6, migra: 56, prensa: 73, crec: 1.4, gini: 35.1, gastoSoc: 20.6, region: "Europa Occ.", ecoAxis: 0.8, libAxis: 8.36 },
+  { name: "España", pol: -0.5, demo: 8.13, corr: 60, paz: 1.47, gender: 0.795, lgbt: 8.4, migra: 60, prensa: 81, crec: 2.0, gini: 33.0, gastoSoc: 24.7, region: "Europa Occ.", ecoAxis: -0.2, libAxis: 8.13 },
+  { name: "Italia", pol: 0.3, demo: 7.75, corr: 56, paz: 1.55, gender: 0.703, lgbt: 7.1, migra: 55, prensa: 74, crec: 0.6, gini: 35.2, gastoSoc: 28.2, region: "Europa Occ.", ecoAxis: 0.3, libAxis: 7.75 },
+  { name: "Portugal", pol: -0.7, demo: 8.08, corr: 67, paz: 1.26, gender: 0.795, lgbt: 8.5, migra: 81, prensa: 87, crec: 1.3, gini: 33.8, gastoSoc: 22.6, region: "Europa Occ.", ecoAxis: -0.3, libAxis: 8.08 },
+  { name: "Polonia", pol: 0.5, demo: 7.47, corr: 54, paz: 1.57, gender: 0.744, lgbt: 5.0, migra: 42, prensa: 67, crec: 3.8, gini: 29.7, gastoSoc: 21.3, region: "Europa Este", ecoAxis: 0.6, libAxis: 7.47 },
+  { name: "Hungría", pol: 1.5, demo: 6.50, corr: 42, paz: 1.60, gender: 0.690, lgbt: 4.2, migra: 34, prensa: 50, crec: 2.8, gini: 30.6, gastoSoc: 19.4, region: "Europa Este", ecoAxis: 0.8, libAxis: 6.50 },
+  { name: "EEUU", pol: 0.5, demo: 7.85, corr: 65, paz: 2.45, gender: 0.769, lgbt: 7.9, migra: 73, prensa: 70, crec: 2.2, gini: 39.8, gastoSoc: 18.7, region: "Norteamérica", ecoAxis: 1.5, libAxis: 7.85 },
+  { name: "Canadá", pol: -0.5, demo: 8.88, corr: 76, paz: 1.35, gender: 0.770, lgbt: 9.3, migra: 80, prensa: 83, crec: 1.9, gini: 33.3, gastoSoc: 17.3, region: "Norteamérica", ecoAxis: 0.5, libAxis: 8.88 },
+  { name: "Chile", pol: 0.0, demo: 8.22, corr: 66, paz: 1.58, gender: 0.755, lgbt: 6.8, migra: 56, prensa: 73, crec: 3.3, gini: 44.9, gastoSoc: 17.0, region: "Sudamérica", ecoAxis: 1.0, libAxis: 8.22 },
+  { name: "Uruguay", pol: -0.5, demo: 8.66, corr: 74, paz: 1.34, gender: 0.750, lgbt: 7.5, migra: 56, prensa: 77, crec: 2.7, gini: 40.2, gastoSoc: 21.2, region: "Sudamérica", ecoAxis: -0.2, libAxis: 8.66 },
+  { name: "Brasil", pol: -0.3, demo: 6.86, corr: 36, paz: 2.38, gender: 0.755, lgbt: 6.3, migra: 64, prensa: 65, crec: 2.1, gini: 48.9, gastoSoc: 26.0, region: "Sudamérica", ecoAxis: -0.1, libAxis: 6.86 },
+  { name: "Argentina", pol: -1.0, demo: 7.11, corr: 42, paz: 1.75, gender: 0.752, lgbt: 6.5, migra: 58, prensa: 56, crec: 1.5, gini: 42.3, gastoSoc: 24.6, region: "Sudamérica", ecoAxis: -0.8, libAxis: 7.11 },
+  { name: "México", pol: -0.5, demo: 6.40, corr: 31, paz: 2.56, gender: 0.765, lgbt: 5.0, migra: 51, prensa: 55, crec: 2.0, gini: 45.4, gastoSoc: 14.2, region: "Norteamérica", ecoAxis: -0.2, libAxis: 6.40 },
+  { name: "Colombia", pol: 0.3, demo: 7.05, corr: 40, paz: 2.73, gender: 0.737, lgbt: 5.5, migra: 47, prensa: 60, crec: 3.5, gini: 51.3, gastoSoc: 13.1, region: "Sudamérica", ecoAxis: 0.5, libAxis: 7.05 },
+  { name: "Venezuela", pol: -2.5, demo: 2.28, corr: 10, paz: 2.56, gender: 0.720, lgbt: 4.0, migra: 25, prensa: 22, crec: -2.5, gini: 44.8, gastoSoc: 18.0, region: "Sudamérica", ecoAxis: -2.2, libAxis: 2.28 },
+  { name: "El Salvador", pol: 1.5, demo: 5.68, corr: 34, paz: 1.78, gender: 0.690, lgbt: 3.5, migra: 30, prensa: 38, crec: 2.3, gini: 38.8, gastoSoc: 12.5, region: "Centroamérica", ecoAxis: 1.3, libAxis: 5.68 },
+  { name: "Japón", pol: 1.0, demo: 8.09, corr: 73, paz: 1.34, gender: 0.663, lgbt: 5.5, migra: 47, prensa: 60, crec: 0.8, gini: 32.9, gastoSoc: 24.0, region: "Asia-Pacífico", ecoAxis: 0.8, libAxis: 8.09 },
+  { name: "Corea del Sur", pol: 0.3, demo: 7.96, corr: 63, paz: 1.62, gender: 0.727, lgbt: 5.3, migra: 47, prensa: 56, crec: 3.2, gini: 31.4, gastoSoc: 14.8, region: "Asia-Pacífico", ecoAxis: 0.7, libAxis: 7.96 },
+  { name: "Australia", pol: 0.3, demo: 8.71, corr: 73, paz: 1.30, gender: 0.778, lgbt: 8.5, migra: 65, prensa: 81, crec: 2.5, gini: 34.3, gastoSoc: 17.8, region: "Oceanía", ecoAxis: 0.9, libAxis: 8.71 },
+  { name: "Nueva Zelanda", pol: -0.3, demo: 9.25, corr: 85, paz: 1.15, gender: 0.835, lgbt: 9.1, migra: 77, prensa: 88, crec: 2.3, gini: 32.0, gastoSoc: 18.4, region: "Oceanía", ecoAxis: 0.4, libAxis: 9.25 },
+  { name: "India", pol: 0.5, demo: 7.18, corr: 39, paz: 2.69, gender: 0.641, lgbt: 3.8, migra: 30, prensa: 37, crec: 6.5, gini: 35.7, gastoSoc: 7.5, region: "Asia Sur", ecoAxis: 0.3, libAxis: 7.18 },
+  { name: "Singapur", pol: 1.5, demo: 6.02, corr: 84, paz: 1.16, gender: 0.726, lgbt: 5.4, migra: 40, prensa: 44, crec: 4.5, gini: 45.9, gastoSoc: 10.9, region: "Asia-Pacífico", ecoAxis: 2.2, libAxis: 6.02 },
+  { name: "Taiwán", pol: -0.3, demo: 8.94, corr: 68, paz: 1.50, gender: 0.745, lgbt: 6.0, migra: 52, prensa: 70, crec: 3.5, gini: 34.1, gastoSoc: 12.8, region: "Asia-Pacífico", ecoAxis: 0.6, libAxis: 8.94 },
+  { name: "Israel", pol: 1.0, demo: 7.77, corr: 56, paz: 3.57, gender: 0.724, lgbt: 5.8, migra: 45, prensa: 56, crec: 3.2, gini: 39.0, gastoSoc: 16.3, region: "Oriente Medio", ecoAxis: 1.0, libAxis: 7.77 },
+  { name: "EAU", pol: 2.0, demo: 2.78, corr: 68, paz: 1.69, gender: 0.647, lgbt: 3.5, migra: 27, prensa: 20, crec: 5.0, gini: 32.5, gastoSoc: 7.5, region: "Oriente Medio", ecoAxis: 2.0, libAxis: 2.78 },
+  { name: "Arabia Saudita", pol: 2.5, demo: 2.08, corr: 40, paz: 2.06, gender: 0.548, lgbt: 1.5, migra: 15, prensa: 15, crec: 4.2, gini: 45.9, gastoSoc: 16.0, region: "Oriente Medio", ecoAxis: 1.5, libAxis: 2.08 },
+  { name: "Sudáfrica", pol: -0.8, demo: 7.12, corr: 41, paz: 2.29, gender: 0.772, lgbt: 5.5, migra: 48, prensa: 59, crec: 1.5, gini: 63.0, gastoSoc: 12.0, region: "África", ecoAxis: 0.0, libAxis: 7.12 },
+  { name: "Ruanda", pol: -1.5, demo: 3.14, corr: 53, paz: 1.84, gender: 0.811, lgbt: 2.0, migra: 22, prensa: 35, crec: 7.2, gini: 43.7, gastoSoc: 13.8, region: "África", ecoAxis: -0.5, libAxis: 3.14 },
+  { name: "Nigeria", pol: 0.5, demo: 4.10, corr: 24, paz: 2.74, gender: 0.641, lgbt: 1.5, migra: 28, prensa: 25, crec: 4.5, gini: 35.1, gastoSoc: 4.5, region: "África", ecoAxis: 0.5, libAxis: 4.10 },
+  { name: "China (*)", pol: -2.5, demo: 2.17, corr: 43, paz: 1.89, gender: 0.740, lgbt: 3.0, migra: 20, prensa: 25, crec: 7.5, gini: 38.2, gastoSoc: 10.8, region: "Asia-Pacífico", ecoAxis: -0.5, libAxis: 2.17 },
+  { name: "Rusia (**)", pol: 1.5, demo: 2.22, corr: 26, paz: 3.69, gender: 0.708, lgbt: 2.0, migra: 25, prensa: 30, crec: 2.5, gini: 36.0, gastoSoc: 17.1, region: "Eurasia", ecoAxis: 0.5, libAxis: 2.22 },
+  { name: "Cuba", pol: -3.0, demo: 2.84, corr: 42, paz: 1.86, gender: 0.740, lgbt: 3.5, migra: 20, prensa: 20, crec: 1.5, gini: 40.0, gastoSoc: 51.0, region: "Caribe", ecoAxis: -2.5, libAxis: 2.84 },
+  { name: "Vietnam", pol: -2.0, demo: 2.75, corr: 34, paz: 1.63, gender: 0.713, lgbt: 3.0, migra: 25, prensa: 30, crec: 6.3, gini: 35.7, gastoSoc: 6.8, region: "Asia-Pacífico", ecoAxis: -0.8, libAxis: 2.75 },
+  { name: "Turquía", pol: 1.0, demo: 4.35, corr: 34, paz: 2.53, gender: 0.685, lgbt: 3.0, migra: 32, prensa: 40, crec: 4.5, gini: 41.9, gastoSoc: 12.5, region: "Eurasia", ecoAxis: 0.7, libAxis: 4.35 },
+];
+
+const regionColors = {
+  "Europa Norte":"#7ee8fa","Europa Occ.":"#80b3ff","Europa Este":"#c084fc",
+  "Norteamérica":"#fbbf24","Sudamérica":"#34d399","Centroamérica":"#6ee7b7",
+  "Asia-Pacífico":"#f472b6","Asia Sur":"#fb923c","Oceanía":"#a3e635",
+  "Oriente Medio":"#f87171","África":"#e879f9","Eurasia":"#94a3b8","Caribe":"#2dd4bf",
+};
+const alwaysLabel = new Set(["España","EEUU","China (*)","Rusia (**)","Venezuela","Cuba","Arabia Saudita","Singapur","Nueva Zelanda","Suiza","Japón","Israel","Alemania","Francia","Noruega"]);
+
+// ============ REGRESSION ============
+function linearRegression(pts) {
+  const n=pts.length; let sx=0,sy=0,sxx=0,sxy=0;
+  for(const p of pts){sx+=p.x;sy+=p.y;sxx+=p.x*p.x;sxy+=p.x*p.y;}
+  const d=n*sxx-sx*sx, b=(n*sxy-sx*sy)/d, a=(sy-b*sx)/n, mean=sy/n;
+  let ssTot=0,ssRes=0;
+  for(const p of pts){ssTot+=(p.y-mean)**2;ssRes+=(p.y-(a+b*p.x))**2;}
+  return{a,b,r2:ssTot?1-ssRes/ssTot:0,type:'linear'};
+}
+function quadRegression(pts) {
+  const n=pts.length; let sx=0,sx2=0,sx3=0,sx4=0,sy=0,sxy=0,sx2y=0;
+  for(const p of pts){const x2=p.x*p.x;sx+=p.x;sx2+=x2;sx3+=x2*p.x;sx4+=x2*x2;sy+=p.y;sxy+=p.x*p.y;sx2y+=x2*p.y;}
+  const M=[[n,sx,sx2],[sx,sx2,sx3],[sx2,sx3,sx4]],V=[sy,sxy,sx2y];
+  function det3(m){return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);}
+  const D=det3(M);
+  if(Math.abs(D)<1e-10) return{a:0,b:0,c:0,r2:0,type:'quadratic'};
+  const Da=det3([[V[0],M[0][1],M[0][2]],[V[1],M[1][1],M[1][2]],[V[2],M[2][1],M[2][2]]]);
+  const Db=det3([[M[0][0],V[0],M[0][2]],[M[1][0],V[1],M[1][2]],[M[2][0],V[2],M[2][2]]]);
+  const Dc=det3([[M[0][0],M[0][1],V[0]],[M[1][0],M[1][1],V[1]],[M[2][0],M[2][1],V[2]]]);
+  const a=Da/D,b=Db/D,c=Dc/D,mean=sy/n;
+  let ssTot=0,ssRes=0;
+  for(const p of pts){ssTot+=(p.y-mean)**2;ssRes+=(p.y-(a+b*p.x+c*p.x*p.x))**2;}
+  return{a,b,c,r2:ssTot?1-ssRes/ssTot:0,type:'quadratic'};
+}
+function bestRegression(pts){const l=linearRegression(pts),q=quadRegression(pts);return(q.r2-l.r2>0.05)?q:l;}
+function regressionLine(reg,xMin,xMax,steps){const pts=[],s=(xMax-xMin)/steps;for(let x=xMin;x<=xMax;x+=s){pts.push({x,y:reg.type==='linear'?reg.a+reg.b*x:reg.a+reg.b*x+reg.c*x*x});}return pts;}
+function regExplanation(reg){
+  const r2pct=(reg.r2*100).toFixed(1);
+  if(reg.type==='linear'){const dir=reg.b>0?'sube':'baja';return`<code>Recta</code> — Por cada punto hacia la derecha, el indicador ${dir} ~${Math.abs(reg.b).toFixed(2)} unidades. R² = <code>${r2pct}%</code>.`;}
+  return`<code>Parábola</code> — Relación NO lineal: valores máximos en el centro, caen hacia ambos extremos. R² = <code>${r2pct}%</code>.`;
+}
+
+// ============ SEARCH & HIGHLIGHT ============
+let highlightedCountry=null, allCharts=[];
+function openSearch(){document.getElementById('searchOverlay').classList.add('active');const inp=document.getElementById('searchInput');inp.value='';inp.focus();updateSearchResults('');}
+function closeSearch(){document.getElementById('searchOverlay').classList.remove('active');}
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();openSearch();}if(e.key==='Escape')closeSearch();});
+document.getElementById('searchOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSearch();});
+document.getElementById('searchInput').addEventListener('input',e=>updateSearchResults(e.target.value));
+function updateSearchResults(query){
+  const c=document.getElementById('searchResults');c.innerHTML='';const q=query.toLowerCase().trim();
+  const m=q?countries.filter(x=>x.name.toLowerCase().includes(q)):countries;
+  m.forEach(x=>{const it=document.createElement('div');it.className='search-result-item';
+    const pd=x.pol<=-2?'Ext.Izq':x.pol<=-1?'Izq':x.pol<=0.5?'Centro':x.pol<=1.5?'Der':'Ext.Der';
+    it.innerHTML=`<div class="dot" style="background:${regionColors[x.region]}"></div><span>${x.name}</span><span class="pol-tag">${pd} (${x.pol})</span>`;
+    it.addEventListener('click',()=>{highlightCountry(x.name);closeSearch();});c.appendChild(it);});
+}
+function highlightCountry(name){highlightedCountry=name;allCharts.forEach(ch=>ch.update());document.querySelector('.compass-section')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{highlightedCountry=null;allCharts.forEach(ch=>ch.update());},8000);}
+
+function pr(i){return highlightedCountry&&countries[i].name===highlightedCountry?14:alwaysLabel.has(countries[i].name)?8:6;}
+function pbw(i){return highlightedCountry&&countries[i].name===highlightedCountry?3:1.5;}
+function pbc(i){return highlightedCountry&&countries[i].name===highlightedCountry?'#fbbf24':regionColors[countries[i].region]||'#999';}
+function pbg(i){if(highlightedCountry)return countries[i].name===highlightedCountry?regionColors[countries[i].region]+'ff':regionColors[countries[i].region]+'33';return regionColors[countries[i].region]+'cc';}
+function sl(i){return highlightedCountry?countries[i].name===highlightedCountry:alwaysLabel.has(countries[i].name);}
+
+const ctt={backgroundColor:'#1c2333ee',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1,cornerRadius:8,padding:12,titleFont:{family:'DM Sans',size:13,weight:700},bodyFont:{family:'DM Sans',size:12}};
+
+function refreshDs(chart,dsIndex){
+  const ds=chart.data.datasets[dsIndex];
+  if(!ds)return;
+  ds.backgroundColor=countries.map((_,i)=>pbg(i));
+  ds.borderColor=countries.map((_,i)=>pbc(i));
+  ds.borderWidth=countries.map((_,i)=>pbw(i));
+  ds.pointRadius=countries.map((_,i)=>pr(i));
+}
+
+// ============ COMPASS ============
+function createCompass(){
+  const ctx=document.getElementById('chart-compass').getContext('2d');
+  const chart=new Chart(ctx,{
+    type:'scatter',
+    data:{datasets:[{
+      data:countries.map(c=>({x:c.ecoAxis,y:c.libAxis})),
+      backgroundColor:countries.map((_,i)=>pbg(i)),borderColor:countries.map((_,i)=>pbc(i)),
+      borderWidth:countries.map((_,i)=>pbw(i)),pointRadius:countries.map((_,i)=>pr(i)),
+      pointHoverRadius:12,
+      datalabels:{display:ctx=>sl(ctx.dataIndex),color:'#e6edf3',font:{family:'DM Sans',size:10,weight:600},anchor:'end',align:'top',offset:4,formatter:(v,ctx)=>countries[ctx.dataIndex].name}
+    }]},
+    plugins:[ChartDataLabels],
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:20,right:20,bottom:10,left:10}},
+      plugins:{legend:{display:false},tooltip:{...ctt,callbacks:{
+        title:items=>countries[items[0].dataIndex].name,
+        label:item=>{const c=countries[item.dataIndex];return[`Región: ${c.region}`,`Eje económico: ${c.ecoAxis}`,`Eje libertades: ${c.libAxis.toFixed(1)}`,`Orientación clásica: ${c.pol}`];}
+      }}},
+      scales:{
+        x:{min:-3,max:3,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'← Más Estado                                                                                      Más Mercado →',color:'#8b949e',font:{family:'DM Sans',size:11}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9},stepSize:1,callback:v=>({'-3':'Econ. planif.','-2':'Muy estatal','-1':'Estado fuerte','0':'Mixta','1':'Liberal','2':'Muy liberal'}[String(v)]||'')}},
+        y:{min:0,max:10.5,grid:{color:'#21262d'},border:{color:'#30363d'},title:{display:true,text:'Libertades y Democracia (EIU 0-10) →',color:'#8b949e',font:{family:'DM Sans',size:11}},ticks:{color:'#8b949e',font:{family:'DM Sans',size:9},stepSize:2,callback:v=>({'0':'Autoritario','2':'Autoritario','4':'Híbrido','6':'Dem. defect.','8':'Dem. plena','10':'Dem. plena'}[String(v)]||'')}}
+      }
+    }
+  });
+  chart._scatterDsIdx=0;
+  allCharts.push(chart);
+}
+
+// ============ CHARTS ============
+const cfgs=[
+  {id:'democracia',title:'Nivel de Democracia',desc:'EIU Democracy Index 2024 (0-10)',field:'demo',yLabel:'Democracia (0-10)',yMin:0,yMax:10.5,
+    insight:'<strong>Observación:</strong> La parábola revela que las democracias plenas se concentran en el centro del espectro. Los extremos (Cuba, Venezuela, China, Arabia Saudita, Rusia) son autoritarios independientemente de su ideología. La democracia no es de izquierdas ni de derechas: es del centro.'},
+  {id:'corrupcion',title:'Corrupción (mayor = menos corrupto)',desc:'Transparency Intl CPI 2024 (0-100)',field:'corr',yLabel:'CPI (0-100)',yMin:0,yMax:100,
+    insight:'<strong>Observación:</strong> La baja corrupción se asocia con instituciones fuertes independientes, no con ideología. Singapur (84) y Dinamarca (90) están en lados opuestos pero ambos son limpios. Venezuela (10) es de los más corruptos del mundo.'},
+  {id:'paz',title:'Seguridad y Paz',desc:'Global Peace Index 2024 (menor = más pacífico)',field:'paz',yLabel:'GPI (menor=más paz)',yMin:1,yMax:4,invert:true,
+    insight:'<strong>Observación:</strong> El Salvador (1.78) ha mejorado drásticamente con Bukele. Rusia (3.69) e Israel (3.57) los menos pacíficos. Los nórdicos lideran. Gráfico invertido: arriba = más paz.'},
+  {id:'genero',title:'Igualdad de Género',desc:'WEF Gender Gap 2024 (0-1)',field:'gender',yLabel:'Gender Gap (0-1)',yMin:0.5,yMax:0.95,
+    insight:'<strong>Observación:</strong> Los nórdicos de centro-izquierda lideran. Japón (0.663) puntúa sorprendentemente bajo para su riqueza. Arabia Saudita (0.548) cierra la tabla. Ruanda (0.811) destaca por cuotas parlamentarias.'},
+  {id:'lgbt',title:'Aceptación LGBT+',desc:'Williams Institute GAI (0-10)',field:'lgbt',yLabel:'Aceptación LGBT+ (0-10)',yMin:0,yMax:10.5,
+    insight:'<strong>Observación:</strong> Máxima en nórdicos y noroeste europeo. Autoritarismos de ambos lados puntúan bajo. España (8.4) destaca muy positivamente en el contexto europeo.'},
+  {id:'migracion',title:'Integración de Inmigrantes',desc:'MIPEX (0-100)',field:'migra',yLabel:'MIPEX (0-100)',yMin:0,yMax:100,
+    insight:'<strong>Observación:</strong> Suecia (86) y Canadá (80) lideran. Arabia Saudita (15), Cuba (20) y China (20) son los menos acogedores. Dinamarca (49) es la excepción nórdica restrictiva.'},
+  {id:'prensa',title:'Libertad de Prensa',desc:'RSF 2024 (0-100)',field:'prensa',yLabel:'Libertad Prensa (0-100)',yMin:0,yMax:100,
+    insight:'<strong>Observación:</strong> Patrón claro de parábola invertida: máxima libertad en el centro democrático, colapsa en ambos extremos autoritarios. Cuba (20), Arabia Saudita (15) y Venezuela (22) en el fondo.'},
+  {id:'crecimiento',title:'Crecimiento Económico (media 20 años)',desc:'Crecimiento real medio PIB 2004-2024 (%)',field:'crec',yLabel:'Crecimiento PIB (%)',yMin:-3,yMax:8,
+    insight:'<strong>Observación:</strong> Venezuela (-2.5%) es el ÚNICO con crecimiento negativo. China (7.5%) y Ruanda (7.2%) lideran. El crecimiento depende más del nivel de desarrollo inicial que de la ideología.'},
+  {id:'gini',title:'Desigualdad (Gini)',desc:'Banco Mundial. 0 = igualdad, 100 = desigualdad total',field:'gini',yLabel:'Gini',yMin:20,yMax:65,invert:true,
+    insight:'<strong>Observación:</strong> Nórdicos (~27-29) más igualitarios. Sudáfrica (63) y Colombia (51.3) los más desiguales. EEUU (39.8) destaca para su nivel de riqueza. Invertido: arriba = más igualdad.',
+    extraNote:'<strong>¿Qué explica realmente la desigualdad?</strong> La orientación izquierda-derecha explica poco (R² bajo). Los estudios académicos (FMI, Banco Mundial, Piketty) identifican otros factores mucho más determinantes: <strong>1) Herencia colonial e histórica</strong> — los países más desiguales (Sudáfrica, Colombia, Brasil) arrastran siglos de estructuras extractivas, esclavismo o apartheid. <strong>2) Calidad institucional</strong> — estados con instituciones fuertes, transparentes y con estado de derecho redistribuyen mejor, independientemente de si son "de izquierdas" o "de derechas" (Dinamarca vs Singapur). <strong>3) Educación universal de calidad</strong> — correlaciona más con igualdad que el gasto social bruto. <strong>4) Progresividad fiscal efectiva</strong> — no cuánto se recauda sino cómo: impuestos sobre patrimonio y herencias, no solo renta. <strong>5) Estructura productiva</strong> — economías dependientes de materias primas (petróleo, minería) tienden a concentrar riqueza más que las industrializadas.'},
+  {id:'gastoSocial',title:'Gasto Social (% del PIB)',desc:'% PIB en protección social. OECD / Banco Mundial',field:'gastoSoc',yLabel:'Gasto Social (% PIB)',yMin:0,yMax:55,
+    hasAltRegression: true,
+    insight:'<strong>Observación:</strong> Cuba (51%) lidera pero con pobreza generalizada. Francia (31.5%) lidera entre democracias. El gasto no garantiza resultados: importa la eficiencia.',
+    extraNote:'<strong>¿Por qué no se ve una correlación clara izquierda = más gasto?</strong> Porque la muestra incluye países muy heterogéneos. Dentro de las democracias europeas SÍ existe esa correlación (Francia 31.5%, Finlandia 29.1% vs Suiza 16.7%). Pero al incluir autoritarismos de izquierda como Vietnam (6.8%) o China (10.8%) —que se autodenominan socialistas pero gastan poco en bienestar— y autoritarismos de derecha como Arabia Saudita (16%) —que gasta bastante en subsidios por su riqueza petrolera—, el patrón se desdibuja. La lección es que <strong>la etiqueta ideológica no garantiza el gasto social real</strong>: un país puede llamarse socialista y gastar poco (Vietnam), o capitalista y gastar mucho (Japón 24%, Francia 31.5%). Lo que sí correlaciona fuertemente con mayor gasto social es el <strong>nivel de renta per cápita</strong> y la <strong>madurez institucional democrática</strong>.'},
+];
+
+function createChart(cfg){
+  const card=document.createElement('div');card.className='chart-card';
+  const pts=countries.map(c=>({x:c.pol,y:c[cfg.field]}));
+  const reg=bestRegression(pts);
+  const regLine=regressionLine(reg,-3.3,3.3,80);
+  const regExp=regExplanation(reg);
+
+  // Alt regression without Cuba for gastoSocial
+  let altRegLine=null, altRegExp='', altRegNote='';
+  let scatterDsIdx = 1; // default: dataset[0]=regLine, dataset[1]=scatter
+  if(cfg.hasAltRegression){
+    const ptsNoCuba=countries.filter(c=>c.name!=='Cuba').map(c=>({x:c.pol,y:c[cfg.field]}));
+    const altReg=bestRegression(ptsNoCuba);
+    altRegLine=regressionLine(altReg,-3.3,3.3,80);
+    const altR2=(altReg.r2*100).toFixed(1);
+    const dir=altReg.b<0?'baja':'sube';
+    altRegExp=`<code>Sin Cuba</code> (línea verde): ${altReg.type==='linear'?'Recta':'Parábola'} — el indicador ${dir} ~${Math.abs(altReg.b).toFixed(2)} por punto hacia la derecha. R² = <code>${altR2}%</code>.`;
+    altRegNote=`<div class="note-box" style="border-left-color:#34d399;background:rgba(52,211,153,0.06);"><strong>⚠ Efecto del outlier Cuba (51% del PIB):</strong> Cuba distorsiona enormemente la regresión. Al eliminarla, la <span style="color:#34d399;font-weight:700;">línea verde</span> muestra lo que ocurre en el resto del mundo: <strong>sí aparece una pendiente negativa clara</strong> — los países más a la izquierda gastan más en protección social que los de la derecha. La correlación sigue siendo modesta (R² ~${altR2}%) porque intervienen otros factores (renta per cápita, tradición institucional), pero la dirección es la esperada. Cuba es un caso tan extremo (gasto social del 51% en un país pobre) que por sí solo arrastra toda la recta y enmascara el patrón real del resto de países.</div>`;
+    scatterDsIdx = 2; // dataset[0]=regLine, dataset[1]=altRegLine, dataset[2]=scatter
+  }
+
+  let extraHtml=cfg.extraNote?`<div class="note-box">${cfg.extraNote}</div>`:'';
+  card.innerHTML=`<div class="chart-title">${cfg.title}</div><div class="chart-desc">${cfg.desc}</div><div class="chart-container"><canvas id="chart-${cfg.id}"></canvas></div><div class="reg-info">${regExp}${altRegExp?' · '+altRegExp:''}</div>${altRegNote}<div class="insight-box">${cfg.insight}</div>${extraHtml}`;
+  document.getElementById('chartsGrid').appendChild(card);
+
+  // Build datasets
+  const datasets = [
+    // Main regression line (orange)
+    {type:'line',data:regLine,borderColor:'rgba(255,159,67,0.7)',borderWidth:2.5,borderDash:reg.type==='linear'?[8,4]:[],pointRadius:0,pointHoverRadius:0,fill:false,tension:reg.type==='quadratic'?0.4:0,order:3,datalabels:{display:false}},
+  ];
+  if(altRegLine){
+    // Alt regression line (green, without Cuba)
+    datasets.push({type:'line',data:altRegLine,borderColor:'rgba(52,211,153,0.85)',borderWidth:2.5,borderDash:[4,3],pointRadius:0,pointHoverRadius:0,fill:false,tension:0,order:2,datalabels:{display:false}});
+  }
+  // Scatter points (always last)
+  datasets.push({
+    data:countries.map(c=>({x:c.pol,y:c[cfg.field]})),
+    backgroundColor:countries.map((_,i)=>pbg(i)),borderColor:countries.map((_,i)=>pbc(i)),
+    borderWidth:countries.map((_,i)=>pbw(i)),pointRadius:countries.map((_,i)=>pr(i)),pointHoverRadius:11,order:1,
+    datalabels:{display:ctx2=>sl(ctx2.dataIndex),color:'#c9d1d9',font:{family:'DM Sans',size:9,weight:600},anchor:'end',align:'top',offset:3,formatter:(v,ctx2)=>countries[ctx2.dataIndex].name}
+  });
+
+  const ctx=document.getElementById(`chart-${cfg.id}`).getContext('2d');
+  const chart=new Chart(ctx,{
+    type:'scatter',
+    data:{datasets},
+    plugins:[ChartDataLabels],
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:16,right:16,bottom:4,left:4}},
+      plugins:{legend:{display:false},tooltip:{...ctt,
+        filter:item=>item.datasetIndex===scatterDsIdx,
+        callbacks:{
+          title:items=>{
+            if(!items.length||items[0].datasetIndex!==scatterDsIdx)return'';
+            return countries[items[0].dataIndex].name;
+          },
+          label:item=>{
+            if(item.datasetIndex!==scatterDsIdx)return'';
+            const c=countries[item.dataIndex];
+            const pd=c.pol<=-2?'Ext. Izquierda':c.pol<=-1?'Izquierda':c.pol<=0.5?'Centro':c.pol<=1.5?'Centro-Der/Der':'Ext. Derecha';
+            return[`Región: ${c.region}`,`Orientación: ${c.pol} (${pd})`,`${cfg.yLabel}: ${c[cfg.field]}`];
+          }
+        }
+      }},
+      scales:{
+        x:{min:-3.5,max:3.5,grid:{color:'#21262d',lineWidth:0.5},border:{color:'#30363d'},
+          title:{display:true,text:'← Ext.Izq       Izquierda       Centro       Derecha       Ext.Der →',color:'#8b949e',font:{family:'DM Sans',size:10}},
+          ticks:{color:'#8b949e',font:{family:'DM Sans',size:9},stepSize:1,callback:v=>({'-3':'Ext.Izq','-2':'Izq','-1':'C-Izq','0':'Centro','1':'C-Der','2':'Der','3':'Ext.Der'}[String(v)]||'')}},
+        y:{min:cfg.yMin,max:cfg.yMax,reverse:cfg.invert||false,grid:{color:'#21262d',lineWidth:0.5},border:{color:'#30363d'},
+          title:{display:true,text:cfg.yLabel+(cfg.invert?' (invertido: arriba=mejor)':''),color:'#8b949e',font:{family:'DM Sans',size:10}},
+          ticks:{color:'#8b949e',font:{family:'DM Sans',size:9}}}
+      }
+    }
+  });
+  chart._scatterDsIdx=scatterDsIdx;
+  allCharts.push(chart);
+}
+
+// Override update to refresh scatter styles
+const _origUpdate=Chart.prototype.update;
+Chart.prototype.update=function(mode){
+  if(this._scatterDsIdx!==undefined)refreshDs(this,this._scatterDsIdx);
+  _origUpdate.call(this,mode);
+};
+
+// ============ BUILD ============
+createCompass();
+cfgs.forEach(createChart);
+
+const lg=document.getElementById('legendGrid');
+countries.slice().sort((a,b)=>a.pol-b.pol).forEach(c=>{
+  const it=document.createElement('div');it.className='legend-item';it.style.cursor='pointer';
+  it.innerHTML=`<div class="legend-dot" style="background:${regionColors[c.region]}"></div><span class="legend-name">${c.name} (${c.pol>=0?'+':''}${c.pol})</span>`;
+  it.addEventListener('click',()=>highlightCountry(c.name));lg.appendChild(it);
+});
+
+// ============ COMPOSITE INDEX ============
+const indicators = [
+  { key: 'demo', label: 'Democracia', icon: '🗳️', max: 10, defaultW: 20 },
+  { key: 'corr', label: 'Anticorrupción', icon: '⚖️', max: 100, defaultW: 15 },
+  { key: 'paz', label: 'Paz y Seguridad', icon: '🕊️', max: 5, defaultW: 10, invert: true },
+  { key: 'gender', label: 'Igualdad de Género', icon: '♀️', max: 1, defaultW: 10 },
+  { key: 'lgbt', label: 'Aceptación LGBT+', icon: '🏳️‍🌈', max: 10, defaultW: 10 },
+  { key: 'migra', label: 'Integración Inmigración', icon: '🌍', max: 100, defaultW: 5 },
+  { key: 'prensa', label: 'Libertad de Prensa', icon: '📰', max: 100, defaultW: 10 },
+  { key: 'crec', label: 'Crecimiento PIB', icon: '📈', max: 8, defaultW: 10 },
+  { key: 'gini', label: 'Igualdad (inv. Gini)', icon: '⚡', max: 65, defaultW: 5, invert: true },
+  { key: 'gastoSoc', label: 'Gasto Social', icon: '🏥', max: 55, defaultW: 5 },
+];
+
+const weights = {};
+indicators.forEach(ind => { weights[ind.key] = ind.defaultW; });
+
+function normalize(c, ind) {
+  let val = c[ind.key];
+  if (ind.invert) {
+    // For paz: lower=better, max 5. For gini: lower=better, max 65
+    if (ind.key === 'paz') return Math.max(0, (ind.max - val) / (ind.max - 1)) * 100;
+    if (ind.key === 'gini') return Math.max(0, (ind.max - val) / (ind.max - 20)) * 100;
+  }
+  if (ind.key === 'crec') return Math.max(0, (val + 3) / (ind.max + 3)) * 100; // handle negative Venezuela
+  return (val / ind.max) * 100;
+}
+
+function compositeScore(c) {
+  let totalW = 0, totalS = 0;
+  for (const ind of indicators) {
+    const w = weights[ind.key];
+    totalW += w;
+    totalS += w * normalize(c, ind);
+  }
+  return totalW > 0 ? totalS / totalW : 0;
+}
+
+// Build sliders
+const slidersCont = document.getElementById('slidersContainer');
+indicators.forEach(ind => {
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:center;gap:8px;';
+  div.innerHTML = `
+    <span style="font-size:1.1rem;width:24px;text-align:center;">${ind.icon}</span>
+    <span style="font-size:0.8rem;color:var(--text-muted);width:130px;flex-shrink:0;">${ind.label}</span>
+    <input type="range" min="0" max="30" value="${ind.defaultW}" data-key="${ind.key}"
+      style="flex:1;accent-color:var(--highlight);height:6px;cursor:pointer;">
+    <span class="slider-val" data-key="${ind.key}" style="font-size:0.8rem;color:var(--highlight);width:28px;text-align:right;font-weight:700;">${ind.defaultW}</span>
+  `;
+  slidersCont.appendChild(div);
+  div.querySelector('input').addEventListener('input', e => {
+    weights[ind.key] = parseInt(e.target.value);
+    div.querySelector('.slider-val').textContent = e.target.value;
+    updateComposite();
+  });
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  indicators.forEach(ind => {
+    weights[ind.key] = ind.defaultW;
+    const sl = slidersCont.querySelector(`input[data-key="${ind.key}"]`);
+    if (sl) sl.value = ind.defaultW;
+    const lbl = slidersCont.querySelector(`.slider-val[data-key="${ind.key}"]`);
+    if (lbl) lbl.textContent = ind.defaultW;
+  });
+  updateComposite();
+});
+
+// Chart
+let compositeChart = null;
+function buildComposite() {
+  const scored = countries.map((c, i) => ({ ...c, score: compositeScore(c), idx: i }));
+  const ctx = document.getElementById('chart-composite').getContext('2d');
+  
+  compositeChart = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        data: scored.map(s => ({ x: s.pol, y: s.score })),
+        backgroundColor: scored.map(s => pbg(s.idx)),
+        borderColor: scored.map(s => pbc(s.idx)),
+        borderWidth: scored.map(s => pbw(s.idx)),
+        pointRadius: scored.map(s => pr(s.idx)),
+        pointHoverRadius: 12,
+        datalabels: {
+          display: ctx2 => sl(ctx2.dataIndex),
+          color: '#e6edf3',
+          font: { family: 'DM Sans', size: 10, weight: 600 },
+          anchor: 'end', align: 'top', offset: 4,
+          formatter: (v, ctx2) => countries[ctx2.dataIndex].name
+        }
+      }]
+    },
+    plugins: [ChartDataLabels],
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20, right: 20, bottom: 10, left: 10 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...ctt, callbacks: {
+          title: items => countries[items[0].dataIndex].name,
+          label: item => {
+            const c = countries[item.dataIndex];
+            const sc = compositeScore(c).toFixed(1);
+            const pd = c.pol <= -2 ? 'Ext. Izquierda' : c.pol <= -1 ? 'Izquierda' : c.pol <= 0.5 ? 'Centro' : c.pol <= 1.5 ? 'Centro-Der/Der' : 'Ext. Derecha';
+            return [`Puntuación: ${sc}/100`, `Orientación: ${c.pol} (${pd})`, `Región: ${c.region}`];
+          }
+        }}
+      },
+      scales: {
+        x: { min: -3.5, max: 3.5, grid: { color: '#21262d' }, border: { color: '#30363d' },
+          title: { display: true, text: '← Ext.Izq       Izquierda       Centro       Derecha       Ext.Der →', color: '#8b949e', font: { family: 'DM Sans', size: 11 } },
+          ticks: { color: '#8b949e', font: { family: 'DM Sans', size: 9 }, stepSize: 1,
+            callback: v => ({'-3':'Ext.Izq','-2':'Izq','-1':'C-Izq','0':'Centro','1':'C-Der','2':'Der','3':'Ext.Der'}[String(v)]||'') }
+        },
+        y: { min: 0, max: 100, grid: { color: '#21262d' }, border: { color: '#30363d' },
+          title: { display: true, text: 'Puntuación Compuesta (0-100) →', color: '#8b949e', font: { family: 'DM Sans', size: 11 } },
+          ticks: { color: '#8b949e', font: { family: 'DM Sans', size: 9 } }
+        }
+      }
+    }
+  });
+  compositeChart._scatterDsIdx = 0;
+  allCharts.push(compositeChart);
+  updateRanking();
+}
+
+function updateComposite() {
+  if (!compositeChart) return;
+  const scored = countries.map((c, i) => ({ score: compositeScore(c), idx: i }));
+  compositeChart.data.datasets[0].data = scored.map(s => ({ x: countries[s.idx].pol, y: s.score }));
+  compositeChart.update();
+  updateRanking();
+}
+
+function updateRanking() {
+  const scored = countries.map((c, i) => ({ name: c.name, score: compositeScore(c), pol: c.pol, region: c.region, idx: i }));
+  scored.sort((a, b) => b.score - a.score);
+  const top10 = scored.slice(0, 10);
+  const bot5 = scored.slice(-5).reverse();
+  
+  const polDesc = p => p <= -2 ? 'Ext.Izq' : p <= -1 ? 'Izq' : p <= 0.5 ? 'Centro' : p <= 1.5 ? 'Der' : 'Ext.Der';
+  
+  let html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">`;
+  html += `<div><strong style="color:var(--text);font-size:0.95rem;">🏆 Top 10</strong><br>`;
+  top10.forEach((s, i) => {
+    const col = regionColors[s.region];
+    html += `<span style="color:${col};font-weight:600;">${i + 1}. ${s.name}</span> <span style="color:var(--highlight);font-weight:700;">${s.score.toFixed(1)}</span> <span style="opacity:0.5;font-size:0.75rem;">(${polDesc(s.pol)})</span><br>`;
+  });
+  html += `</div><div><strong style="color:var(--text);font-size:0.95rem;">📉 Últimos 5</strong><br>`;
+  bot5.forEach((s) => {
+    const col = regionColors[s.region];
+    html += `<span style="color:${col};">${scored.length - scored.indexOf(s)}. ${s.name}</span> <span style="opacity:0.7;">${s.score.toFixed(1)}</span> <span style="opacity:0.5;font-size:0.75rem;">(${polDesc(s.pol)})</span><br>`;
+  });
+  html += `</div></div>`;
+  
+  // Find Spain's rank
+  const spainRank = scored.findIndex(s => s.name === 'España') + 1;
+  const spainScore = scored.find(s => s.name === 'España')?.score.toFixed(1);
+  html += `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><strong style="color:var(--text);">🇪🇸 España:</strong> puesto <span style="color:var(--highlight);font-weight:700;">${spainRank}º</span> de 42 con <span style="color:var(--highlight);font-weight:700;">${spainScore}</span> puntos</div>`;
+  
+  document.getElementById('rankingBox').innerHTML = html;
+}
+
+buildComposite();
+</script>
+</body>
+</html>
