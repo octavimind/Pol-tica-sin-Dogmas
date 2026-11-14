@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>España: Análisis Político por Gobiernos (1977-2025)</title>
+<title>España: Análisis Político por Gobiernos (1977-2026)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -57,13 +57,19 @@
   .prog-item:hover{background:rgba(255,255,255,.02)}
   .prog-text{flex:1}
   .prog-thumbs{flex-shrink:0;white-space:nowrap}
+  .events{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .ev{display:grid;grid-template-columns:76px 82px 1fr;gap:10px;align-items:start;padding:10px 12px;background:var(--surface2);border-radius:10px}
+  .ev-date{font-weight:700;font-size:.78rem;color:var(--text)}
+  .ev-tag{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;border:1px solid;border-radius:20px;padding:2px 8px;text-align:center;white-space:nowrap}
+  .ev-text{font-size:.82rem;color:var(--text-muted);line-height:1.5}
+  @media(max-width:600px){.ev{grid-template-columns:1fr auto}.ev-text{grid-column:1/-1}}
   @media(max-width:600px){.charts-grid{grid-template-columns:1fr}.section{padding:16px}}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>España: Análisis por Gobiernos (1977–2025)</h1>
+  <h1>España: Análisis por Gobiernos (1977–2026)</h1>
   <p class="subtitle">Quién ha gobernado, con qué resultados económicos y sociales, y qué leyes clave ha aprobado cada partido. Datos de INE, Banco de España, Banco Mundial y fuentes oficiales.</p>
   <a href="index.html" style="display:inline-block;margin-top:12px;color:var(--highlight);text-decoration:none;font-size:.85rem;padding:6px 16px;border:1px solid rgba(251,191,36,0.25);border-radius:8px;background:rgba(251,191,36,0.06);">← Volver al inicio</a>
 </header>
@@ -72,14 +78,38 @@
 
 <!-- TIMELINE -->
 <div class="card">
-  <div class="card-title">Línea de Gobiernos de España (1977–2025)</div>
+  <div class="card-title">Línea de Gobiernos de España (1977–2026)</div>
   <div class="card-desc">Cada bloque = un año. <span style="color:var(--ucd)">■ UCD</span> (centro) · <span style="color:var(--psoe)">■ PSOE</span> (centro-izquierda) · <span style="color:var(--pp)">■ PP</span> (centro-derecha). Debajo: presidente y si gobernó en coalición.</div>
   <div class="timeline" id="timeline"></div>
   <div class="insight-box">
-    <strong>Patrón:</strong> España ha alternado entre PSOE y PP de forma bastante equilibrada: ~24 años de PSOE y ~16 años de PP desde 1982 (más 5 años de UCD al inicio). El PSOE ha gobernado más tiempo, pero el PP ha tenido dos periodos con mayoría absoluta (2000-2004, 2011-2015). Desde 2015 ningún partido ha logrado mayoría absoluta, obligando a coaliciones y gobiernos minoritarios.
+    <strong>Patrón:</strong> España ha alternado entre PSOE y PP de forma bastante equilibrada: ~26 años de PSOE y ~16 años de PP desde 1982 (más 5 años de UCD al inicio). El PSOE ha gobernado más tiempo, pero el PP ha tenido dos periodos con mayoría absoluta (2000-2004, 2011-2015). Desde 2015 ningún partido ha logrado mayoría absoluta, obligando a coaliciones y gobiernos minoritarios. La legislatura que empezó en 2023 termina antes de tiempo: elecciones generales anticipadas el <strong>29 de noviembre de 2026</strong>.
   </div>
 </div>
 
+
+<!-- WHAT HAPPENED 2023-2026 -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Qué ha pasado desde las últimas elecciones (2023–2026)</div>
+  <div class="card-desc">Los hechos más importantes de la legislatura que termina, en orden. Los casos judiciales se marcan como <em>condena firme</em>, <em>no firme</em> o <em>investigación</em>: no es lo mismo estar condenado que estar investigado.</div>
+  <div class="events">
+    <div class="ev"><div class="ev-date">Nov 2023</div><div class="ev-tag" style="color:var(--highlight);border-color:var(--highlight)">Política</div><div class="ev-text">Sánchez es investido presidente con el apoyo de Sumar, ERC, Junts, EH Bildu, PNV, BNG y CC, a cambio, entre otras cosas, de una amnistía para los implicados en el procés. El PP había ganado las elecciones, pero no sumó apoyos suficientes.</div></div>
+    <div class="ev"><div class="ev-date">Jun 2024</div><div class="ev-tag" style="color:#34d399;border-color:#34d399">Ley</div><div class="ev-text">Se aprueba la Ley de Amnistía. En 2025 el Tribunal Constitucional la avala en lo esencial y en 2026 la extiende también a la malversación; el juez levanta la orden de detención de Puigdemont (oct. 2026).</div></div>
+    <div class="ev"><div class="ev-date">Oct 2024</div><div class="ev-tag" style="color:#9ca3af;border-color:#9ca3af">Tragedia</div><div class="ev-text">DANA en Valencia (29 de octubre): más de 220 muertos. Abre un duro debate sobre alertas y coordinación entre Generalitat y Gobierno.</div></div>
+    <div class="ev"><div class="ev-date">Abr 2025</div><div class="ev-tag" style="color:#9ca3af;border-color:#9ca3af">Crisis</div><div class="ev-text">Apagón eléctrico en toda la península (28 de abril).</div></div>
+    <div class="ev"><div class="ev-date">Jun 2025</div><div class="ev-tag" style="color:#f97316;border-color:#f97316">Justicia</div><div class="ev-text">Santos Cerdán, número 3 del PSOE, dimite y entra en prisión preventiva por el caso Koldo (sale a los 5 meses).</div></div>
+    <div class="ev"><div class="ev-date">Sep 2025</div><div class="ev-tag" style="color:#34d399;border-color:#34d399">Ley</div><div class="ev-text">El Congreso tumba la reducción de la jornada laboral a 37,5 horas (PP, Vox y Junts votan en contra).</div></div>
+    <div class="ev"><div class="ev-date">Nov 2025</div><div class="ev-tag" style="color:var(--highlight);border-color:var(--highlight)">Política</div><div class="ev-text">Junts rompe con el Gobierno y anuncia que votará en contra de todas sus leyes. Desde entonces, el Gobierno pierde muchas votaciones.</div></div>
+    <div class="ev"><div class="ev-date">Nov 2025</div><div class="ev-tag" style="color:#f97316;border-color:#f97316">Justicia</div><div class="ev-text">El Fiscal General del Estado, Álvaro García Ortiz, es condenado a 2 años de inhabilitación por revelar datos secretos del novio de Ayuso. Es el primer fiscal general condenado.</div></div>
+    <div class="ev"><div class="ev-date">Ene 2026</div><div class="ev-tag" style="color:#9ca3af;border-color:#9ca3af">Tragedia</div><div class="ev-text">Accidente ferroviario de Adamuz (Córdoba): 46 muertos.</div></div>
+    <div class="ev"><div class="ev-date">Abr 2026</div><div class="ev-tag" style="color:#34d399;border-color:#34d399">Ley</div><div class="ev-text">Regularización extraordinaria de migrantes que ya vivían en España: 1,17 millones de solicitudes.</div></div>
+    <div class="ev"><div class="ev-date">Jun 2026</div><div class="ev-tag" style="color:#f97316;border-color:#f97316">Justicia</div><div class="ev-text">El Tribunal Supremo condena al exministro Ábalos a 24 años de cárcel, a su asesor Koldo a 19 y al empresario Aldama a 4,5 por el caso mascarillas (firme en octubre).</div></div>
+    <div class="ev"><div class="ev-date">Jul 2026</div><div class="ev-tag" style="color:#f97316;border-color:#f97316">Justicia</div><div class="ev-text">David Sánchez, hermano del presidente, condenado (no firme) a 9 años de inhabilitación por prevaricación. Begoña Gómez, su esposa, irá a juicio con jurado. Zapatero, imputado en el caso Plus Ultra. Montoro (exministro del PP), investigado en Tarragona.</div></div>
+    <div class="ev"><div class="ev-date">Oct 2026</div><div class="ev-tag" style="color:var(--highlight);border-color:var(--highlight)">Política</div><div class="ev-text">El Congreso rechaza los decretos de vivienda del Gobierno (2 de octubre). El 5 de octubre, Sánchez disuelve las Cortes y convoca elecciones para el 29 de noviembre.</div></div>
+    <div class="ev"><div class="ev-date">Oct 2026</div><div class="ev-tag" style="color:#9ca3af;border-color:#9ca3af">Tragedia</div><div class="ev-text">Accidente ferroviario de Urda (Toledo): 69 muertos. El ministro de Transportes, Óscar Puente, dimite el 3 de noviembre.</div></div>
+    <div class="ev"><div class="ev-date">Nov 2026</div><div class="ev-tag" style="color:#60a5fa;border-color:#60a5fa">Sociedad</div><div class="ev-text">Huelga general por la vivienda, el coste de la vida y los salarios (11 de noviembre). La campaña electoral arranca el 13 de noviembre.</div></div>
+  </div>
+  <div class="insight-box"><strong>En números:</strong> la economía ha crecido más que la media europea (PIB +2,8% en 2025), hay récord de ocupados (22,85 millones) y la deuda ha bajado al 100,7% del PIB. A la vez, la legislatura ha estado bloqueada: <strong>ningún Presupuesto nuevo en tres años</strong>, muchas leyes rechazadas desde que Junts rompió, y una cadena de casos judiciales que afectan al PSOE y al entorno del presidente. El gran problema social que ha marcado el final es el <strong>precio de la vivienda</strong>.</div>
+</div>
 
 <!-- CHARTS ESPAÑA -->
 <div class="charts-grid">
@@ -88,14 +118,14 @@
   <div class="card-title">Crecimiento del PIB real (%)</div>
   <div class="card-desc">Variación anual del PIB en volumen. Fuente: Banco Mundial / INE. Franjas de color = partido en el gobierno.</div>
   <div class="chart-sm"><canvas id="chartPIB"></canvas></div>
-  <div class="insight-box"><strong>Observación:</strong> El crecimiento alto de los 80 fue con PSOE (González), la burbuja inmobiliaria creció bajo PP (Aznar) y PSOE (Zapatero), y la crisis de 2008-2013 afectó a ambos. La recuperación post-COVID (2021-2024) bajo PSOE (Sánchez) ha sido fuerte (3.5% en 2024). Las recesiones no respetan colores políticos: las provocan ciclos globales.</div>
+  <div class="insight-box"><strong>Observación:</strong> El crecimiento alto de los 80 fue con PSOE (González), la burbuja inmobiliaria creció bajo PP (Aznar) y PSOE (Zapatero), y la crisis de 2008-2013 afectó a ambos. La recuperación post-COVID (2021-2025) bajo PSOE (Sánchez) ha sido fuerte (3,5% en 2024 y 2,8% en 2025, de lo más alto de la zona euro). Las recesiones no respetan colores políticos: las provocan ciclos globales.</div>
 </div>
 
 <div class="card">
   <div class="card-title">Tasa de Desempleo (%)</div>
   <div class="card-desc">Media anual. Fuente: INE (EPA) / Eurostat. El desempleo es el gran problema estructural español.</div>
   <div class="chart-sm"><canvas id="chartParo"></canvas></div>
-  <div class="insight-box"><strong>Observación:</strong> El paro bajó con González (de 21% a 16%), se disparó en la recesión del 93, bajó a mínimos con Aznar (11%), volvió a subir con la crisis de 2008 bajo Zapatero y Rajoy (26%), y ha bajado bajo Sánchez (~11%). Ambos partidos han tenido éxitos y fracasos en empleo: el ciclo económico global pesa más que la política nacional.</div>
+  <div class="insight-box"><strong>Observación:</strong> El paro bajó con González (de 21% a 16%), se disparó en la recesión del 93, bajó a mínimos con Aznar (11%), volvió a subir con la crisis de 2008 bajo Zapatero y Rajoy (26%), y ha bajado bajo Sánchez (10,8% de media en 2025; 10,18% en el 3er trimestre de 2026, con récord de 22,85 millones de ocupados). Aun así, sigue siendo el paro más alto de la UE. Ambos partidos han tenido éxitos y fracasos en empleo: el ciclo económico global pesa más que la política nacional.</div>
 </div>
 
 <div class="card">
@@ -109,14 +139,14 @@
   <div class="card-title">Deuda Pública (% del PIB)</div>
   <div class="card-desc">Deuda de las Administraciones Públicas. Fuente: Banco de España / Eurostat.</div>
   <div class="chart-sm"><canvas id="chartDeuda"></canvas></div>
-  <div class="insight-box"><strong>Observación:</strong> González heredó deuda alta y la redujo. Aznar la bajó al mínimo histórico (36% en 2007). Zapatero y Rajoy la dispararon por la crisis bancaria y el rescate. Sánchez la mantiene alta (~105%) pero estable. La deuda sube en crisis (inevitable) y debería bajar en bonanza (no siempre ocurre).</div>
+  <div class="insight-box"><strong>Observación:</strong> González heredó deuda alta y la redujo. Aznar la bajó al mínimo histórico (36% en 2007). Zapatero y Rajoy la dispararon por la crisis bancaria y el rescate. Sánchez la ha bajado desde el pico del COVID (120%) hasta el 100,7% en 2025, pero sigue muy por encima de la media de la UE (81,7%). La deuda sube en crisis (inevitable) y debería bajar en bonanza (no siempre ocurre).</div>
 </div>
 
 <div class="card">
   <div class="card-title">Índice de Percepción de Corrupción (Transparency Intl)</div>
   <div class="card-desc">Escala 0-100. Mayor = menos corrupción. Datos comparables desde 2012 (cambio metodológico TI).</div>
   <div class="chart-sm"><canvas id="chartCorr"></canvas></div>
-  <div class="insight-box"><strong>Observación:</strong> España empeoró en corrupción durante la burbuja inmobiliaria (casos Gürtel, ERE, Bárcenas, Nóos). Ambos partidos han tenido escándalos graves: Gürtel/Bárcenas (PP), ERE de Andalucía (PSOE), Nóos (Monarquía). La corrupción ha sido transversal, no de un solo partido.</div>
+  <div class="insight-box"><strong>Observación:</strong> España empeoró en corrupción durante la burbuja inmobiliaria (casos Gürtel, ERE, Bárcenas, Nóos). Ambos partidos han tenido escándalos graves: Gürtel/Bárcenas (PP), ERE de Andalucía (PSOE), Nóos (Monarquía). La corrupción ha sido transversal, no de un solo partido. En la legislatura 2023-2026 España ha seguido cayendo: 60 puntos en 2023, 56 en 2024 y 55 en 2025 (puesto 49 del mundo), con el caso mascarillas en el centro del debate.</div>
 </div>
 
 <div class="card">
@@ -130,7 +160,7 @@
 
 <!-- LAWS TABLE -->
 <div class="card" style="margin-top:20px">
-  <div class="card-title">Leyes más representativas por gobierno (1977–2025)</div>
+  <div class="card-title">Leyes más representativas por gobierno (1977–2026)</div>
   <div class="card-desc">Selección de las leyes y decisiones más importantes de cada legislatura, agrupadas por presidente.</div>
   <div class="legend-bar">
     <span><span class="swatch" style="background:var(--ucd)"></span> UCD (Suárez/Calvo-Sotelo)</span>
@@ -158,22 +188,42 @@
     </table>
   </div>
   <div id="corrSummary" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.85rem;color:var(--text-muted);line-height:1.6;"></div>
-  <div class="insight-box" style="margin-top:12px"><strong>Observación:</strong> La corrupción en España ha sido transversal. El PP acumula más casos y mayor importe total judicializado (~3.000M€ según Verificat), pero el PSOE tiene el mayor caso individual (ERE de Andalucía, ~680M€ en condena firme). CiU tuvo el caso Palau y el 3% que afectaron a la financiación del partido. Ningún gran partido español está libre de escándalos graves. La diferencia está en si fueron casos individuales o tramas sistémicas.</div>
+  <div class="insight-box" style="margin-top:12px"><strong>Observación:</strong> La corrupción en España ha sido transversal. Históricamente, el PP acumula mayor importe total judicializado (~3.000M€ según Verificat) y el PSOE tiene el mayor caso individual (ERE de Andalucía, ~680M€ en condena firme). Entre 2024 y 2026 la mayoría de casos nuevos afectan al PSOE y a su entorno; ojo: solo el de mascarillas tiene condena firme, el resto están investigados o recurridos, y hay que distinguir siempre entre <em>condenado</em> e <em>investigado</em>. CiU tuvo el caso Palau y el 3% que afectaron a la financiación del partido. Ningún gran partido español está libre de escándalos graves. La diferencia está en si fueron casos individuales o tramas sistémicas.</div>
+</div>
+
+<!-- POLLS 29-N -->
+<div class="card" style="margin-top:20px">
+  <div class="card-title">Qué dicen las encuestas (inicio de campaña, noviembre 2026)</div>
+  <div class="card-desc">Estimaciones de voto publicadas justo antes de la campaña. Para gobernar hacen falta <strong>176 escaños</strong> de 350 (mayoría absoluta) o, al menos, más síes que noes en la investidura.</div>
+  <div class="table-scroll">
+    <table class="laws-table">
+      <thead><tr><th>Encuesta</th><th>Fecha</th><th>PP</th><th>PSOE</th><th>Vox</th><th>Sumar / FA</th></tr></thead>
+      <tbody>
+        <tr><td style="font-size:.8rem">40dB (El País / SER)</td><td style="font-size:.75rem">13-nov</td><td>31,5%</td><td>29,4%</td><td>18,8%</td><td>5,1%</td></tr>
+        <tr><td style="font-size:.8rem">Sigma Dos (El Mundo)</td><td style="font-size:.75rem">12-nov</td><td>30,8%</td><td>25,3%</td><td>19,6%</td><td>7,3%</td></tr>
+        <tr><td style="font-size:.8rem">Promedio Mapa Electoral (escaños)</td><td style="font-size:.75rem">nov</td><td>~130</td><td>~110</td><td>~66</td><td>—</td></tr>
+        <tr><td style="font-size:.8rem">CIS (escaños)</td><td style="font-size:.75rem">nov</td><td>98-106</td><td>134-143</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight-box"><strong>Cómo leerlo:</strong> casi todas las encuestas privadas dan ganador al PP, y PP + Vox sumarían más de 176 escaños. El CIS (organismo público, cuyo presidente fue nombrado por el Gobierno) es el único que pone primero al PSOE. Las encuestas <em>no son resultados</em>: tienen márgenes de error y la campaña puede cambiar mucho el voto. Lo que cuenta es lo que pase el 29-N.</div>
 </div>
 
 <!-- ELECTORAL PROGRAMS -->
 <div class="card" style="margin-top:20px">
-  <div class="card-title">Propuestas electorales: Elecciones Generales 2023 (23-J)</div>
-  <div class="card-desc">Principales propuestas de cada partido en las últimas elecciones generales. Vota 👍 o 👎 cada propuesta según tu criterio. Fuentes: programas electorales oficiales publicados por cada partido.</div>
+  <div class="card-title">Propuestas electorales: Elecciones Generales 2026 (29-N)</div>
+  <div class="card-desc">Principales propuestas de cada partido para las elecciones del 29 de noviembre de 2026. Vota 👍 o 👎 cada propuesta según tu criterio.</div>
+  <div class="insight-box" style="margin-bottom:14px;border-left-color:#f97316"><strong>⚠️ Ojo, a 14 de noviembre de 2026:</strong> la mayoría de partidos todavía no ha publicado su programa completo. Lo que hay aquí son las propuestas que han anunciado y que recoge la prensa (ERC sí ha publicado programa; en Vox algunas cifras vienen de documentos del partido de 2025; de Junts solo hemos encontrado 4 propuestas concretas). Cuando salgan los programas oficiales, vale la pena comprobarlas. Fuentes: Telecinco (13/11/2026), DatosClaros (comparador 29-N), Forbes España.</div>
   <div id="programsContainer"></div>
   <div id="programsScore" style="margin-top:16px;padding:16px 20px;background:var(--surface2);border-radius:12px;font-size:.88rem;color:var(--text-muted);line-height:1.6;"></div>
-  <div class="insight-box" style="margin-top:12px;"><strong>Reflexión:</strong> Después de votar, mira los resultados. ¿Te sorprende el partido con más propuestas que te gustan? Muchas veces coincidimos con partidos que no esperábamos. Esto demuestra que las propuestas concretas importan más que las etiquetas.</div>
+  <div class="insight-box" style="margin-top:12px;"><strong>Reflexión:</strong> Después de votar, mira los resultados. Para comparar: en 2023 se presentaban juntos Sumar y Podemos; en 2026 van por separado (Frente Amplio y Podemos), salvo en Valencia y Canarias. ¿Te sorprende el partido con más propuestas que te gustan? Muchas veces coincidimos con partidos que no esperábamos. Esto demuestra que las propuestas concretas importan más que las etiquetas.</div>
 </div>
 
 </div><!-- section -->
 
 <div class="footer-note">
   Fuentes: INE, Banco de España, Banco Mundial, Eurostat, Transparency International, BOE, Congreso de los Diputados.<br>
+  Actualizado el 14 de noviembre de 2026 (elecciones generales del 29-N): legislatura 2023-2026, casos judiciales, encuestas y propuestas electorales. Prensa consultada: El País, El Mundo, COPE, Euronews, Telecinco, DatosClaros, Forbes España, Maldita.es, La Moncloa.<br>
   Datos económicos: PIB real (Banco Mundial/INE), Desempleo (EPA/Eurostat), IPC (INE), Deuda (Eurostat/BdE), CPI (TI desde 1995).<br>
   Uso exclusivamente educativo. Elaboración propia.
 </div>
@@ -229,7 +279,8 @@ const govs = [
   {y:2022,party:'PSOE',pm:'Sánchez',coal:'Coalición (UP)'},
   {y:2023,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar)'},
   {y:2024,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar)'},
-  {y:2025,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar)'},
+  {y:2025,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar) · Junts rompe en noviembre'},
+  {y:2026,party:'PSOE',pm:'Sánchez',coal:'Coalición (Sumar) · Elecciones anticipadas 29-N'},
 ];
 
 // Timeline
@@ -246,19 +297,20 @@ govs.forEach(g => {
 });
 
 // ============ ECONOMIC DATA ============
-const years = govs.map(g => g.y);
+// Los gráficos llegan hasta el último año cerrado (2025); 2026 aún está en curso
+const years = govs.filter(g => g.y <= 2025).map(g => g.y);
 // GDP growth (real, %) - World Bank / INE
-const pib = [3.3,1.5,0.0,-0.1,-0.1,1.2,1.8,1.8,2.3,3.3,5.5,5.1,4.8,3.8,3.7,2.5,0.9,-1.0,2.8,2.7,4.7,4.7,4.5,5.3,4.0,2.7,2.4,3.2,3.7,4.2,3.8,3.8,1.1,-3.8,-0.3,-1.0,-3.0,-1.4,1.4,3.8,3.0,3.0,2.3,2.0,-10.8,6.4,5.8,2.5,3.5,2.8];
+const pib = [1.5,0.0,-0.1,-0.1,1.2,1.8,1.8,2.3,3.3,5.5,5.1,4.8,3.8,3.7,2.5,0.9,-1.0,2.8,2.7,4.7,4.7,4.5,5.3,4.0,2.7,2.4,3.2,3.7,4.2,3.8,3.8,1.1,-3.8,-0.3,-1.0,-3.0,-1.4,1.4,3.8,3.0,3.0,2.3,2.0,-10.8,6.4,5.8,2.5,3.5,2.8];
 // Unemployment rate (%) - EPA / Eurostat
-const paro = [5.3,7.0,8.7,11.5,14.4,16.2,17.5,20.1,21.0,20.5,20.2,19.5,17.3,16.3,18.4,22.7,24.1,22.8,19.6,17.2,15.9,13.0,11.3,11.1,10.5,10.6,11.5,11.0,11.0,8.5,8.3,8.2,11.3,17.9,19.9,21.4,24.8,26.1,24.4,22.1,19.6,17.2,14.1,14.1,15.5,14.8,12.9,12.1,11.3,11.0];
+const paro = [7.0,8.7,11.5,14.4,16.2,17.5,20.1,21.0,20.5,20.2,19.5,17.3,16.3,18.4,22.7,24.1,22.8,19.6,17.2,15.9,13.0,11.3,11.1,10.5,10.6,11.5,11.0,11.0,8.5,8.3,8.2,11.3,17.9,19.9,21.4,24.8,26.1,24.4,22.1,19.6,17.2,14.1,14.1,15.5,14.8,12.9,12.1,11.3,10.8];
 // CPI Inflation (%) - INE
-const ipc = [24.5,19.8,15.7,15.5,14.6,14.4,12.2,11.3,8.8,8.3,5.2,4.8,6.8,6.7,5.9,4.7,4.6,4.3,3.6,1.6,3.5,2.8,3.5,3.5,2.3,3.6,3.1,2.7,3.0,3.6,2.7,4.2,1.4,-0.3,2.0,3.2,2.4,1.5,1.0,-0.2,1.7,2.0,0.7,0.3,-0.3,3.1,8.4,3.5,2.8,2.3];
+const ipc = [19.8,15.7,15.5,14.6,14.4,12.2,11.3,8.8,8.3,5.2,4.8,6.8,6.7,5.9,4.7,4.6,4.3,3.6,1.6,3.5,2.8,3.5,3.5,2.3,3.6,3.1,2.7,3.0,3.6,2.7,4.2,1.4,-0.3,2.0,3.2,2.4,1.5,1.0,-0.2,1.7,2.0,0.7,0.3,-0.3,3.1,8.4,3.5,2.8,2.7];
 // Public debt (% GDP) - Eurostat / BdE - estimated for early years
-const deuda = [14,16,18,20,25,30,38,43,44,44,43,41,42,42,48,57,60,63,65,67,62,61,59,55,52,48,43,39,36,36,39,40,53,62,60,69,86,95,100,99,99,99,98,96,120,118,113,107,105,103];
+const deuda = [16,18,20,25,30,38,43,44,44,43,41,42,42,48,57,60,63,65,67,62,61,59,55,52,48,43,39,36,36,39,40,53,62,60,69,86,95,100,99,99,99,98,96,120,117,112,105,102,101];
 // Corruption CPI - TI (comparable from 1995; earlier estimated)
-const corr = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44,44,44,44,70,70,70,69,69,71,70,68,65,67,65,61,61,65,65,60,60,58,57,57,62,62,62,61,60,60,60,60];
+const corr = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,44,44,44,44,70,70,70,69,69,71,70,68,65,67,65,61,61,65,65,60,60,58,57,57,62,62,62,61,60,60,56,55];
 // Rights/freedoms cumulative index (qualitative, 0-100)
-const libertades = [15,25,30,32,33,38,40,42,42,44,46,47,47,47,48,48,48,48,48,48,50,50,50,50,50,50,50,50,55,60,62,64,64,64,64,64,64,64,65,65,66,66,68,68,68,72,74,78,82,84];
+const libertades = [25,30,32,33,38,40,42,42,44,46,47,47,47,48,48,48,48,48,48,50,50,50,50,50,50,50,50,55,60,62,64,64,64,64,64,64,64,65,65,66,66,68,68,68,72,74,78,82,84];
 
 function partyColor(y) {
   const g = govs.find(g => g.y === y);
@@ -386,7 +438,12 @@ const corrCases = [
   {caso:'Caso Nóos / Urdangarin',party:'Casa Real / PP Baleares',periodo:'2004-2006',importe:'~6M€ en fondos públicos desviados',implicados:'Iñaki Urdangarin condenado (cuñado del Rey); Jaume Matas (PP) condenado separadamente',estado:'Condena firme (2017)',desc:'Desvío de fondos públicos a través del Instituto Nóos. Urdangarin entró en prisión. Matas (expresidente balear PP) también condenado.'},
   {caso:'Caso Roldán',party:'PSOE',periodo:'1986-1993',importe:'~3M€ en enriquecimiento ilícito',implicados:'Luis Roldán (Director Gral. Guardia Civil) condenado',estado:'Condena firme (1998)',desc:'El director de la Guardia Civil se enriqueció ilícitamente y huyó de España. Fue capturado en Laos.'},
   {caso:'Operación Kitchen',party:'PP',periodo:'2013-2015',importe:'Espionaje político (sin importe directo)',implicados:'Exministro Fernández Díaz y altos cargos de Interior procesados',estado:'Pendiente de juicio (2026)',desc:'El Ministerio del Interior de Rajoy creó una brigada parapolicial para espiar a Bárcenas y destruir pruebas de la caja B del PP.'},
-  {caso:'Caso Koldo',party:'PSOE',periodo:'2020-2023',importe:'~52M€ en contratos de mascarillas',implicados:'Koldo García (asesor ministerial) y empresarios investigados',estado:'En instrucción judicial',desc:'Presuntas comisiones ilegales en la compra de mascarillas durante la pandemia por parte de un asesor del ministro Ábalos.'},
+  {caso:'Caso Koldo / Mascarillas',party:'PSOE',periodo:'2020-2023',importe:'~52M€ en contratos de mascarillas',implicados:'Exministro Ábalos (24 años de prisión), Koldo García (19) y el empresario Aldama (4,5; colaboró con la justicia)',estado:'Condena firme (Tribunal Supremo, junio 2026; firme en octubre 2026)',desc:'Comisiones ilegales en la compra de mascarillas durante la pandemia. Es la primera vez que un exministro de un gobierno de Sánchez es condenado por corrupción. Otras piezas del caso siguen abiertas.'},
+  {caso:'Caso Leire Díez / Santos Cerdán',party:'PSOE',periodo:'2024-2025',importe:'—',implicados:'Santos Cerdán (exsecretario de Organización del PSOE, 5 meses en prisión preventiva en 2025) y la exmilitante Leire Díez',estado:'En investigación (Audiencia Nacional). Presunción de inocencia',desc:'El juez investiga un supuesto plan para desacreditar a jueces, fiscales y agentes de la UCO que investigaban casos que afectaban al PSOE.'},
+  {caso:'Caso Diputación de Badajoz (David Sánchez)',party:'PSOE',periodo:'2016-2017',importe:'Contratación de un puesto público',implicados:'David Sánchez (hermano del presidente) y Miguel Ángel Gallardo (exlíder del PSOE extremeño)',estado:'Condena NO firme (Audiencia de Badajoz, julio 2026): 9 años de inhabilitación por prevaricación; recurrida al Supremo',desc:'La sentencia considera que se creó un puesto a medida en la Diputación. Absuelve del delito de tráfico de influencias y no impone cárcel.'},
+  {caso:'Caso Begoña Gómez',party:'PSOE (entorno del presidente)',periodo:'2020-2024',importe:'—',implicados:'Begoña Gómez (esposa del presidente)',estado:'Pendiente de juicio con jurado (tráfico de influencias y malversación). Presunción de inocencia',desc:'Se investiga si aprovechó su posición para favorecer a empresas y si una asesora de Moncloa trabajó para sus actividades privadas. El Gobierno lo considera una persecución judicial.'},
+  {caso:'Caso Plus Ultra (Zapatero)',party:'PSOE (expresidente)',periodo:'2021',importe:'Rescate público de 53M€ a la aerolínea Plus Ultra',implicados:'Expresidente Zapatero y otros investigados',estado:'En investigación (Audiencia Nacional). Presunción de inocencia',desc:'El juez investiga si hubo tráfico de influencias y blanqueo alrededor del rescate de la aerolínea durante la pandemia.'},
+  {caso:'Caso Montoro / Equipo Económico',party:'PP',periodo:'2008-2018',importe:'Por determinar',implicados:'Exministro de Hacienda Cristóbal Montoro y 27 investigados',estado:'En investigación (juzgado de Tarragona, prorrogada hasta enero 2027). Presunción de inocencia',desc:'Se investiga si el despacho fundado por Montoro cobró de empresas gasistas a cambio de cambios legales favorables cuando él era ministro.'},
   {caso:'Caso Lezo',party:'PP',periodo:'2003-2014',importe:'~70M€ en irregularidades en Canal de Isabel II',estado:'Parcialmente juzgado',implicados:'Ignacio González (expresidente Madrid) procesado',desc:'Corrupción en la gestión de la empresa pública Canal de Isabel II bajo el gobierno PP de Madrid.'},
   {caso:'Caso 3% / Palau de la Música',party:'CiU',periodo:'1990-2010',importe:'~6,6M€ (Palau) + comisiones sistémicas del 3%',implicados:'Millet y Montull condenados (Palau); Mas y otros procesados (3%)',estado:'Condenas firmes (Palau 2017); 3% en instrucción',desc:'CDC (parte de CiU) cobraba presuntamente una comisión del 3% en obra pública catalana. El Palau de la Música fue un caso derivado de desvío de fondos.'},
   {caso:'Caso GAL',party:'PSOE',periodo:'1983-1987',importe:'Fondos reservados del Estado',implicados:'Exministro Barrionuevo y exsecretario de Estado Vera condenados',estado:'Condena firme (1998)',desc:'Grupos Antiterroristas de Liberación: terrorismo de Estado contra ETA financiado con fondos reservados. 27 asesinatos.'},
@@ -414,8 +471,8 @@ const laws = [
     '• <b>Ley de Matrimonio Igualitario</b> (2005)\n• Ley de Igualdad (2007)\n• Ley contra Violencia de Género (2004)\n• Ley de Dependencia (2006)\n• Ley de Memoria Histórica (2007)\n• Ley antitabaco (2006)\n• Reforma laboral (2010)\n• Reforma art. 135 Constitución (2011)'],
   ['2011-2018','Mariano Rajoy','PP','Mayoría absoluta (11-15), minoría con C\'s (16-18)',
     '• <b>Reforma laboral</b> (2012)\n• Rescate bancario europeo (2012) — 41.000M€\n• Ley Mordaza (2015)\n• LOMCE "Ley Wert" (2013)\n• Aplicación Art. 155 en Cataluña (2017)\n• Intento reforma Ley Aborto (Gallardón, retirada)\n• Destituido por moción de censura (2018)'],
-  ['2018-2025','Pedro Sánchez','PSOE','Coalición UP (20-23), coalición Sumar (23-)',
-    '• <b>Ley de Eutanasia</b> (2021)\n• Ley Trans (2023)\n• Ley "solo sí es sí" (2022)\n• Reforma laboral (2021)\n• Subida SMI de 736€ a 1.134€\n• Ingreso Mínimo Vital (2020)\n• Ley de Vivienda (2023)\n• Ley de Amnistía procés (2024)\n• LOMLOE "Ley Celaá" (2020)'],
+  ['2018-2026','Pedro Sánchez','PSOE','Coalición UP (20-23), coalición Sumar (23-26)',
+    '• <b>Ley de Eutanasia</b> (2021)\n• Ley Trans (2023)\n• Ley "solo sí es sí" (2022)\n• Reforma laboral (2021)\n• Subida SMI de 736€ a 1.134€\n• Ingreso Mínimo Vital (2020)\n• Ley de Vivienda (2023)\n• Ley de Amnistía procés (2024)\n• LOMLOE "Ley Celaá" (2020)\n• Ley ELA (2024) — aprobada por unanimidad, con apoyo de todos los partidos\n• Ley de Paridad (2024) — listas y consejos de administración equilibrados\n• Permisos por nacimiento ampliados a 19 semanas (2025)\n• Jornada laboral de 37,5 horas — <i>rechazada</i> por el Congreso (PP, Vox y Junts, sept. 2025)\n• Regularización extraordinaria de migrantes (2026) — 1,17 millones de solicitudes\n• Ley contra las terapias de conversión (2026)\n• Ninguna ley de Presupuestos nueva en toda la legislatura (se prorrogaron los de 2023)\n• Decretos de vivienda (desahucios, alquiler) — <i>rechazados</i> por el Congreso (2026)'],
 ];
 
 const lawVotes = {};
@@ -461,14 +518,15 @@ function updateLawsScore() {
 }
 updateLawsScore();
 
-// ============ ELECTORAL PROGRAMS 2023 ============
+// ============ ELECTORAL PROPOSALS 29-N 2026 ============
 const programs = [
-  { party: 'VOX', color: '#63be21', tag: 'Extrema derecha', proposals: ['Derogación de la ley del aborto','Ilegalización de partidos independentistas','Supresión del Tribunal Constitucional','Eliminación de policías autonómicas','Sustitución de ley violencia de género por ley protección familia','Derogación de la ley de memoria histórica','Deportación masiva de inmigrantes ilegales','Eliminación impuestos: patrimonio, sucesiones','Supresión del Ministerio de Igualdad','Eliminación competencias autonómicas en educación y sanidad']},
-  { party: 'PP', color: '#1d4ed8', tag: 'Centro-derecha', proposals: ['Recuperar delito de sedición','Eliminar impuesto grandes fortunas','Castellano como lengua vehicular en toda España','Suprimir ley de memoria democrática','Deflactar IRPF, eliminar impuesto patrimonio','Recuperar permiso paterno para aborto de menores','Plan de vivienda: 200.000 viviendas, liberar suelo público','Ley de conciliación: flexibilidad horaria','Eliminar mecanismo excepción ibérica del gas','Más recursos para Fuerzas de Seguridad']},
-  { party: 'PSOE', color: '#e63946', tag: 'Centro-izquierda', proposals: ['183.000 viviendas públicas de alquiler','Transporte público gratuito menores de 24','SMI nunca inferior al 60% del salario medio','Universidad y FP gratuitas aprobando a la primera','Tiempos máximos en listas de espera sanitarias','Avales ICO primera vivienda menores de 35','Abolición de la prostitución','Ampliar permisos maternidad/paternidad a 20 semanas','Herramienta para ver destino de tus impuestos','Acuerdo social por el pleno empleo']},
-  { party: 'Sumar/Podemos', color: '#7b2d8e', tag: 'Izquierda', proposals: ['Jornada laboral de 37.5h (previsión bajar a 32)','Herencia universal de 20.000€ a los 23 años','Subir pensiones mínimas por encima del IPC','Alquiler social obligatorio grandes tenedores','Bono emergencia 1.000€ hipotecas variables','Creación banco público','Reducir brecha de género en pensiones','Impuesto reforzado grandes fortunas y beneficios','Reforma ley trabajo nocturno y turnos','Ampliación permisos maternidad/paternidad']},
-  { party: 'ERC', color: '#ffb81c', tag: 'Independentismo izquierda (Catalunya)', proposals: ['Derecho a la autodeterminación de Catalunya (referéndum pactado)','Amnistía para todos los encausados del procés','Blindaje de la inmersión lingüística en catalán','Transición energética: 100% renovables para 2030 en Catalunya','Fin de la monarquía: república federal plurinacional','Aumento del SMI a 1.200€','Mayor inversión en infraestructuras en Catalunya (deuda histórica)','Reforma fiscal progresiva: más impuestos a grandes patrimonios']},
-  { party: 'Junts', color: '#00b4d8', tag: 'Independentismo centro-derecha (Catalunya)', proposals: ['Independencia de Catalunya como objetivo irrenunciable','Amnistía y retorno de Puigdemont sin consecuencias penales','Catalunya como estado miembro de la UE','Bajada de impuestos para empresas y autónomos catalanes','Pacto fiscal: Catalunya recauda y gestiona todos sus impuestos','Defensa del catalán como lengua preferente en educación y administración','Apoyo a la empresa y el emprendimiento: menos burocracia','Modelo de seguridad propio: Mossos como única policía en Catalunya']},
+  { party: 'PP', color: '#1d4ed8', tag: 'Centro-derecha · Alberto Núñez Feijóo', proposals: ['Construir 1 millón de viviendas en 4 años y suprimir las zonas de alquiler tensionado','Avales públicos que cubran el 95-100% de la hipoteca de los jóvenes','Ley antiocupación: desalojo de okupas en 48 horas','Duplicar la deducción por primer hijo en el IRPF (de 2.400 a 4.800 €)','Bajar el IVA de la luz y el gas del 21% al 10% e IVA 0% en alimentos básicos','Alargar la vida de las centrales nucleares y quitar el impuesto a la generación eléctrica','Subir las pensiones cada año según el IPC','Devolver en 7 días a quien entre de forma irregular y fijar cupos de inmigración por sectores']},
+  { party: 'PSOE', color: '#e63946', tag: 'Centro-izquierda · Pedro Sánchez', proposals: ['Jornada laboral de 36 horas semanales antes de 2030','Salario mínimo siempre por encima del 60% del salario medio, blindado en la Constitución','Empresa estatal de vivienda y que la vivienda pública supere el 6% del total (7.000 M€ en 2026-2030)','Prórrogas de alquiler y suspender los desahucios de familias vulnerables','Estatuto del Becario: prácticas con derechos y pagadas','Subir las pensiones según el IPC por ley ("línea roja")','Impuestos más progresivos y más lucha contra el fraude fiscal','Mantener la reforma laboral, el ingreso mínimo vital y la "excepción ibérica" de la energía']},
+  { party: 'Vox', color: '#63be21', tag: 'Derecha radical · Santiago Abascal', proposals: ['"Prioridad nacional": españoles primero en vivienda protegida y ayudas, según años de arraigo','"Remigración": expulsar a irregulares y a extranjeros con delitos graves y revisar regularizaciones','IRPF con solo dos tipos: 15% hasta 70.000 € y 25% por encima','Impuesto de sociedades al 15% e IVA general del 18%','Suprimir los impuestos de patrimonio, sucesiones y donaciones','Cuota cero de autónomos para quien gane menos del salario mínimo','Más energía nuclear: alargar las centrales y construir nuevas','No reducir la jornada por ley y bajar las cotizaciones a las empresas']},
+  { party: 'Frente Amplio', color: '#d6336c', tag: 'Izquierda (IU, Sumar, Comuns, Más Madrid…) · Ada Colau', proposals: ['Intervenir el alquiler: contratos indefinidos y prórrogas más largas','Invertir el 1% del PIB al año en vivienda pública y prohibir compras especulativas de fondos','Impuesto estatal a herencias y donaciones de más de 1 millón de euros','Jornada laboral de 32 horas (sin calendario fijado)','Prestación de 200 € al mes por hijo hasta los 18 años','Seguir subiendo el salario mínimo','Apostar por las renovables y no alargar algunas centrales nucleares','Ningún retroceso en las leyes del aborto y la eutanasia']},
+  { party: 'Podemos', color: '#7b2d8e', tag: 'Izquierda · Irene Montero', proposals: ['Bajar por ley el precio de los alquileres en el primer año de gobierno','Salario mínimo de 1.800 € y jornada laboral de 30 horas','Crear una empresa pública de energía','Impuesto del 57% a la banca y hacer permanente el impuesto a las energéticas','"Ni un euro para guerras": no aumentar el gasto militar','Prohibir los desahucios sin alternativa de vivienda','Limitar los precios de los productos básicos','Prohibir la compra especulativa de vivienda por parte de fondos']},
+  { party: 'ERC', color: '#ffb81c', tag: 'Independentismo de izquierda (Catalunya) · Gabriel Rufián', proposals: ['Competencias para que Catalunya haga su propia ley de alquileres','Dedicar el 1,5% del PIB a vivienda y traspasar a Catalunya los pisos de la SAREB','Impuesto permanente a las grandes fortunas, con un tramo nuevo desde 100 M€','Subir del 30% al 35% el impuesto a las grandes ganancias de capital y bajar el IRPF a sueldos de menos de 35.000 €','Salario mínimo al 60% del salario medio y un salario mínimo catalán de 1.460 €','Traspasar a Catalunya las competencias de inmigración y asilo','Subir las pensiones según el IPC de cada territorio','Más financiación estatal para la sanidad pública y reducir listas de espera']},
+  { party: 'Junts', color: '#00b4d8', tag: 'Independentismo de centro-derecha (Catalunya) · Míriam Nogueras', proposals: ['Deducción del 15% en el IRPF por alquiler o hipoteca (hasta 11.630 € al año)','Limitar la subida del alquiler al índice del INE','Que autónomos y pymes que facturan menos de 85.000 € al año no paguen IVA','Que Catalunya gestione las competencias de inmigración']},
 ];
 
 const progVotes = {};
@@ -482,7 +540,7 @@ programs.forEach(prog => {
 });
 
 function voteProg(el) { const id=el.dataset.id,val=parseInt(el.dataset.val); progVotes[id].vote=progVotes[id].vote===val?0:val; const row=el.parentElement; row.querySelectorAll('.thumb-btn').forEach(b=>b.classList.remove('active-up','active-down')); if(progVotes[id].vote===1)row.querySelector('[data-val="1"]').classList.add('active-up'); if(progVotes[id].vote===-1)row.querySelector('[data-val="-1"]').classList.add('active-down'); updateProgsScore(); }
-function updateProgsScore() { const sc={}; Object.values(progVotes).forEach(v=>{if(!sc[v.party])sc[v.party]={up:0,down:0};if(v.vote===1)sc[v.party].up++;if(v.vote===-1)sc[v.party].down++;}); const sorted=Object.entries(sc).sort((a,b)=>(b[1].up-b[1].down)-(a[1].up-a[1].down)); const pc={'VOX':'#63be21','PP':'#1d4ed8','PSOE':'#e63946','Sumar/Podemos':'#7b2d8e','ERC':'#ffb81c','Junts':'#00b4d8'}; let html='<strong style="color:var(--text)">📊 Tu afinidad por partido (propuestas 2023):</strong><br>'; sorted.forEach(([p,s])=>{const pct=s.up+s.down>0?Math.round(s.up/(s.up+s.down)*100):0;const bar='█'.repeat(Math.round(pct/10));html+=`<span style="color:${pc[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 → <strong style="color:var(--text)">${pct}% afinidad</strong> <span style="color:${pc[p]||'#999'};font-size:.7rem">${bar}</span><br>`;}); document.getElementById('programsScore').innerHTML=html; }
+function updateProgsScore() { const sc={}; Object.values(progVotes).forEach(v=>{if(!sc[v.party])sc[v.party]={up:0,down:0};if(v.vote===1)sc[v.party].up++;if(v.vote===-1)sc[v.party].down++;}); const sorted=Object.entries(sc).sort((a,b)=>(b[1].up-b[1].down)-(a[1].up-a[1].down)); const pc=Object.fromEntries(programs.map(p=>[p.party,p.color])); let html='<strong style="color:var(--text)">📊 Tu afinidad por partido (propuestas 29-N 2026):</strong><br>'; sorted.forEach(([p,s])=>{const pct=s.up+s.down>0?Math.round(s.up/(s.up+s.down)*100):0;const bar='█'.repeat(Math.round(pct/10));html+=`<span style="color:${pc[p]||'#999'};font-weight:700">${p}</span>: ${s.up} 👍 / ${s.down} 👎 → <strong style="color:var(--text)">${pct}% afinidad</strong> <span style="color:${pc[p]||'#999'};font-size:.7rem">${bar}</span><br>`;}); document.getElementById('programsScore').innerHTML=html; }
 updateProgsScore();
 </script>
 </body>
